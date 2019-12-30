@@ -9,7 +9,8 @@ class ContractRepository extends EntityRepository
 {
     public function findAllOrderByIdDesc($user)
     {
-        $conn = $this->getEntityManager()->getConnection();
+        //test branch
+        $conn = $this->getEntityManager()->getConnection();        
         $sql = "select 
                 c.id_contract,
                 c.label,
