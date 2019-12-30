@@ -1,0 +1,41 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Récapitulatif par distribution{% endblock %}
+{% block header_css %}<link href="{{  asset('css/checkbox.css') }}" rel="stylesheet" />{% endblock %}
+
+{% block body %}
+
+
+
+<div class="row">
+  <div class="col-md-12">
+    
+      
+     
+      
+      {% for ferme,produits in products %}
+        <table class="table table-bordered table-condensed">
+        <tr><td class="text-center bg-success" colspan="{{ distributions|length + 1 }}">{{ ferme }}</td></tr>
+        
+        {% include 'Contract/_tr_dates.html.twig' %}     
+        
+        {% for produit in produits %}
+        <tr><td style="width:250px;" class="bg-warning">{{ produit.nom }}</td>
+          {% set last_month = -1 %}
+          {% for date in distributions %}
+            <td class="{% if calendar[produit.id] is defined and calendar[produit.id][date] is defined %}bg-info text-right{% endif %} {% if date|date("n") != last_month and not loop.first%}delimit-left{% endif %}">
+                {% if calendar[produit.id] is defined and calendar[produit.id][date] is defined %}                
+                  {{ calendar[produit.id][date] }}
+                {% endif %}
+              </td>
+            {% set last_month = date|date("n") %}
+          {% endfor %}
+        {% endfor %}
+        </tr>
+        </table>
+      {% endfor %}
+        
+    
+  </div>
+</div>
+      
+{% endblock %}

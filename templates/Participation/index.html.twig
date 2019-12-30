@@ -1,0 +1,109 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Inscriptions aux distributions {% if admin %}(Administration){% endif %}{% endblock %}
+{% block body %}
+    
+{% set mois = ['','Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'] %}
+{% set jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'] %}  
+{% set last_month = 0 %}
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <p class="bg-info text-center">
+            <span class="glyphicon glyphicon-info-sign"></span><br />
+            {{ setting.textRegisterDistribution|nl2br }}
+        </p>
+    </div>
+</div>
+{% for month, data1 in data %}    
+ 
+    <div class="row">
+        <div class="col-md-12">
+            <h3>{{ month|month_year_fr }}</h3>
+        </div>                 
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <tr>
+                    <td></td>
+                    {% for distribution in data1.dates %}
+                        <th class="active">{{ distribution.date|full_date_fr2 }}</th>
+                    {% endfor %}
+                </tr>
+                {% for id_task, task in available_tasks %}
+                    <tr>
+                        <td class="active">
+                            {{ task.label }}
+                            <br />
+                            <small>
+                                {% if task.max is not empty and task.min is not empty %}
+                                     {% if task.min != task.max %}
+                                        {{ task.min }} à {{ task.max }} personnes
+                                     {% else %}
+                                         {{ task.max }} personne{% if task.max>0 %}s{% endif %}
+                                     {% endif %}
+                                 {% endif %}
+                            </small>
+                        </td>
+                    {% for distribution in data1.dates %}
+                        <td
+                            {% set iam_in = false %}
+                            {% if data1.tasks[id_task] is defined and data1.tasks[id_task][distribution.id_distribution] is defined %}
+                                {% if data1.tasks[id_task][distribution.id_distribution]|length < task.min %}
+                                    class="bg-danger">
+                                 {% elseif data1.tasks[id_task][distribution.id_distribution]|length > task.max %}
+                                     class="bg-warning">
+                                 {% else %}
+                                     class="bg-success">
+                                 {% endif %}
+                                 
+                                {% for user in data1.tasks[id_task][distribution.id_distribution] %}
+                                    <span class="glyphicon glyphicon-chevron-right"></span> {{ user.name }}
+                                    {% if admin %}
+                                        <a data-toggle="tooltip" data-placement="bottom" title="Désinscrire {{ user.name }}" onclick="if(confirm('Voulez-vous vraiment désinscrire {{ user.name|addslashes }} ?')){window.location.href=this.href;};return false;" href="{{ path('participation_remove',{'id_participation': user.id_participation,'admin':true }) }}"><span class="glyphicon glyphicon-minus text-danger"></span></a>
+                                    {% elseif user.id == current_user.idUser %}
+                                        {% set iam_in = true %}
+                                        <a data-toggle="tooltip" data-placement="bottom" title="Se désinscrire" onclick="if(confirm('Voulez-vous vraiment vous désinscrire ?')){window.location.href=this.href;};return false;" href="{{ path('participation_remove',{'id_participation': user.id_participation }) }}"><span class="glyphicon glyphicon-minus text-danger"></span></a>
+                                    {% endif %}
+                                    <br />
+                                {% endfor %}
+                                
+                            {% else %}class="bg-danger">
+                            {% endif %}
+                                
+                            {% if admin %}
+                                <small><a href="#" onclick="participation.add({{ distribution.id_distribution }},{{ id_task }});return false;"><span class="glyphicon glyphicon-plus"></span> Inscrire un adhérent</a></small>
+                            {% elseif not iam_in %}
+                                <small><a href="{{ path('participation_add',{'id_distribution': distribution.id_distribution, 'id_task':id_task}) }}"><span class="glyphicon glyphicon-plus"></span> Je m'inscris</a></small>
+                            {% endif %} 
+                        </td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+         </div>
+    </div>
+{% endfor %}
+
+{{ render(controller('App\\Controller\\ParticipationController:modalUserChoice')) }}         
+<script type="text/javascript">
+var participation = {
+    url_add: '{{ path('participation_add',{'id_distribution':'_1_','id_task':'_2_','id_user':'_3_'}) }}',
+    id_distribution: null,
+    id_task: null,
+    id_user: null,
+    add: function (id_distribution, id_task) {
+        this.id_distribution = id_distribution;
+        this.id_task = id_task;
+        $('#user-choice').modal('show');
+    },
+    validate: function () {
+        this.id_user = $('#user').val();
+        var url = this.url_add.replace('_1_',this.id_distribution).replace('_2_',this.id_task).replace('_3_',this.id_user);
+        window.location.href = url;
+    }
+}
+</script>
+
+
+{% endblock %}

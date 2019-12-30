@@ -1,0 +1,66 @@
+
+memo symfony
+
+Installer symfony
+Installer composer
+Installer PHP
+
+symfony new sf_3.4b --version=3.4
+cd sf_test
+composer require symfony/web-server-bundle --dev
+php bin/console server:run localhost:8042
+composer update
+symfony security:check
+#activer annotations
+composer req sensio/framework-extra-bundle annot
+#barre de debug
+composer require profiler --dev
+
+#symfony 4 only ?
+composer require symfony/flex
+composer remove symfony/symfony
+composer require annotations asset orm-pack twig logger mailer form security translation validator
+composer require --dev dotenv maker-bundle orm-fixtures profiler
+
+
+composer require symfony/translation
+composer require symfony/monolog-bundle
+composer require symfony/orm-pack
+composer require --dev symfony/maker-bundle
+composer require symfony/asset
+
+conf bdd dans .env ?
+#créer entités automatiquement
+php bin/console doctrine:mapping:import "App\Entity" annotation --path=src/Entity
+#getters setters
+php bin/console make:entity --regenerate App
+
+#formulaire
+composer require form validator security-csrf
+php bin/console make:crud #>prompt choix de l'entité
+
+#elastic search
+#composer require friendsofsymfony/elastica-bundle
+ou
+//https://afsy.fr/avent/2017/20-elasticsearch-6-et-symfony-4
+composer require maker
+//https://www.lucidar.me/fr/web-dev/levenshtein-distance-in-mysql/
+
+
+#oauth2
+composer require symfony/security-bundle
+composer require knpuniversity/oauth2-client-bundle league/oauth2-google
+composer require league/oauth2-facebook
+
+
+#easyadmin
+composer require admin
+
+
+composer require annotations
+composer require symfony/apache-pack
+
+#login auth
+composer require symfony/security-bundle
+php bin/console make:user
+php bin/console make:auth

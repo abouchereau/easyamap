@@ -1,0 +1,15 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Nouveau paiement{% endblock %}
+
+{% block body %}
+<div class="row">
+   <div class="col-md-4 col-md-offset-4">
+     {% form_theme form 'Form/fields.html.twig' %}
+     {{ form(form) }}    
+    </div>
+</div>
+{% endblock %}
+{% block footer_js %}
+<script type="text/javascript" src="{{ asset('js/form.js') }}"></script>
+{% endblock %}
+

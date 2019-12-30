@@ -1,0 +1,36 @@
+<?php
+$url2env = [
+    'contrats.la-riche-en-bio.com' => ['37520', false],//0:name, 1:debug
+    'la-riche.easyamap.fr' => ['37520', true],//0:name, 1:debug
+    'choisille.easyamap.fr' => ['choisille', false],//0:name, 1:debug
+    'amapaufildulong.easyamap.fr' => ['amapaufildulong', false],//0:name, 1:
+    'chambray.easyamap.fr' => ['chambray', true],//0:name, 1:
+    'commandes.amap-de-la-plage.fr' => ['delaplage', false],//0:name, 1:
+    'commandes-amap.attikcreation.com' => ['delaplage', false],//0:name, 1:
+    'faverolles.easyamap.fr' => ['delaplage', false],//0:name, 1:
+    'lespaniersvinoliens.easyamap.fr' => ['lespaniersvinoliens', false],//0:name, 1:
+    'amap-monts-panier.easyamap.fr' => ['monts', false],//0:name, 1:
+    'civray.easyamap.fr' => ['civray', false],//0:name, 1:
+    'chinon.easyamap.fr' => ['chinon', false],//0:name, 1:
+    'www.easyamap.fr' => ['portal', true],
+    'nitray.easyamap.fr' => ['nitray', false],
+    'azay.easyamap.fr' => ['azay', false],
+    'notreamapdoe.easyamap.fr' => ['notreamapdoe', false],
+    'fondettes.easyamap.fr' => ['fondettes', false],
+    'lepanierdesvences.easyamap.fr' => ['lepanierdesvences', true],
+    'amapdelolivier.easyamap.fr' => ['amapdelolivier', true],
+    'montpreschambord.easyamap.fr' => ['montpreschambord', true],
+    'test02.easyamap.fr' => ['test02', false],
+    'test03.easyamap.fr' => ['test03', false],
+    'test04.easyamap.fr' => ['test04', false],
+    'test05.easyamap.fr' => ['test05', false],
+    'test06.easyamap.fr' => ['test06', false],
+    'test07.easyamap.fr' => ['test07', false],
+    'test08.easyamap.fr' => ['test08', false],
+    'test09.easyamap.fr' => ['test09', true],
+    'test10.easyamap.fr' => ['test10', false],
+    'test11.easyamap.fr' => ['test11', false],
+    'sd-94068.dedibox.fr/amap' => ['test', false],
+    'localhost' => ['local', true],
+    //'easyamap.fr' => ['portal', true],
+];

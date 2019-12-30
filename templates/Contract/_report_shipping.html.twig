@@ -1,0 +1,100 @@
+{% set total = 0 %}
+{% set has_ratio = false %}
+{% set nb_month = 0 %}
+{% set last_month = '' %}
+{% for date in dates %}     
+    {% if date|month_year_fr != last_month %}
+        {% set nb_month = nb_month+1 %}
+    {% endif %}
+    {% set last_month = date|month_year_fr %}
+{% endfor %}
+<div class="col-md-12">
+
+    <table class="table table-condensed table-bordered">
+        <tr>
+            <td colspan="{{ 2+dates|length+nb_month }}" class="text-center warning">
+                {% include 'Contract/_report_thead.html.twig' with {'contract':contract, 'farm': farm } %}  
+            </td>
+        </tr>
+        <tr class="success">
+            <th class="text-center" rowspan="3">Produit</th>
+            <th class="text-center" rowspan="3">Prix</th>
+            <th colspan="{{ dates|length }}" class="text-center">Distributions</th>
+            <!--<th class="text-center" rowspan="3">Total<br />Qt</th>
+            <th class="text-center" rowspan="3">Total<br />Prix</th>-->
+            {% set last_month = '' %}
+            {% for date in dates %}     
+                {% if date|month_year_fr != last_month %}
+                    <th  rowspan="3" class="text-center delimit-left"><small>{{ date|month_year_fr|replace({' ':'<br />'})|raw }}</small></th>
+                {% endif %}
+                {% set last_month = date|month_year_fr %}
+            {% endfor %}
+        </tr>
+         <tr>
+            {% set last_month = '' %}
+            {% for date in dates %}     
+                {% if date|month_year_fr != last_month %}
+                    <td class="text-center delimit-left" colspan="{{ nb_per_month[date|slice(0,7)] }}"><small>{{ date|month_year_fr }}</small></td>
+                {% endif %}
+                {% set last_month = date|month_year_fr %}
+            {% endfor %}
+        </tr>
+        <tr>
+            {% set last_month = '' %}
+            {% for date in dates %}                
+                <td class="nobr text-center success{% if date|month_year_fr != last_month %} delimit-left{% endif %}"><small>{{ date|date_fr }}</small></td>
+                {% set last_month = date|month_year_fr %}
+            {% endfor %}
+        </tr>
+        {% for id_product, product in report %}
+            <tr>
+                <td><div class="product2" data-toggle="tooltip" data-placement="bottom" title="{{ product.label }} {{ product.unit }}">{{ product.label }} {{ product.unit }}</div></td>
+                <td class="nobr">{{ product.base_price|price_fr}}</td>
+                {% set last_month = '' %}
+
+                {% for date in dates %}{#
+                    #}<td class="bold text-center{% if product.distris[date] is defined and product.distris[date].quantity is not null %} warning{% endif %}{% if product.distris[date] is not defined %} bg-grey{% endif %}{% if date|month_year_fr != last_month %} delimit-left{% endif %}">{#
+                        #}{% if product.distris[date] is defined %}{#
+                            #}{{ product.distris[date].quantity }}{#
+                        #}{% endif %}{#
+                        #}{% if product.distris[date] is not defined %} - {% endif %}{#
+                    #}</td>{#
+                    #}{% set last_month = date|month_year_fr %}
+                {% endfor %}
+                {% for month, nb in nb_per_month %}{#
+                    #}<td class="nobr text-right">{#
+                    #}{% if product.ratio is empty %}{#
+                        #}{% if payment[id_product] is defined and payment[id_product][month] is defined %}{#
+                            #}{{ payment[id_product][month]|price_fr }}{#
+                        #}{% else %}{#
+                            #}{{ 0|price_fr }}{#
+                        #}{% endif %}{#
+                    #}{% else %}{#
+                        #}<small class="text-muted">Prix au poids</small>{#
+                        #}{% set has_ratio = true %}{#
+                    #}{% endif %}{#
+                    #}</td>{#
+                #}{% endfor %}
+            </tr>
+        {% endfor %}
+        <tr>
+            <th class="success" colspan="{{ dates|length +2 }}">Total par mois</th>
+            {% set total = 0 %}
+            {% for month, nb in nb_per_month %}
+                <th class="nobr text-right">
+                    {% if payment.all[month] is defined %}
+                        {{ payment.all[month]|price_fr }} {% if has_ratio %}*{% endif %}                   
+                        {% set total = total + payment.all[month] %}
+                    {% else %}
+                        {{ 0|price_fr }}
+                    {% endif %}
+                </th>
+            {% endfor %}
+        </tr>
+        <tr>
+            <th class="success" colspan="{{ dates|length +2 }}">Total contrat</th>
+            <th class="text-center" colspan="{{ nb_per_month|length }}">{{ total|price_fr }} {% if has_ratio %}*{% endif %}</th>
+        </tr>
+        </table>
+        {% if has_ratio %}<div class="text-right">* Le total ne prend pas en compte les produits ayant un prix au poids. </div><br /><br /> {% endif %}
+</div>

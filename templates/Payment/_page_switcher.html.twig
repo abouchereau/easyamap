@@ -1,0 +1,20 @@
+<div class="row">
+    <div class="col-md-6 text-left">
+        <a class="btn{% if curPage == 'global' %} btn-warning{% else %} btn-default{% endif %} no-print" href="{% if role == 'referent' %}{{ path('paiements_referent') }}{% else %}{{ path('paiements_adherent') }}{% endif %}">Vue globale</a>
+        <a class="btn{% if curPage == 'by_year' %} btn-warning{% else %} btn-default{% endif %} no-print" href="{% if role == 'referent' %}{{ path('payment_history') }}{% else %}{{ path('payment_history_adherent') }}{% endif %}">Vue par année</a>
+    </div>
+    <div class="col-md-6 text-right">
+            {% if role != 'adherent' %}
+                {% set params = {'id_user': null, 'id_farm': null} %}
+                {% if user is defined and user is not null %}
+                    {% set params = params|merge({'id_user': user.idUser}) %}
+                {% endif %}                
+                {% if farm is defined and farm is not null %}
+                    {% set params = params|merge({'id_farm': farm.idFarm}) %}
+                {% endif %}
+                <div class="pull-right no-print">
+                    <a data-toggle="tooltip" data-placement="bottom" title="(ex : acompte, régularisation)" href="{{ path('payment_new', params) }}" class="btn btn-success"><span class="glyphicon glyphicon-euro"></span> Ajouter un paiement hors-contrat</a> 
+                </div>
+        {% endif %}
+    </div>
+</div>

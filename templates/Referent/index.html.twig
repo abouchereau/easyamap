@@ -1,0 +1,34 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Liste des producteurs{% endblock %}
+
+{% block body %}
+
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+    
+
+    <a href="{{ path('referent_new') }}" class="btn btn-success"><span class="glyphicon glyphicon-retweet"></span> Ajouter un référent</a>
+    <br />
+    <br />
+    <table class="table table-condensed table-hover">
+        <thead>
+            <tr>
+                <th>Producteur</th>
+                <th>Référent</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr onclick="window.location.href='{{ path('referent_edit', { 'id': entity.idReferent }) }}';">
+                <td>{{ entity.fkFarm }}</td>
+                <td>{{ entity.fkUser }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div> 
+{% endblock %}
+{% block footer_js %}
+<script type="text/javascript" src="{{ asset('js/form.js') }}"></script>
+{% endblock %}

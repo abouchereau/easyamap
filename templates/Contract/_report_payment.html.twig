@@ -1,0 +1,36 @@
+<div class="col-md-8 col-lg-offset-2">
+    <table class="table table-condensed table-bordered table-striped">
+    {% for producteur,tab1 in report %}    
+        <tr><td class="text-center warning" colspan="{{ dates|length+1 }}">
+                {% if farm is null %}
+                    <h4>Contrat "{{ contract.label }}"</h4>
+                    <p>{{ producteur }}</p>
+                {% else %}
+                    {% include 'Contract/_report_thead.html.twig' with {'contract':contract, 'farm': farm } %}  
+                {% endif %}
+                </td></tr>
+        <tr><td></td>
+        {% for date in dates %}
+            <th class="success"><small>{{ date|month_year_fr }}</small></th>
+        {% endfor %}
+        </tr>
+        {% for adherent, tab2 in tab1 %}
+            <tr>
+                <td>{{ adherent }}</td>
+                {% for date in dates %}
+                    {% if tab2[date] is defined and tab2[date]|length > 0 %}
+                        <td class="text-right">
+                            {% for payment in tab2[date] %}
+                                {{ payment|price_fr }}<br />
+                            {% endfor %}
+                            </td>                        
+                    {% else %}
+                        <td class="text-center"> - </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    
+    {% endfor %}
+    </table>
+</div>

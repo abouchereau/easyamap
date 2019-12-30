@@ -1,0 +1,6 @@
+{% extends admin.getTemplate('base_list_field') %}
+
+
+{% block field %}
+    {{ value }}<br /><small>{{ value.email }}</small>
+{% endblock %}
