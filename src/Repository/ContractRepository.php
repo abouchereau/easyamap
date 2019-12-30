@@ -10,6 +10,7 @@ class ContractRepository extends EntityRepository
     public function findAllOrderByIdDesc($user)
     {
         //test branch
+        $params = ['id_contract'=>$contract->getIdContract()];
         $conn = $this->getEntityManager()->getConnection();        
         $sql = "select 
                 c.id_contract,
@@ -34,17 +35,20 @@ class ContractRepository extends EntityRepository
                 left join farm f on f.id_farm = p.fk_farm
                 left join referent r on r.fk_farm = f.id_farm
                 left join user u on u.id_user = c.fk_user
-                where r.fk_user=".$user->getIdUser();
+                where r.fk_user=:id_user";
+            $params['id_user'] = $user->getIdUser();
         } elseif ($user->hasRole(User::ROLE_FARMER)) {
             $sql .= " left join product p on p.id_product = cp.fk_product
                 left join farm f on f.id_farm = p.fk_farm                
                 left join user u on u.id_user = c.fk_user
-                where f.fk_user=".$user->getIdUser();
+                where f.fk_user=:id_user";
+            $params['id_user'] = $user->getIdUser();
         }
         $sql .= " group by c.id_contract
                 order by c.id_contract desc";
-        $r = $conn->query($sql);
-        return $r->fetchAll(\PDO::FETCH_ASSOC);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     
     public function findAllOrderByPeriodStart()
