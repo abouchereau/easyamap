@@ -1,0 +1,1 @@
+ALTER TABLE `user` ADD COLUMN `created_at` DATE DEFAULT NULL AFTER `is_active`;

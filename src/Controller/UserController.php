@@ -48,6 +48,7 @@ class UserController extends AmapBaseController
         $form->handleRequest($request);
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            $entity->setCreatedAt(new \DateTime());
             $em->persist($entity);
             $em->flush();
             $sendMail = $form['sendMail']->getData();

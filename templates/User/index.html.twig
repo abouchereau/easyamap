@@ -25,6 +25,7 @@
                 {% endif %}
                 <th class="success">Référent</th>
                 <th class="success">Admin</th>                
+                <th class="success">Date adhésion</th>   
                 <th class="success">Dern. connexion</th>                
             </tr>
         </thead>
@@ -57,6 +58,7 @@
                   {% endfor %}
                 </td>
                 <td>{% if entity.isAdmin %}<span class="almost-invisible">1</span><span class="glyphicon glyphicon-star text-success" style="font-size:18px;"></span>{% endif %}</td>
+                <td>{% if entity.createdAt is not empty %}{{ entity.createdAt|date("Y-m-d") }}{% endif %}</td>
                 <td>{% if entity.lastConnection is not empty %}{{ entity.lastConnection|date("Y-m-d") }}{% endif %}</td>
             </tr>
         {% endfor %}

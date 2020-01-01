@@ -9,12 +9,14 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\JoinTable;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\Traits\IsActiveDefaultTrueTrait;
+use App\Entity\Traits\CreatedAtTrait;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
 class User implements UserInterface
 {
     use IsActiveDefaultTrueTrait;
+    use CreatedAtTrait;
     
     const ROLE_USER = 'ROLE_USER';
     const ROLE_ADHERENT = 'ROLE_ADHERENT';
