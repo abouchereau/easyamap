@@ -26,6 +26,7 @@ class SettingType extends AbstractType
             ->add('useAddress',CheckboxType::class,  array('label' => 'Coordonnées adhérents','required' => false))
             //->add('cotisation',CheckboxType::class,  array('label' => 'Gestion des cotisations','required' => false))
             ->add('registerDistribution',CheckboxType::class,  array('label' => 'Inscription aux distributions','required' => false))                
+            ->add('useReport',CheckboxType::class,  array('label' => 'Rapports de distributions','required' => false)) 
             ->add('textRegisterDistribution',TextareaType::class,array('label' => 'Texte Inscription Distribution','required' => false))
         ;
     }

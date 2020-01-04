@@ -38,6 +38,13 @@ class Setting
     /**
      * @var boolean
      *
+     * @ORM\Column(name="use_report", type="boolean", nullable=false, )
+     */
+    private $useReport = false;
+    
+    /**
+     * @var boolean
+     *
      * @ORM\Column(name="cotisation", type="boolean", nullable=false, )
      */
     //private $cotisation = true;
@@ -95,6 +102,10 @@ class Setting
     function getRegisterDistribution() {
         return $this->registerDistribution;
     }
+    
+    function getUseReport() {
+        return $this->useReport;
+    }
 
     function getName() {
         return $this->name;
@@ -115,6 +126,7 @@ class Setting
     function getTextRegisterDistribution() {
         return $this->textRegisterDistribution;
     }
+    
     
    /* function getCotisation() {
         return $this->cotisation;
@@ -138,7 +150,12 @@ class Setting
         $this->registerDistribution = $registerDistribution;
         return $this;
     }
-
+    
+    function setUseReport($useReport) {
+        $this->useReport = $useReport;        
+        return $this;
+    }
+    
     function setName($name) {
         $this->name = $name;
         return $this;
