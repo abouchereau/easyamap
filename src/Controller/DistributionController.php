@@ -7,6 +7,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DistributionController extends AmapBaseController
 {
+    const NB_PER_PAGE = 20;
+    
     public function index()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -86,6 +88,36 @@ class DistributionController extends AmapBaseController
             'date' => $date,
             'nb' => $nb
         ));
+    }
+    
+    public function list($page=1) {
+        $em = $this->getDoctrine()->getManager();
+        $distris = $em->getRepository('App\Entity\Distribution')->getLasts($page, self::NB_PER_PAGE);        
+
+        $pagination = [
+            'page' => $page,
+            'nbPages' => ceil(count($distris) / self::NB_PER_PAGE),
+            'paramsRoute' => []
+        ];
+        return $this->render('Distribution/list.html.twig', [
+            'distris' => $distris,
+            'pagination' => $pagination
+        ]);
+    }
+    
+    public function showRapport($id) {
+        $em = $this->getDoctrine()->getManager();
+        $distri = $em->getRepository('App\Entity\Distribution')->find($id); 
+        //TODO produits livrés
+        //TODO liste personnes cette distribution + suivante 
+        
+        return $this->render('Distribution/show.html.twig', [
+            'distri' => $distri
+        ]);
+    }
+    
+    public function editRapport($id) {
+        
     }
     
  

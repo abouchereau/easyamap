@@ -1,5 +1,5 @@
 <a {#
-    #}data-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title="Début: {{ contract.firstDistribution|full_date_fr2 }}<br>{{ contract.nbDistribution }} distribution{% if contract.nbDistribution > 1 %}s{% endif %}<br>{{ contract.nbProduct }} produit{% if contract.nbProduct > 1 %}s{% endif %}" {#
+    #}data-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title="Début: {{ contract.firstDistribution|full_date_fr2 }}<br>{{ contract.nbDistribution }} distribution{% if contract.nbDistribution > 1 %}s{% endif %}" {#
     #}href="{{ path('contrat_view', {'id_contract': contract.idContract }) }}" {#
     #}class="btn btn-{{ style }}{% if size=='L' %} btn-lg{% endif %} btn-xl">{#
 #}{% if filled[contract.idContract] is defined %}<div class="pull-left"><span data-toggle="tooltip" data-placement="bottom" title="Commande passée" class="glyphicon glyphicon-check"></span></div>{% endif %}{#

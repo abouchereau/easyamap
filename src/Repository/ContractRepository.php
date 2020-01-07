@@ -57,13 +57,11 @@ class ContractRepository extends EntityRepository
       $sql = "select c.id_contract as idContract, 
             c.label, 
             c.is_active as isActive, 
-            count(distinct(cp.fk_product)) as nbProduct, 
             count(distinct(d.id_distribution)) as nbDistribution,
             min(d.date) as firstDistribution,
             c.fill_date_end as fillDateEnd,
             case when c.fill_date_end <= date_sub(now(),interval 1 hour) then 1 else 0 end as isArchive
             from contract c
-            left join contract_product cp on cp.fk_contract = c.id_contract
             left join distribution d on d.date between c.period_start and c.period_end
             where c.is_visible=1
             group by c.id_contract

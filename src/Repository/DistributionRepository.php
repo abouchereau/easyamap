@@ -5,6 +5,8 @@ namespace App\Repository;
 use Doctrine\ORM\EntityRepository;
 use \DateTime;
 use App\Entity\Distribution;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DistributionRepository extends EntityRepository 
 {
@@ -240,4 +242,19 @@ class DistributionRepository extends EntityRepository
         $stmt->execute(array('mois' => $mois, 'annee' => $annee));
         return $stmt->fetchAll(\PDO::FETCH_COLUMN);    
     }
+    
+    public function getLasts($page, $nbPerPage) {
+        $qb = $this->createQueryBuilder('d')
+            ->addOrderBy('d.date', 'DESC')
+            ->andWhere('p.date < date_add(CURDATE(),interval 1 day)');
+        $query = $qb->getQuery();
+        $firstResult = ($page - 1) * $nbPerPage;
+        $query->setFirstResult($firstResult)->setMaxResults($nbPerPage);
+        $paginator = new Paginator($query);
+        if (($paginator->count() <= $firstResult) && $page != 1) {
+            throw new NotFoundHttpException('La page demandée n\'existe pas.'); // page 404, sauf pour la première page
+        }
+        return $paginator;   
+    }
+        
 }

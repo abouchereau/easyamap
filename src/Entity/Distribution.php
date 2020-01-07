@@ -28,6 +28,26 @@ class Distribution
      */
     private $date;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="info_livraison", type="text", nullable=true)
+     */
+    private $infoLivraison;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="info_distribution", type="text", nullable=true)
+     */
+    private $infoDistribution;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="info_divers", type="text", nullable=true)
+     */
+    private $infoDivers;
 
 
     /**
@@ -61,5 +81,32 @@ class Distribution
     public function getDate()
     {
         return $this->date;
+    }
+    
+    public function getInfoLivraison() {
+        return $this->infoLivraison;
+    }
+    
+    public function setInfoLivraison($infoLivraison) {
+        $this-> infoLivraison = $infoLivraison;
+        return $this;
+    }
+    
+    public function getInfoDistribution() {
+        return $this->infoDistribution;
+    }
+    
+    public function setInfoDistribution($infoDistribution) {
+        $this-> infoDistribution = $infoDistribution;
+        return $this;
+    }
+    
+    public function getInfoDivers() {
+        return $this->infoDivers;
+    }
+    
+    public function setInfoDivers($infoDivers) {
+        $this-> infoDivers = $infoDivers;
+        return $this;
     }
 }

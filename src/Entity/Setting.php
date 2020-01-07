@@ -194,6 +194,7 @@ class Setting
         return array(
             'useAddress' => $this->useAddress,
             'registerDistribution' => $this->registerDistribution,
+            'useReport' => $this->useReport,
             'name' => $this->name,
             'link' => $this->link,
             'logoSmallUrl' => $this->logoSmallUrl,

@@ -485,3 +485,17 @@ participation_remove:
 show_history:
     path: show_history
     controller: App\Controller\HomeController:showHistory
+    
+rapport_distribution:
+    path: rapport_distribution/{page}
+    controller: App\Controller\DistributionController:list
+    defaults:
+        page: 1
+    
+rapport_distribution_show:
+    path: rapport_distribution/show/{id}/
+    controller: App\Controller\DistributionController:showRapport
+    
+rapport_distribution_edit:
+    path: rapport_distribution/edit/{id}/
+    controller: App\Controller\DistributionController:editRapport
