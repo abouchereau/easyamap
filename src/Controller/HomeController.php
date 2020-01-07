@@ -103,6 +103,14 @@ class HomeController extends AmapBaseController
                     'S\'inscrire à une distribution'
                     );
         }
+        if ($em->getRepository('App\Entity\Setting')->get('useReport', $_SERVER['APP_ENV'])) {
+            $list[] = array(
+                    $this->generateUrl('rapport_distribution') ,
+                    'calendar',
+                    'Rapports de distribution',
+                    'rapport_distribution'
+                    );
+        }
      /*   $list[] = array(
              $this->generateUrl('payment_history_adherent'),
              'plus',

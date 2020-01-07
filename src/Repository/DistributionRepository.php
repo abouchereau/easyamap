@@ -246,7 +246,8 @@ class DistributionRepository extends EntityRepository
     public function getLasts($page, $nbPerPage) {
         $qb = $this->createQueryBuilder('d')
             ->addOrderBy('d.date', 'DESC')
-            ->andWhere('p.date < date_add(CURDATE(),interval 1 day)');
+            ->andWhere('d.date <= :now')
+            ->setParameter('now',new \DateTime());
         $query = $qb->getQuery();
         $firstResult = ($page - 1) * $nbPerPage;
         $query->setFirstResult($firstResult)->setMaxResults($nbPerPage);

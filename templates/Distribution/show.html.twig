@@ -1,10 +1,10 @@
 {% extends 'layout.html.twig' %}
-{% block header_title %}Compte-rendu de distribution du {{ distribution.date|full_date_fr }}{% endblock %}
+{% block header_title %}Compte-rendu de distribution du {{ distri.date|full_date_fr }}{% endblock %}
 {% block header_css %}{% endblock %}
 
 {% block body %}
     
-    <h3>Compte-rendu de distribution du {{ distribution.date|full_date_fr }}</h3>
+    <h3>Compte-rendu de distribution du {{ distri.date|full_date_fr }}</h3>
     
     <div class="row">
     <div class="col-md-6 col-md-offset-3">
@@ -12,4 +12,4 @@
     </div>        
     </div>
     
-{%  endblock %} %}
+{%  endblock %}
