@@ -137,5 +137,17 @@ class ProductDistributionRepository extends EntityRepository
         return $stmt->fetchAll(\PDO::FETCH_KEY_PAIR); 
   }
 
-  
+    
+  public function getFarmForDistribution($id_distribution) {
+      $conn = $this->getEntityManager()->getConnection();
+      $sql = "select distinct f.product_type, f.label
+            from product_distribution pd
+            left join product p on pd.fk_product = p.id_product
+            left join farm f on p.fk_farm = f.id_farm
+            where pd.fk_distribution=:id_distribution
+            order by f.sequence";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['id_distribution' => $id_distribution]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC); 
+  }
 }
