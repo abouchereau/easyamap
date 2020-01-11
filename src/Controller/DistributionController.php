@@ -109,11 +109,14 @@ class DistributionController extends AmapBaseController
         $em = $this->getDoctrine()->getManager();
         $distri = $em->getRepository('App\Entity\Distribution')->find($id); 
         //TODO produits livrés
-        $products = $em->getRepository('App\Entity\ProductDistribution')->getProductsForDistribution($id); 
-        //TODO liste personnes cette distribution + suivante 
-        
+        $farms = $em->getRepository('App\Entity\ProductDistribution')->getFarmForDistribution($id); 
+        //TODO liste personnes cette distribution + suivante +
+        $participations = $em->getRepository('App\Entity\Participation')->getTaskForDistributionAndNext($id); 
+
         return $this->render('Distribution/show.html.twig', [
-            'distri' => $distri
+            'distri' => $distri,
+            'farms' => $farms,
+            'participations' => $participations
         ]);
     }
     

@@ -140,7 +140,7 @@ class ProductDistributionRepository extends EntityRepository
     
   public function getFarmForDistribution($id_distribution) {
       $conn = $this->getEntityManager()->getConnection();
-      $sql = "select distinct f.product_type, f.label
+      $sql = "select distinct f.product_type, f.label, f.sequence
             from product_distribution pd
             left join product p on pd.fk_product = p.id_product
             left join farm f on p.fk_farm = f.id_farm

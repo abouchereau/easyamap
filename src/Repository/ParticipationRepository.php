@@ -74,5 +74,25 @@ class ParticipationRepository extends EntityRepository
         }
         return $out;
     }
+    
+    public function getTaskForDistributionAndNext($id_distribution) {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "select t.id_distribution, t.date, t.label tache,  GROUP_CONCAT(CONCAT(u.lastname, ' ', u.firstname) SEPARATOR ', ') inscrits
+from task t
+left join participation p on t.id_task = p.fk_task
+left join user u on p.fk_user = u.id_user
+inner join (
+    select id_distribution, date
+    from distribution
+    where date >= (select date from distribution where id_distribution = :id_distribution)
+    order by date asc
+    limit 2) t on t.id_distribution=p.fk_distribution
+group by t.id_distribution, t.label, t.date, t.id_task
+order by t.date, t.id_task";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([':id_distribution'=>$id_distribution]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC); 
+
+    }
             
 }
