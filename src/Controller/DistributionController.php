@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DistributionController extends AmapBaseController
 {
-    const NB_PER_PAGE = 20;
+    const NB_PER_PAGE = 10;
     
     public function index()
     {
@@ -105,7 +105,7 @@ class DistributionController extends AmapBaseController
         ]);
     }
     
-    public function showRapport($id) {
+    public function showRapport($id,$isEdit=false) {
         $em = $this->getDoctrine()->getManager();
         $distri = $em->getRepository('App\Entity\Distribution')->find($id); 
         //TODO produits livrés
@@ -113,16 +113,21 @@ class DistributionController extends AmapBaseController
         //TODO liste personnes cette distribution + suivante +
         $participations = $em->getRepository('App\Entity\Participation')->getTaskForDistributionAndNext($id); 
 
-        return $this->render('Distribution/show.html.twig', [
+        return $this->render('Distribution/show.html.twig', [         
+            'isEdit' => $isEdit,
+            'isEditable' => $this->isEditable(),
             'distri' => $distri,
             'farms' => $farms,
             'participations' => $participations
         ]);
     }
     
-    public function editRapport($id) {
-        
+    private function isEditable($id) {
+        //Si admin ou si participant        
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        return $user->getIsAdmin() || $em->getRepository('App\Entity\Participation')->isParticipant($user->getIdUser(),$id);
     }
-    
+
  
 }

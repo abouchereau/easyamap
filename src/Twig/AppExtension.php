@@ -69,7 +69,7 @@ class AppExtension extends AbstractExtension
     }
 
     public function price_excel($num) {
-        return number_format($num, 2, ',',' ').' €';//number_format($num, 2, ',','');
+        return number_format($num, 2, ',','');//number_format($num, 2, ',','');
     }
     
     public function slugify($text)
