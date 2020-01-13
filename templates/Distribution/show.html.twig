@@ -3,8 +3,33 @@
 {% block header_css %}{% endblock %}
 
 {% block body %}
+    <style type="text/css">
+        .ta-container {
+            padding:0 !important;
+        }
+        .ta-container textarea {
+            width:100%;
+            height:120px;
+        }
+    </style>
+    {% if isEdit %}
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+    {% endif %}
     
-    <h3 class="text-center">Compte-rendu de distribution du {{ distri.date|full_date_fr }}</h3>
+    <div class="row">
+        <div class="col-md-2">
+            <a href="{{ path('rapport_distribution') }}" class="btn btn-primary"><span class="glyphicon glyphicon-list"></span> Liste</a>
+        </div>   
+        <div class="col-md-8">            
+            <h4 class="text-center">Compte-rendu de distribution du {{ distri.date|full_date_fr }}<br /> </h4>        
+        </div>        
+        <div class="col-md-2 text-right">
+            {% if isEditable and not isEdit %}
+              <a href="{{ path('rapport_distribution_edit', {'id':distri.idDistribution}) }}" class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Modifier</a>
+            {% endif %}
+        </div>   
+    </div>
     
     <div class="row">
         <div class="col-md-8 col-md-offset-2">            
@@ -22,9 +47,9 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <table class="table table-bordered">
-                <tr><td colspan="2" class="success"><h4>Produits livrés</h4></td></tr>
+                <tr><td class="success"><h4>Produits livrés</h4></td></tr>
                 {% for farm in farms %}            
-                        <tr><td>{{ farm.product_type }}</td><td>{{ farm.label }}</td></tr>
+                        <tr><td>{{ farm.product_type }} ({{ farm.label }})</td></tr>
                 {% endfor %}
             </table>        
         </div>        
@@ -34,7 +59,11 @@
         <div class="col-md-8 col-md-offset-2">
             <table class="table table-bordered">
                 <tr><td class="warning"><h4>Contrôles de livraison</h4></td></tr> 
-                <tr><td>{{ distri.infoLivraison }}</td></tr>
+                <tr><td{% if isEdit %} class="ta-container"{% endif %}>{% if isEdit %}
+                        {{ form_widget(form.infoLivraison) }}
+                        {% else %}
+                        {{ distri.infoLivraison|raw }}
+                        {% endif %}</td></tr>
             </table>        
         </div>        
     </div>
@@ -43,7 +72,11 @@
         <div class="col-md-8 col-md-offset-2">
             <table class="table table-bordered">
                 <tr><td class="warning"><h4>Bilan fin distribution</h4></td></tr> 
-                <tr><td>{{ distri.infoDistribution }}</td></tr>
+                <tr><td{% if isEdit %} class="ta-container"{% endif %}>{% if isEdit %}
+                        {{ form_widget(form.infoDistribution) }}
+                        {% else %}
+                        {{ distri.infoDistribution|raw }}
+                        {% endif %}</td></tr>
             </table>        
         </div>        
     </div>
@@ -52,7 +85,11 @@
         <div class="col-md-8 col-md-offset-2">
             <table class="table table-bordered">
                 <tr><td class="info"><h4>Infos diverses</h4></td></tr> 
-                <tr><td>{{ distri.infoDivers }}</td></tr>
+                <tr><td{% if isEdit %} class="ta-container"{% endif %}>{% if isEdit %}
+                        {{ form_widget(form.infoDivers) }}
+                        {% else %}
+                        {{ distri.infoDivers|raw }}
+                        {% endif %}</td></tr>
             </table>        
         </div>        
     </div>
@@ -69,4 +106,27 @@
             </table>        
         </div>        
     </div>
+            
+    {% if isEdit %}     
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2 text-center">   
+            {{ form_widget(form.submit, { 'attr': {'class': 'btn btn-success btn-lg'} })|replace({'Enregistrer':'<span class="glyphicon glyphicon-floppy-disk"></span> Enregistrer'})|raw }}
+        </div>        
+    </div>
+    {% endif %}
+    
+    {% if isEdit %}{{ form_end(form) }}{% endif %}
+    
+{%  endblock %}
+    
+{% block footer_js %}
+    <script src="https://cdn.ckeditor.com/4.13.1/basic/ckeditor.js"></script>
+    <script type="text/javascript">    
+        window.hasChanges = false;
+        CKEDITOR.replace('distribution_infoLivraison', {height: 150});
+        CKEDITOR.replace('distribution_infoDistribution', {height: 150});
+        CKEDITOR.replace('distribution_infoDivers', {height: 150});        
+        $('textarea').on('change')
+        
+    </script>
 {%  endblock %}

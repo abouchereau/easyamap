@@ -108,9 +108,9 @@ class AppExtension extends AbstractExtension
 
     public function full_date_fr($dateTime) {
         $str = "";
-        $str .= strtolower($this->jour_long[$dateTime->format('w')]);
+        $str .= mb_strtolower($this->jour_long[$dateTime->format('w')]);
         $str .= " ".$dateTime->format('j')." ";
-        $str .= strtolower($this->mois_long[$dateTime->format('n')]);
+        $str .= mb_strtolower($this->mois_long[$dateTime->format('n')]);
         $str .= " ".$dateTime->format('Y');
         return $str;
     }

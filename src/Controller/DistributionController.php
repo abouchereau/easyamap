@@ -4,6 +4,9 @@ namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\Entity\Distribution;
 
 class DistributionController extends AmapBaseController
 {
@@ -105,17 +108,25 @@ class DistributionController extends AmapBaseController
         ]);
     }
     
-    public function showRapport($id,$isEdit=false) {
+    public function showRapport($id,$isEdit=false) {        
+        if($isEdit && !$this->isEditable($id)) {
+            throw new AccessDeniedException();
+        }
+        
         $em = $this->getDoctrine()->getManager();
         $distri = $em->getRepository('App\Entity\Distribution')->find($id); 
-        //TODO produits livrés
         $farms = $em->getRepository('App\Entity\ProductDistribution')->getFarmForDistribution($id); 
-        //TODO liste personnes cette distribution + suivante +
         $participations = $em->getRepository('App\Entity\Participation')->getTaskForDistributionAndNext($id); 
-
+        $form = null;
+        if($isEdit) {
+            $form = $this->createEditForm($distri);
+            $form = $form->createView();
+        }
+        
         return $this->render('Distribution/show.html.twig', [         
+            'form' => $form,
             'isEdit' => $isEdit,
-            'isEditable' => $this->isEditable(),
+            'isEditable' => $this->isEditable($distri->getIdDistribution()),
             'distri' => $distri,
             'farms' => $farms,
             'participations' => $participations
@@ -124,10 +135,44 @@ class DistributionController extends AmapBaseController
     
     private function isEditable($id) {
         //Si admin ou si participant        
+        //TODO date limite ?
         $em = $this->getDoctrine()->getManager();
         $user = $this->get('security.token_storage')->getToken()->getUser();
         return $user->getIsAdmin() || $em->getRepository('App\Entity\Participation')->isParticipant($user->getIdUser(),$id);
     }
+    
+    public function saveRapport(Request $request, $id) {
+        if(!$this->isEditable($id)) {
+            throw new AccessDeniedException();
+        }
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('App\Entity\Distribution')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Contract entity.');
+        }
+        $form = $this->createEditForm($entity);
+        $form->handleRequest($request);
 
+        if ($form->isValid()) 
+        {
+            $em->persist($entity);
+            $em->flush();
+            $this->get('session')->getFlashBag()->add('notice', 'Les données ont été mises à jour.');
+        }
+        else {
+            $this->get('session')->getFlashBag()->add('error', 'Problème lors de l\'enregistrement des données '.$form->getErrors(true, false));
+        }
+        
+        return $this->redirect($this->generateUrl('rapport_distribution_show',['id'=>$id, 'edit'=>false]));
+    }
+
+    private function createEditForm(Distribution $entity) {
+        $form = $this->createForm(\App\Form\DistributionType::class, $entity, array(
+                'action' => $this->generateUrl('rapport_distribution_save', array('id' => $entity->getIdDistribution())),
+                'method' => 'PUT'
+            ));
+        $form->add('submit', SubmitType::class, array('label' => 'Enregistrer'));
+        return $form;
+    }
  
 }
