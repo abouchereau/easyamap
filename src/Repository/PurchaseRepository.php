@@ -20,7 +20,7 @@ class PurchaseRepository extends EntityRepository
       WHERE pu.fk_user = ".$user->getIdUser()."
       AND pd.fk_distribution IN (".implode(', ',  array_keys($distris)).")
       GROUP BY pd.fk_distribution, p.id_product
-      ORDER BY d.date, f.sequence, p.sequence";
+      ORDER BY d.date, f.sequence, p.sequence";//TODO requete preparee
     
     $r = $conn->query($sql);
     $products = $r->fetchAll(\PDO::FETCH_GROUP);
@@ -46,7 +46,7 @@ class PurchaseRepository extends EntityRepository
       WHERE p.fk_farm=".$farm->getIdFarm()."
       AND pd.fk_distribution IN (".implode(', ',  array_keys($distris)).")
       GROUP BY pd.fk_distribution, p.id_product
-      ORDER BY d.date, p.sequence";
+      ORDER BY d.date, p.sequence";//TODO requete preparee
    
     $r = $conn->query($sql);
     $products = $r->fetchAll(\PDO::FETCH_GROUP);
@@ -68,7 +68,7 @@ class PurchaseRepository extends EntityRepository
     $sql = "SELECT id_distribution, date 
       FROM distribution 
       WHERE date >= '".$date."' 
-      LIMIT ".$limit;
+      LIMIT ".$limit;//TODO requete preparee
     $r = $conn->query($sql);
     return $r->fetchAll(\PDO::FETCH_KEY_PAIR);
   }
@@ -82,7 +82,7 @@ class PurchaseRepository extends EntityRepository
             LEFT JOIN distribution d ON d.id_distribution = pd.fk_distribution
             WHERE d.id_distribution IN (".implode(',',$ids_distributions).")
             AND p.fk_user=".$id_user."
-            AND p.fk_contract=".$contract->getIdContract();           
+            AND p.fk_contract=".$contract->getIdContract();      //TODO requete preparee     
     
      $r = $conn->query($sql);
      return $r->fetchAll(\PDO::FETCH_KEY_PAIR);
@@ -110,7 +110,7 @@ class PurchaseRepository extends EntityRepository
             WHERE p.fk_user=".$id_user." 
             and r.fk_user=".$referent->getIdUser()." 
             AND p.fk_contract=".$id_contract;//fk_product_distribution IN(".implode(',',$list).")";//à vérifier
-    }
+    }//TODO requete preparee
     $nb = $conn->exec($sql);
     return $nb;
   }
@@ -177,7 +177,7 @@ class PurchaseRepository extends EntityRepository
           $sql .= " AND v.fk_farm IN (".implode(',',$farms_id).")";
         }
       //  $sql .= " ORDER BY f.label";
-        $sql .= " ORDER BY v.f_seq, v.date, v.pr_seq";
+        $sql .= " ORDER BY v.f_seq, v.date, v.pr_seq";//TODO requete preparee
         $r = $conn->query($sql);
         $tab = $r->fetchAll(\PDO::FETCH_GROUP);
         return $this->fetchGroupTwoLevels($tab);
@@ -198,7 +198,7 @@ class PurchaseRepository extends EntityRepository
         {
           $sql .= " AND v.fk_user=".$id_user;
         }
-        $sql .= " ORDER BY u.lastname, v.date,v.pr_seq";
+        $sql .= " ORDER BY u.lastname, v.date,v.pr_seq";//TODO requete preparee
         $r = $conn->query($sql);
         $tab = $r->fetchAll(\PDO::FETCH_GROUP);
         return $this->fetchGroupTwoLevels($tab);
@@ -231,7 +231,7 @@ class PurchaseRepository extends EntityRepository
             left join view_payment_purchase v1 on v1.fk_purchase = p.id_purchase
             left join payment pa on pa.id_payment = v1.fk_payment
             WHERE p.id_purchase IN (".implode(',',$ids_purchase).")
-            and pa.received=0";
+            and pa.received=0";//TODO requete preparee
         $r = $conn->query($sql);
         return$r->fetchAll(\PDO::FETCH_COLUMN);
   }
@@ -258,7 +258,7 @@ class PurchaseRepository extends EntityRepository
             LEFT JOIN farm f ON f.id_farm = pr.fk_farm
             WHERE p.id_purchase IN (".implode(',',$ids_purchase).")
 ) AS t
-          GROUP BY t.id_farm, t.date, t.has_ratio";
+          GROUP BY t.id_farm, t.date, t.has_ratio";//TODO requete preparee
       
       $r = $conn->query($sql);
       return $r->fetchAll(\PDO::FETCH_ASSOC);
@@ -294,7 +294,7 @@ class PurchaseRepository extends EntityRepository
                 where pd.fk_product in(".implode(',',$id_products).")
                 and pu.fk_user = ".$user->getIdUser()."
                 and dis.date > '".$date->format('Y-m-d')."'
-                group by pd.fk_product";
+                group by pd.fk_product";//TODO requete preparee
        $r = $conn->query($sql);
        return $r->fetchAll(\PDO::FETCH_ASSOC); 
   }

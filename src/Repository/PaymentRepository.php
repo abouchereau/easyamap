@@ -508,7 +508,7 @@ class PaymentRepository extends EntityRepository
       $sql = "SELECT COUNT(id_payment) AS nb 
           FROM payment 
           WHERE fk_user=".$user->getIdUser()." 
-          AND received_at is null";
+          AND received_at is null";//TODO requete preparee
       $r = $conn->query($sql);
       return $r->fetch(\PDO::FETCH_COLUMN);
     }
@@ -585,7 +585,7 @@ class PaymentRepository extends EntityRepository
                 $sql .= " and pr.fk_farm=".$id_farm;
             $sql .= " group by pu.id_purchase, di.date
             ) pre_somme
-            group by month(date)";
+            group by month(date)";//TODO requete preparee
         $r = $conn->query($sql);
         $tab = $r->fetchAll(\PDO::FETCH_KEY_PAIR);
         $out = array();
@@ -641,7 +641,7 @@ class PaymentRepository extends EntityRepository
                 ) j2 on j2.id_payment = pay.id_payment and j2.fk_contract = pu.fk_contract
                 where pr.ratio is not null
                 and pay.fk_farm is not null
-                and pu.fk_payment=".$id_payment;
+                and pu.fk_payment=".$id_payment;//TODO requete preparee
             $conn->exec($sql);
         }
         catch(\Exception $e) {
@@ -679,7 +679,7 @@ class PaymentRepository extends EntityRepository
                 left join product p on vo.fk_product = p.id_product
                 left join product_distribution pd on vo.id_product_distribution = pd.id_product_distribution
                 left join distribution d on d.id_distribution = pd.fk_distribution
-                where vo.id_product_distribution in(".implode(',',$pds).")";
+                where vo.id_product_distribution in(".implode(',',$pds).")";//TODO requete preparee
         $r = $conn->query($sql);
         return $r->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -725,7 +725,7 @@ class PaymentRepository extends EntityRepository
         if ($id_farm != null) {         
             $sql .= " AND fk_farm=".$id_farm;
         }
-        $sql .= " GROUP BY fk_user";
+        $sql .= " GROUP BY fk_user";//TODO requete preparee
         $r = $conn->query($sql);
         return $r->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE);
     }

@@ -164,7 +164,7 @@ class DistributionRepository extends EntityRepository
       LEFT JOIN product_distribution pd ON pd.fk_distribution = d.id_distribution
       LEFT JOIN product p ON p.id_product = pd.fk_product
       LEFT JOIN farm f ON f.id_farm = p.fk_farm
-      WHERE d.date='".$date."'";
+      WHERE d.date='".$date."'";//TODO requete preparee
     $conn = $this->getEntityManager()->getConnection();
     $r = $conn->query($sql);
     return $r->fetchAll(\PDO::FETCH_COLUMN);
@@ -199,7 +199,7 @@ class DistributionRepository extends EntityRepository
         FROM distribution 
         WHERE date >= '".addslashes($date)."'
         ORDER BY date ASC
-        LIMIT ".$n;
+        LIMIT ".$n;//TODO requete preparee
     $conn = $this->getEntityManager()->getConnection();
     $r = $conn->query($sql);
     return $r->fetchAll(\PDO::FETCH_COLUMN);
@@ -211,7 +211,7 @@ class DistributionRepository extends EntityRepository
             WHERE date 
             BETWEEN (select period_start from contract where id_contract=".$id_contract.") 
             AND (select period_end from contract where id_contract=".$id_contract.") 
-            ORDER BY date";
+            ORDER BY date";//TODO requete preparee
     $conn = $this->getEntityManager()->getConnection();
     $r = $conn->query($sql);
     return $r->fetchAll(\PDO::FETCH_COLUMN);
@@ -224,7 +224,7 @@ class DistributionRepository extends EntityRepository
             BETWEEN (select period_start from contract where id_contract=".$id_contract.") 
             AND (select period_end from contract where id_contract=".$id_contract.")
             group by date_format(date, '%Y-%m')
-            ORDER BY date";
+            ORDER BY date";//TODO requete preparee
     $conn = $this->getEntityManager()->getConnection();
   /*  $stmt = $conn->prepare($sql);
     $stmt->execute(array('id_contract' => $id_contract));*/

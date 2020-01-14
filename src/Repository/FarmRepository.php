@@ -58,7 +58,7 @@ class FarmRepository extends EntityRepository
             from farm f
             left join product p on p.fk_farm = f.id_farm
             left join contract_product cp on cp.fk_product = p.id_product
-            where cp.fk_contract=".$id_contract;
+            where cp.fk_contract=".$id_contract;//TODO requete preparee
          $r = $conn->query($sql);
          return $r->fetchAll(\PDO::FETCH_KEY_PAIR);
     }

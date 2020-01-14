@@ -124,7 +124,7 @@ class ContractRepository extends EntityRepository
       $sql = "SELECT contrat, distribution, produit
               FROM view_contract_conflict";
       if ($id_contract != null)
-        $sql .= " WHERE id_contract = ".$id_contract;
+        $sql .= " WHERE id_contract = ".$id_contract;//TODO requete preparee
       $r = $conn->query($sql);
       return $r->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -147,7 +147,7 @@ class ContractRepository extends EntityRepository
               FROM user u
               LEFT JOIN view_contract_purchaser vcp ON vcp.fk_user = u.id_user AND vcp.id_contract = '.$id_contrat.'
               WHERE u.is_active=1
-              ORDER BY u.lastname ASC';
+              ORDER BY u.lastname ASC';//TODO requete preparee
       $r = $conn->query($sql);
       return $r->fetchAll(\PDO::FETCH_GROUP);
     }
@@ -164,7 +164,7 @@ class ContractRepository extends EntityRepository
               LEFT JOIN product_distribution pd ON pd.fk_distribution = d.id_distribution
               INNER JOIN contract_product cp ON cp.fk_product = pd.fk_product AND cp.fk_contract = c.id_contract
               LEFT JOIN purchase p ON p.fk_product_distribution = pd.id_product_distribution
-              WHERE c.id_contract = '.$id_contract;
+              WHERE c.id_contract = '.$id_contract;//TODO requete preparee
       
       
    /*   $sql = 'SELECT cp.fk_product, d.date, IFNULL(SUM(p.quantity),0) AS nb_purchase
@@ -199,7 +199,7 @@ class ContractRepository extends EntityRepository
               FROM contract c
               LEFT JOIN distribution d ON (d.date BETWEEN c.period_start AND c.period_end)
               WHERE c.id_contract = '.$id_contract.'
-              ORDER BY d.date';
+              ORDER BY d.date';//TODO requete preparee
       $r = $conn->query($sql);
       return $r->fetchAll(\PDO::FETCH_KEY_PAIR);
     }
@@ -254,7 +254,7 @@ class ContractRepository extends EntityRepository
               LEFT JOIN product p ON p.id_product = cp.fk_product
               LEFT JOIN farm f ON f.id_farm = p.fk_farm
               WHERE c.id_contract = ".$id_contract."
-              ORDER BY f.label, p.label";
+              ORDER BY f.label, p.label";//TODO requete preparee
       $r = $conn->query($sql);
       return $r->fetchAll(\PDO::FETCH_GROUP);
     }
@@ -288,7 +288,7 @@ class ContractRepository extends EntityRepository
             $sql .= " AND pr.fk_farm=".$id_farm;            
         }
         $sql .= " GROUP BY p.id_purchase
-                ORDER BY u.lastname, d.date, f.sequence, pr.sequence";
+                ORDER BY u.lastname, d.date, f.sequence, pr.sequence";//TODO requete preparee
       $r = $conn->query($sql);
       return $r->fetchAll(\PDO::FETCH_GROUP);
     }
@@ -310,7 +310,7 @@ class ContractRepository extends EntityRepository
                 LEFT JOIN distribution d ON d.id_distribution = pd.fk_distribution
                 LEFT JOIN product pr ON pr.id_product = pd.fk_product
                 LEFT JOIN farm f ON pr.fk_farm = f.id_farm
-                WHERE c.id_contract=".$id_contract;
+                WHERE c.id_contract=".$id_contract;//TODO requete preparee
        /* $sql = "SELECT 
                 pr.id_product,
                 pr.label,
@@ -369,7 +369,7 @@ class ContractRepository extends EntityRepository
                 LEFT JOIN product pr ON pr.id_product = pd.fk_product
                 LEFT JOIN farm f ON pr.fk_farm = f.id_farm
                 LEFT JOIN user u ON u.id_user = p.fk_user
-                WHERE c.id_contract=".$id_contract;
+                WHERE c.id_contract=".$id_contract;//TODO requete preparee
         /*$sql = "SELECT 
                 pr.id_product,
                 pr.label,
@@ -453,7 +453,7 @@ class ContractRepository extends EntityRepository
               $sql .= " AND pr.fk_farm=".$id_farm;
             }
             $sql .= "
-                group by year(d.date), month(d.date)";
+                group by year(d.date), month(d.date)";//TODO requete preparee
         $r = $conn->query($sql);
         $tab = $r->fetchAll(\PDO::FETCH_GROUP);
         $new_tab = array();
@@ -514,7 +514,7 @@ class ContractRepository extends EntityRepository
                 left join product_distribution pd on p.fk_product_distribution = pd.id_product_distribution
                 where p.fk_contract = ".addslashes($id_contract)."
                 group by pd.fk_product
-                having IFNULL(sum(p.quantity),0) > 0";
+                having IFNULL(sum(p.quantity),0) > 0";//TODO requete preparee
       /*  $sql = "SELECT 
               pd.fk_product, 1
               FROM contract c

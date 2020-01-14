@@ -34,7 +34,7 @@ class ProductDistributionRepository extends EntityRepository
     
     if ($user != null)
       $sql .= " AND r.fk_user=".$user->getIdUser();    
-    $sql .= " GROUP BY pd.id_product_distribution";
+    $sql .= " GROUP BY pd.id_product_distribution";//TODO requete preparee
     $r = $conn->query($sql);
     return $r->fetchAll(\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
   }
@@ -51,7 +51,7 @@ class ProductDistributionRepository extends EntityRepository
     {
       if ($checked == '0')
       {
-        $sql = "DELETE FROM product_distribution WHERE id_product_distribution=".$id_product_distribution;
+        $sql = "DELETE FROM product_distribution WHERE id_product_distribution=".$id_product_distribution;//TODO requete preparee
         $conn->exec($sql);
         $nb_suppr++;
       }
@@ -89,7 +89,7 @@ class ProductDistributionRepository extends EntityRepository
       LEFT JOIN product_distribution pd ON pd.fk_distribution = d.id_distribution
       INNER JOIN contract_product cp ON cp.fk_product = pd.fk_product AND cp.fk_contract = c.id_contract
       WHERE c.id_contract = ".$id_contract."
-      GROUP BY pd.id_product_distribution";
+      GROUP BY pd.id_product_distribution";//TODO requete preparee
     $r = $conn->query($sql);
     return $r->fetchAll(\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
   }
@@ -106,7 +106,7 @@ class ProductDistributionRepository extends EntityRepository
             left join purchase p on p.fk_product_distribution = pd.id_product_distribution
             where p.fk_contract=".$id_contract."
             and pd.max_quantity is not null
-            group by pd.id_product_distribution";
+            group by pd.id_product_distribution";//TODO requete preparee
     /*select
                 CONCAT(pd.fk_product, '-', pd.fk_distribution) AS id,  
                 pd.max_quantity, 

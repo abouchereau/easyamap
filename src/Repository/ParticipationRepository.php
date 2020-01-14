@@ -15,7 +15,7 @@ class ParticipationRepository extends EntityRepository
                 right join distribution d on d.id_distribution = p.fk_distribution
                 left join task t on t.id_task = p.fk_task
                 where d.date between now() - interval 3 day and last_day(now() + interval ".$nb_month." month) 
-                order by d.date asc, t.id_task";
+                order by d.date asc, t.id_task";//TODO requete preparee
         $r = $conn->query($sql);
         $tab = $r->fetchAll(\PDO::FETCH_ASSOC);
         $all = array();
@@ -57,7 +57,7 @@ class ParticipationRepository extends EntityRepository
             left join distribution d on d.id_distribution=p.fk_distribution
             where d.date IN ('".implode("','",$dates)."')";
         if ($id_user != null) {
-            $sql .= " and fk_user=".$id_user;
+            $sql .= " and fk_user=".$id_user;//TODO requete preparee
         }
         $conn = $this->getEntityManager()->getConnection();
         $r = $conn->query($sql);

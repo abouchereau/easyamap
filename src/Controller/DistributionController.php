@@ -148,7 +148,7 @@ class DistributionController extends AmapBaseController
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('App\Entity\Distribution')->find($id);
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Contract entity.');
+            throw $this->createNotFoundException('Unable to find Distribution entity.');
         }
         $form = $this->createEditForm($entity);
         $form->handleRequest($request);
