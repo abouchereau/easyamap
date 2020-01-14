@@ -106,9 +106,9 @@ class HomeController extends AmapBaseController
         if ($em->getRepository('App\Entity\Setting')->get('useReport', $_SERVER['APP_ENV'])) {
             $list[] = array(
                     $this->generateUrl('rapport_distribution') ,
-                    'calendar',
+                    'blackboard',
                     'Rapports de distribution',
-                    'rapport_distribution'
+                    'Contrôles de livraison, bilan distribution'
                     );
         }
      /*   $list[] = array(
@@ -176,6 +176,12 @@ class HomeController extends AmapBaseController
              'stats',
              'Rapports',
              'Statistiques par produit'
+             );
+         $list[] = array(
+             $this->generateUrl('shift'),
+             'transfer',
+             'Reports de livraison',
+             'Définir les reports de produits'
              );
          
        /*  $list[] = array(

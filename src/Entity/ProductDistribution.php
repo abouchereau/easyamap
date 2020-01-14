@@ -50,7 +50,17 @@ class ProductDistribution
      * @ORM\Column(name="max_per_user", type="integer", nullable=true)
      */
     private $maxPerUser;
-
+    
+    /**
+     * @var \Distribution
+     *
+     * @ORM\ManyToOne(targetEntity="Distribution")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="fk_distribution_shift", referencedColumnName="id_distribution")
+     * })
+     */
+    private $fkDistributionShift;
+    
 
     /**
      * Get idProductDistribution
@@ -129,4 +139,23 @@ class ProductDistribution
     {
         return $this->maxQuantity;
     }
+    
+    
+    public function setFkDistributionShift(\App\Entity\Distribution $fkDistributionShift = null)
+    {
+        $this->fkDistributionShift = $fkDistributionShift;
+
+        return $this;
+    }
+
+    /**
+     * Get fkDistributionShift
+     *
+     * @return \App\Entity\Distribution 
+     */
+    public function getFkDistributionShift()
+    {
+        return $this->fkDistributionShift;
+    }
+
 }

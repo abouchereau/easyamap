@@ -162,4 +162,8 @@ class ProductDistributionController extends AmapBaseController
           'totaux'    => $totaux
     ));
   }
+  
+  public function shiftProduct() {
+      return new Response("YO");
+  }
 }

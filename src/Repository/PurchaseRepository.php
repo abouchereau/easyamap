@@ -154,16 +154,65 @@ class PurchaseRepository extends EntityRepository
   
   public function getProductsToShip($dates, $farms=null)
   {
-      if ($farms != null)
-      {
+      if ($farms != null) {
           $farms_id = array();
-          foreach ($farms as $farm)
-          {
+          foreach ($farms as $farm) {
               $farms_id[] = $farm->getIdFarm();
           }
       }
       
       $conn = $this->getEntityManager()->getConnection();
+      $sql = "SELECT * FROM (
+SELECT 
+f.label AS entity,
+d.date AS date,
+pr.fk_farm AS fk_farm, 
+sum(pu.quantity) AS nb, 
+concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit, 
+f.sequence as f_seq, 
+pr.sequence as pr_seq,
+d2.date AS date_shift,
+0 is_shift
+from purchase pu 
+left join product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
+left join distribution d on d.id_distribution = pd.fk_distribution 
+left join product pr on pr.id_product = pd.fk_product 
+left join farm f on f.id_farm = pr.fk_farm
+left join distribution d2 ON d2.id_distribution = pd.fk_distribution_shift 
+WHERE d.date IN ('".implode("','",$dates)."')";
+      if($farms != null) {
+        $sql .= "AND v.fk_farm IN (".implode(',',$farms_id).") ";
+      }
+$sql .= " group by f.label, d.date, pr.fk_farm, pr.id_product, f.sequence, pr.sequence, d2.date
+UNION
+SELECT 
+f.label AS entity,
+d2.date AS date,
+pr.fk_farm AS fk_farm, 
+sum(pu.quantity) AS nb, 
+concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit, 
+f.sequence as f_seq, 
+pr.sequence as pr_seq,
+d.date AS date_shift,
+1 is_shift
+from purchase pu 
+left join product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
+left join distribution d on d.id_distribution = pd.fk_distribution 
+left join product pr on pr.id_product = pd.fk_product 
+left join farm f on f.id_farm = pr.fk_farm
+left join distribution d2 ON d2.id_distribution = pd.fk_distribution_shift 
+WHERE pu.fk_product_distribution IS NOT NULL
+AND d2.date IN ('".implode("','",$dates)."')";
+      if($farms != null) {
+        $sql .= "AND v.fk_farm IN (".implode(',',$farms_id).") ";
+      }
+$sql .= "
+group by f.label, d.date, pr.fk_farm, pr.id_product, f.sequence, pr.sequence, d2.date
+) v
+ORDER BY v.f_seq, v.DATE, v.pr_seq, v.is_shift";
+      
+      
+      /*
       $sql = "SELECT 
           f.label AS entity, 
           v.date, 
@@ -178,7 +227,7 @@ class PurchaseRepository extends EntityRepository
         }
       //  $sql .= " ORDER BY f.label";
         $sql .= " ORDER BY v.f_seq, v.date, v.pr_seq";//TODO requete preparee
-        $r = $conn->query($sql);
+      */  $r = $conn->query($sql);
         $tab = $r->fetchAll(\PDO::FETCH_GROUP);
         return $this->fetchGroupTwoLevels($tab);
   }     
@@ -186,21 +235,49 @@ class PurchaseRepository extends EntityRepository
   public function getProductsToRecover($dates, $id_user=null)
   {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = "SELECT 
-            CONCAT(ifnull(u.lastname,''),'<br>',ifnull(u.firstname,'')) AS entity, 
-            v.date, 
-            v.nb, 
-            v.produit
-            FROM view_distribution_user_product v
-            LEFT JOIN user u ON u.id_user = v.fk_user
-            WHERE v.date IN ('".implode("','",$dates)."')";
-        if ($id_user != null)
-        {
-          $sql .= " AND v.fk_user=".$id_user;
-        }
-        $sql .= " ORDER BY u.lastname, v.date,v.pr_seq";//TODO requete preparee
-        $r = $conn->query($sql);
-        $tab = $r->fetchAll(\PDO::FETCH_GROUP);
+        $sql = "SELECT * FROM (
+SELECT 
+	CONCAT(ifnull(u.lastname,''),'<br>',ifnull(u.firstname,'')) AS entity,    
+    0 is_shift,
+    pd.id_product_distribution,
+	d.date AS date,
+    pu.fk_user AS fk_user,
+    pu.quantity AS nb,
+    concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit,
+    pr.sequence as pr_seq,
+    d2.date AS date_shift
+    from purchase pu 
+    left join product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution 
+    left join distribution d on d.id_distribution = pd.fk_distribution 
+    left join distribution d2 ON d2.id_distribution = pd.fk_distribution_shift
+    left join product pr on pr.id_product = pd.fk_product
+	LEFT JOIN user u ON u.id_user = pu.fk_user
+	WHERE d.date IN ('".implode("','",$dates)."')
+    AND (pu.fk_user=:id_user OR :id_user is null)
+UNION  
+SELECT     
+	CONCAT(ifnull(u.lastname,''),'<br>',ifnull(u.firstname,'')) AS entity,	 
+    1 is_shift,
+    pd.id_product_distribution,
+	d2.date AS date,
+    pu.fk_user AS fk_user,
+    pu.quantity AS nb,
+    concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit,
+    pr.sequence as pr_seq,
+    d.date AS date_shift
+    from purchase pu 
+    left join product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution 
+    left join distribution d on d.id_distribution = pd.fk_distribution 
+    left join distribution d2 ON d2.id_distribution = pd.fk_distribution_shift
+    left join product pr on pr.id_product = pd.fk_product
+	LEFT JOIN user u ON u.id_user = pu.fk_user
+	WHERE d2.date IN ('".implode("','",$dates)."')
+    AND (pu.fk_user=:id_user OR :id_user is null)
+	) v
+    ORDER BY v.entity, v.date, v.pr_seq";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['id_user'=>$id_user]);
+        $tab = $stmt->fetchAll(\PDO::FETCH_GROUP);
         return $this->fetchGroupTwoLevels($tab);
   }
   
@@ -212,8 +289,8 @@ class PurchaseRepository extends EntityRepository
           foreach($infos as $info)
           {
               if (!isset($newInfo[$info['date']]))
-                  $newInfo[$info['date']] = array();
-              $newInfo[$info['date']][] = array('nb'=>$info['nb'],'produit' => $info['produit']);
+                  $newInfo[$info['date']] = [];
+              $newInfo[$info['date']][] = ['nb'=>$info['nb'],'produit' => $info['produit'],'date_shift' => $info['date_shift'],'is_shift' => $info['is_shift']];
           }
           $tab[$entity] = $newInfo;
       }

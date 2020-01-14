@@ -508,3 +508,7 @@ rapport_distribution_save:
     path: rapport_distribution/save/{id}
     controller: App\Controller\DistributionController:saveRapport
     methods: POST|PUT
+    
+shift:
+    path: report_produit
+    controller: App\Controller\ProductDistributionController:shiftProduct

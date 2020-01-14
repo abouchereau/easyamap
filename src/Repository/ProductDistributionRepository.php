@@ -124,13 +124,31 @@ class ProductDistributionRepository extends EntityRepository
   }
   
   public function getLivraisonsInMonth($mois, $annee) {
-      $sql = "SELECT CONCAT(d.date,'_', p.fk_farm) AS id, 1
+      $sql = "SELECT * FROM (
+SELECT 
+CONCAT(d.date,'_', p.fk_farm) AS id, 1
             FROM product_distribution pd
             left join distribution d on pd.fk_distribution = d.id_distribution
             left join product p on p.id_product = pd.fk_product
-            WHERE month(d.date)=:mois AND year(d.date)=:annee AND p.is_active=1
+            WHERE month(d.DATE)=1 
+				AND year(d.DATE)=2020 
+				AND p.is_active=1
+				AND pd.fk_distribution_shift IS NULL
             group by d.date, p.fk_farm
-            order by d.date, p.sequence";
+UNION
+SELECT
+CONCAT(d2.date,'_', p.fk_farm) AS id, 1
+            FROM product_distribution pd
+            left join distribution d on pd.fk_distribution = d.id_distribution
+            left join distribution d2 on pd.fk_distribution_shift = d2.id_distribution
+            left join product p on p.id_product = pd.fk_product
+            WHERE month(d.DATE)=1 
+				AND year(d.DATE)=2020 
+				AND p.is_active=1
+				AND pd.fk_distribution_shift IS NOT NULL
+            group by d.date, p.fk_farm
+) v
+order BY v.id";
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
         $stmt->execute(array('mois' => $mois, 'annee' => $annee));

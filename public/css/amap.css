@@ -53,6 +53,15 @@ body > .container {
     background-color:#555 !important;
     color:#fff !important;
 }
+.deleted {
+    text-decoration: line-through;
+}
+.shift {
+    color: #999;
+    display: inline-block;
+    backgound-color: #DDD;
+    
+}
 /*
 .td-relative {
     position:relative;    
