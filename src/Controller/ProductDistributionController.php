@@ -164,6 +164,34 @@ class ProductDistributionController extends AmapBaseController
   }
   
   public function shiftProduct() {
-      return new Response("YO");
+    $this->denyAccessUnlessGranted('ROLE_REFERENT');
+    
+    $user = $this->get('security.token_storage')->getToken()->getUser();
+    $em = $this->getDoctrine()->getManager();
+    
+    $first = ($page - 1) * self::NB_PER_PAGE;   
+    
+    //on récupère l'ensemble des distributions our les n mois à venir
+    $distributions = $em->getRepository('App\Entity\Distribution')->findAllOffset($first, self::NB_PER_PAGE);
+    $nb_per_month = Utils::getNbPerMonth($distributions);  
+
+    //on récupère la liste des produits en fonction du référent / ou admin, groupés par producteur   
+    if ($user->getIsAdmin())
+      $products = $em->getRepository('App\Entity\Product')->findAllOrderByFarm(true);
+    elseif ($user->isReferent())
+      $products = $em->getRepository('App\Entity\Product')->findAllForReferent($user);
+    $nb_per_farm = $this->getNbPerFarm($products);
+    
+    //on récupère les produits déjà disponibles dans la période, en fonction du référent / ou admin
+    $product_distribution = $em->getRepository('App\Entity\ProductDistribution')->findAllWhereDistributionIn(array_keys($distributions), ($user->getIsAdmin()?null:$user));
+    
+    return $this->render('ProductDistribution/shift.html.twig', array(
+          'distributions' => $distributions,
+          'nb_per_month' => $nb_per_month,
+          'products' => $products,
+          'product_distribution' => $product_distribution,
+          'nb_per_farm' => $nb_per_farm,
+          'page' => $page
+    ));
   }
 }
