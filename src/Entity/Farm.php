@@ -11,6 +11,8 @@ use App\Entity\Traits\IsActiveDefaultTrueTrait;
 use App\Entity\Traits\DescriptionTrait;
 use App\Entity\Traits\SequenceTrait;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * Farm
  *
@@ -90,8 +92,9 @@ class Farm
     private $fkUser;
 
     
-    /**
-    * @ORM\ManyToMany(targetEntity="App\Entity\PaymentType")
+    /**    
+     * @Assert\Count(min = 1, minMessage = "Merci de choisir au moins un type de paiement")  
+     * @ORM\ManyToMany(targetEntity="App\Entity\PaymentType")
      * @JoinTable(name="farm_payment_type",
      *      joinColumns={@JoinColumn(name="fk_farm", referencedColumnName="id_farm")},
      *      inverseJoinColumns={@JoinColumn(name="fk_payment_type", referencedColumnName="id_payment_type")}
@@ -101,7 +104,8 @@ class Farm
     
     
     /**
-    * @ORM\ManyToMany(targetEntity="App\Entity\PaymentFreq")
+     * @Assert\Count(min = 1, minMessage = "Merci de choisir au moins une fréquence de paiement") 
+     * @ORM\ManyToMany(targetEntity="App\Entity\PaymentFreq")
      * @JoinTable(name="farm_payment_freq",
      *      joinColumns={@JoinColumn(name="fk_farm", referencedColumnName="id_farm")},
      *      inverseJoinColumns={@JoinColumn(name="fk_payment_freq", referencedColumnName="id_payment_freq")}
