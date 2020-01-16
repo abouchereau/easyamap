@@ -163,7 +163,7 @@ class ProductDistributionController extends AmapBaseController
     ));
   }
   
-  public function shiftProduct() {
+  public function shiftProduct($page = 1) {
     $this->denyAccessUnlessGranted('ROLE_REFERENT');
     
     $user = $this->get('security.token_storage')->getToken()->getUser();
@@ -193,5 +193,10 @@ class ProductDistributionController extends AmapBaseController
           'nb_per_farm' => $nb_per_farm,
           'page' => $page
     ));
+  }
+  
+  public function shiftSave() {      
+      $this->denyAccessUnlessGranted('ROLE_REFERENT');
+      return new Response(" ù");
   }
 }

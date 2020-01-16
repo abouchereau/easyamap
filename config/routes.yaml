@@ -512,3 +512,9 @@ rapport_distribution_save:
 shift:
     path: report_produit
     controller: App\Controller\ProductDistributionController:shiftProduct
+    defaults:
+        page: 1
+        
+shift_save:
+    path: shift_save
+    controller: App\Controller\ProductDistributionController:shiftSave

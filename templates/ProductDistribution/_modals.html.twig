@@ -17,7 +17,11 @@
         <h4 class="modal-title">aa</h4>
     </div>
       <div class="modal-body">
-        
+          <select id="distribution_new">
+        {% for distribution in distributions %}
+            <option value="{{ distribution.idDistribution }}">{{ distribution.date }}
+        {% endfor %}
+          </select>
       </div>
     </div>
   </div>

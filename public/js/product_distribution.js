@@ -4,6 +4,7 @@ $(document).ready(function() {
   app.init.checkAll();
   app.init.checkChanges();  
   app.init.checkSave();
+  app.init.checkShift();
   $('.btn-prodis').click(function() {
       app.editForm($(this).data('id'), $(this).data('prodis'));
   });
@@ -98,10 +99,10 @@ var app = {
         $('input[type=checkbox]').change(function () {
           app.has_unsaved_changes = true;
           $(this).parent().parent().parent().find('.save-button').removeAttr("disabled");
+          $(this).parent().parent().parent().find('.shift-button').removeAttr("disabled");
         });
     },
-    checkSave: function () 
-    {
+    checkSave: function () {
       $('.save-button').click(function () {
         var existing = {};
         var new_ones = {};
@@ -112,6 +113,15 @@ var app = {
             new_ones[$(this).attr('id')] = $(this).prop('checked')?1:0;
         });        
         app.save(existing, new_ones);
+      });
+    },
+    checkShift: function() {
+      $('.shift-button').click(function () {
+        var selected = [];
+        $(this).parent().parent().parent().find('input[type=checkbox]:checked').each(function() {
+            selected.push($(this).data('id_product_distribution'));
+        });        
+        console.log(selected);
       });
     }
   },
@@ -138,7 +148,6 @@ var app = {
       html += '<div class="form-group"><button class="btn btn-primary">Enregistrer</button></div>';
       html += '</form>';
       $("#form-prodis .modal-body").html(html);
-      $("#form-prodis").modal('show')    
-      
+      $("#form-prodis").modal('show');      
   }
 };

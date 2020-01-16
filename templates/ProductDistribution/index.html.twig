@@ -51,7 +51,7 @@
             {% endif %}
             {% set id = product.idProduct~'-'~id_distribution %}
             <td{% if new_month and loop.index0 > 0 %} class="delimit-left"{% endif %}>
-              <input type="checkbox" id="{{ id }}" {% if product_distribution[id] is defined %} data-id_product_distribution="{{ product_distribution[id].id_product_distribution }}" checked=checked"{% if product_distribution[id].nb_purchase > 0 %} disabled="disabled" data-toggle="tooltip" data-placement="left" title="{{ product_distribution[id].nb_purchase }} commande{% if product_distribution[id]>1 %}s{% endif %}"{% endif %}{% endif %}/>
+              <input type="checkbox" id="{{ id }}" {% if product_distribution[id] is defined %} data-id_product_distribution="{{ product_distribution[id].id_product_distribution }}" checked="checked"{% if product_distribution[id].nb_purchase > 0 %} disabled="disabled" data-toggle="tooltip" data-placement="left" title="{{ product_distribution[id].nb_purchase }} commande{% if product_distribution[id]>1 %}s{% endif %}"{% endif %}{% endif %}/>
               <label for="{{ id }}"><span></span></label>
               {% if product_distribution[id] is defined %}
                   <br />
