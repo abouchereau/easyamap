@@ -13,7 +13,7 @@ class SettingRepository extends EntityRepository
     
     public function updateCache($env) {
         $entity = $this->findOneBy(array(),array('id'=>'DESC'));
-        $json = json_encode($entity->toArray());
+        $json = json_encode($entity->toArray(), JSON_INVALID_UTF8_SUBSTITUTE);
         file_put_contents($this->filepath($env), $json);
         $this->updateManifest($env,true);
     }    

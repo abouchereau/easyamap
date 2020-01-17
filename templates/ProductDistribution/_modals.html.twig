@@ -18,10 +18,14 @@
     </div>
       <div class="modal-body">
           <select id="distribution_new">
-        {% for distribution in distributions %}
-            <option value="{{ distribution.idDistribution }}">{{ distribution.date }}
+        {% for id_distribution,date in distributions %}
+            <option value="{{ id_distribution }}">{{ date|full_date_fr2 }}</option>
         {% endfor %}
           </select>
+          <br />
+          S'agit-il...<br />
+          <input type="radio" name="report_type" id="report_type_1"><label for="report_type_1"><span></span></label> d'un report de livraison (les listes de distribution feront apparaître la nouvelle date + la date initiale qui sera barrée)<br />
+          <input type="radio" name="report_type" id="report_type_2"><label for="report_type_2"><span></span></label> d'une erreur initiale de date (les listes de distribution feront apparaître uniquement la nouvelle date)
       </div>
     </div>
   </div>

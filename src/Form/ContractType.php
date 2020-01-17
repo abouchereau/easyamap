@@ -49,6 +49,12 @@ class ContractType extends AbstractType
               'required' => false))
             //->add('isVisible',CheckboxType::class,array('label' => 'Visible pour les adhérents','required' => false))
             ->add('description',TextareaType::class,array('label' => 'Infos','required' => false))
+            ->add('countPurchaseSince',DateType::class,array(
+              'widget' => 'single_text',
+              'html5' => false,
+              'format' =>'yyyy-MM-dd',
+              'label' => '(option) Compter les produits déjà commandés depuis le (année-mois-jour)', 
+              'required' => true))
             ->add('products',EntityType::class,array(
               'label' => 'Produits',
               'class' => Product::class, 
