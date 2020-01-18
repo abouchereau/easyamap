@@ -195,8 +195,20 @@ class ProductDistributionController extends AmapBaseController
     ));
   }
   
-  public function shiftSave() {      
+  public function shiftSave(Request $request) {      
       $this->denyAccessUnlessGranted('ROLE_REFERENT');
-      return new Response(" ù");
+      $new_id_distribution = $request->get("new_id_distribution")*1;
+      $page = $request->get("page")*1;
+      $type_report = $request->get("type_report")*1;
+      $selected = explode(",",$request->get("selected"));
+      try {
+        $em->getRepository('App\Entity\ProductDistribution')->report($selected,$new_id_distribution,$type_report);
+        $this->get('session')->getFlashBag()->add('notice', "Modifications enregistrées");
+      }
+      catch(\Exception $e) {
+          $this->get('session')->getFlashBag()->add('error', "Problème lors de l'enregistrement : ".$e->getMessage());
+      }
+      
+      return $this->redirect($this->generateUrl('shift',array('page' => $page)));
   }
 }

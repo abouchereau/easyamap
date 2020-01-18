@@ -518,3 +518,4 @@ shift:
 shift_save:
     path: shift_save
     controller: App\Controller\ProductDistributionController:shiftSave
+    methods: POST

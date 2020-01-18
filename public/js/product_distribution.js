@@ -117,11 +117,17 @@ var app = {
     },
     checkShift: function() {
       $('.shift-button').click(function () {
+        $("#form-report").modal('show'); 
+      });      
+      $('#valid-report').click(function () {
         var selected = [];
         $(this).parent().parent().parent().find('input[type=checkbox]:checked').each(function() {
             selected.push($(this).data('id_product_distribution'));
-        });        
-        console.log(selected);
+        });
+        $("#selected").val(selected.join(","));
+        $("#new_id_distribution").val($("#distribution_new").val());
+        $("#type_report").val($('input[name="report_type"]:checked').val());
+        $("#hidden-form").submit();
       });
     }
   },

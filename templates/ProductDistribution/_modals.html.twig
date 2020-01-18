@@ -14,7 +14,19 @@
     <div class="modal-content">
      <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">aa</h4>
+        <h4 class="modal-title"> </h4>
+    </div>
+      <div class="modal-body"></div>
+    </div>
+  </div>
+</div>
+          
+<div class="modal fade" id="form-report">
+  <div class="modal-dialog">
+    <div class="modal-content">
+     <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">A quelle date les produits sont-ils reportés ?</h4>
     </div>
       <div class="modal-body">
           <select id="distribution_new">
@@ -24,8 +36,11 @@
           </select>
           <br />
           S'agit-il...<br />
-          <input type="radio" name="report_type" id="report_type_1"><label for="report_type_1"><span></span></label> d'un report de livraison (les listes de distribution feront apparaître la nouvelle date + la date initiale qui sera barrée)<br />
-          <input type="radio" name="report_type" id="report_type_2"><label for="report_type_2"><span></span></label> d'une erreur initiale de date (les listes de distribution feront apparaître uniquement la nouvelle date)
+          <input type="radio" name="report_type" id="report_type_1" value="1"><label for="report_type_1"><span></span></label> d'un report de livraison (les listes de distribution feront apparaître la nouvelle date + la date initiale qui sera barrée)<br />
+          <input type="radio" name="report_type" id="report_type_2" value="2"><label for="report_type_2"><span></span></label> d'une erreur initiale de date (les listes de distribution feront apparaître uniquement la nouvelle date)
+          
+          <br /><br />
+          <button class="shift-button btn btn-primary" id="valid-report"><span class="glyphicon glyphicon-ok"></span> Valider</button>
       </div>
     </div>
   </div>
