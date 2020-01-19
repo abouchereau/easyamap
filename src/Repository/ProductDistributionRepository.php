@@ -130,10 +130,10 @@ CONCAT(d.date,'_', p.fk_farm) AS id, 1
             FROM product_distribution pd
             left join distribution d on pd.fk_distribution = d.id_distribution
             left join product p on p.id_product = pd.fk_product
-            WHERE month(d.DATE)=1 
-				AND year(d.DATE)=2020 
-				AND p.is_active=1
-				AND pd.fk_distribution_shift IS NULL
+            WHERE month(d.DATE)=:mois
+            AND year(d.DATE)=:annee
+            AND p.is_active=1
+            AND pd.fk_distribution_shift IS NULL
             group by d.date, p.fk_farm
 UNION
 SELECT
@@ -142,10 +142,10 @@ CONCAT(d2.date,'_', p.fk_farm) AS id, 1
             left join distribution d on pd.fk_distribution = d.id_distribution
             left join distribution d2 on pd.fk_distribution_shift = d2.id_distribution
             left join product p on p.id_product = pd.fk_product
-            WHERE month(d.DATE)=1 
-				AND year(d.DATE)=2020 
-				AND p.is_active=1
-				AND pd.fk_distribution_shift IS NOT NULL
+            WHERE month(d.DATE)=:mois
+            AND year(d.DATE)=:annee 
+            AND p.is_active=1
+            AND pd.fk_distribution_shift IS NOT NULL
             group by d.date, p.fk_farm
 ) v
 order BY v.id";
@@ -167,5 +167,20 @@ order BY v.id";
         $stmt = $conn->prepare($sql);
         $stmt->execute(['id_distribution' => $id_distribution]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC); 
+  }
+  
+  public function report($selected, $new_id_distribution, $type_report) {      
+      if ($type_report==1) {
+          $col = "fk_distribution_shift";
+      }
+      elseif ($type_report==2) {
+          $col = "fk_distribution";
+      }
+      $sql = "update product_distribution
+          set ".$col."=:new_id_distribution
+          where id_product_distribution IN(".imlode(",",$selected).")";      
+      $conn = $this->getEntityManager()->getConnection();
+      $stmt = $conn->prepare($sql);
+      $stmt->execute(['new_id_distribution' => $new_id_distribution]);
   }
 }
