@@ -184,15 +184,17 @@ class ProductDistributionController extends AmapBaseController
     
     //on récupère les produits déjà disponibles dans la période, en fonction du référent / ou admin
     $product_distribution = $em->getRepository('App\Entity\ProductDistribution')->findAllWhereDistributionIn(array_keys($distributions), ($user->getIsAdmin()?null:$user));
+    $product_distribution_shift = $em->getRepository('App\Entity\ProductDistribution')->findAllShiftWhereDistributionIn(array_keys($distributions), ($user->getIsAdmin()?null:$user));
     
-    return $this->render('ProductDistribution/shift.html.twig', array(
+    return $this->render('ProductDistribution/shift.html.twig', [
           'distributions' => $distributions,
           'nb_per_month' => $nb_per_month,
           'products' => $products,
           'product_distribution' => $product_distribution,
+          'product_distribution_shift' => $product_distribution_shift,
           'nb_per_farm' => $nb_per_farm,
           'page' => $page
-    ));
+    ]);
   }
   
   public function shiftSave(Request $request) {      

@@ -53,7 +53,10 @@
             #}<td{% if new_month and loop.index0 > 0 %} class="delimit-left"{% endif %}>{#
               #}{% if product_distribution[id] is defined %}{#
                 #}<input type="checkbox" id="{{ id }}" data-id_product_distribution="{{ product_distribution[id].id_product_distribution }}" />{#
-                #}<label for="{{ id }}"><span></span></label>{#              
+                #}<label for="{{ id }}"><span></span></label>{#     
+                    #}{% if product_distribution[id].date is not null %}{#
+                      #}<span class="label label-warning">⮀ {{ product_distribution[id].date|date_small }}</span>{#
+                   #}{% endif %}{#
               #}{% endif %}{#
             #}</td>{#
           #}{% endfor %}{#

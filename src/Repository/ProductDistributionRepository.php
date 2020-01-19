@@ -8,7 +8,8 @@ class ProductDistributionRepository extends EntityRepository
 {
   //si user = null : admin
   public function findAllWhereDistributionIn($ids_distribution, $user = null)
-  {
+  {    
+    $params = [];
     $conn = $this->getEntityManager()->getConnection();
     $sql = "SELECT 
       CONCAT(pd.fk_product, '-', pd.fk_distribution) AS id,
@@ -16,9 +17,11 @@ class ProductDistributionRepository extends EntityRepository
       COUNT(p.id_purchase) AS nb_purchase,
       pd.price,
       pd.max_quantity,
-      pd.max_per_user
+      pd.max_per_user,
+      d.date
       FROM product_distribution pd
-      LEFT JOIN purchase p ON p.fk_product_distribution = pd.id_product_distribution";
+      LEFT JOIN purchase p ON p.fk_product_distribution = pd.id_product_distribution
+      LEFT JOIN distribution d ON pd.fk_distribution_shift = d.id_distribution";
     
     if ($user != null)
     {
@@ -32,11 +35,43 @@ class ProductDistributionRepository extends EntityRepository
     else
       $sql .= " WHERE 1=0";
     
-    if ($user != null)
-      $sql .= " AND r.fk_user=".$user->getIdUser();    
+    if ($user != null) {
+      $sql .= " AND r.fk_user=:id_user";    
+      $params['id_user'] = $user->getIdUser();
+    }
+    $sql .= " GROUP BY pd.id_product_distribution";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll(\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
+  }
+  
+   public function findAllShiftWhereDistributionIn($ids_distribution, $user = null) {
+    $params = [];
+    $conn = $this->getEntityManager()->getConnection();
+    $sql = "SELECT 
+      CONCAT(pd.fk_product, '-', pd.fk_distribution_shift) AS id,
+      pd.id_product_distribution
+      FROM product_distribution pd";
+    
+    if ($user != null) {
+      $sql .= " LEFT JOIN product pr ON pr.id_product = pd.fk_product
+        LEFT JOIN farm f ON f.id_farm = pr.fk_farm
+        LEFT JOIN referent r ON r.fk_farm = f.id_farm";
+    }
+    
+    if (count($ids_distribution) > 0)
+      $sql .= " WHERE pd.fk_distribution_shift IN(".implode(',',$ids_distribution).")";
+    else
+      $sql .= " WHERE 1=0";
+    
+    if ($user != null) {
+      $sql .= " AND r.fk_user=:id_user";    
+      $params['id_user'] = $user->getIdUser();
+    }
     $sql .= " GROUP BY pd.id_product_distribution";//TODO requete preparee
-    $r = $conn->query($sql);
-    return $r->fetchAll(\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
+    $stmt = $conn->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchAll(\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
   }
   
   public function save($existing, $new_ones)
