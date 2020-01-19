@@ -199,6 +199,7 @@ class ProductDistributionController extends AmapBaseController
   
   public function shiftSave(Request $request) {      
       $this->denyAccessUnlessGranted('ROLE_REFERENT');
+      $em = $this->getDoctrine()->getManager();
       $new_id_distribution = $request->get("new_id_distribution")*1;
       $page = $request->get("page")*1;
       $type_report = $request->get("type_report")*1;

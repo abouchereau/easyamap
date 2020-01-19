@@ -214,8 +214,11 @@ order BY v.id";
           $col = "fk_distribution";
       }
       $sql = "update product_distribution
-          set ".$col."=:new_id_distribution
-          where id_product_distribution IN(".imlode(",",$selected).")";      
+          set ".$col."=:new_id_distribution";
+      if ($type_report==2) {
+          $sql .= ", fk_distribution_shift = NULL";
+      }
+      $sql .= " where id_product_distribution IN(".implode(",",$selected).")";      
       $conn = $this->getEntityManager()->getConnection();
       $stmt = $conn->prepare($sql);
       $stmt->execute(['new_id_distribution' => $new_id_distribution]);
