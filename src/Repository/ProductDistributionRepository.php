@@ -18,7 +18,7 @@ class ProductDistributionRepository extends EntityRepository
       pd.price,
       pd.max_quantity,
       pd.max_per_user,
-      d.date
+      d.date date_shift
       FROM product_distribution pd
       LEFT JOIN purchase p ON p.fk_product_distribution = pd.id_product_distribution
       LEFT JOIN distribution d ON pd.fk_distribution_shift = d.id_distribution";
@@ -50,8 +50,10 @@ class ProductDistributionRepository extends EntityRepository
     $conn = $this->getEntityManager()->getConnection();
     $sql = "SELECT 
       CONCAT(pd.fk_product, '-', pd.fk_distribution_shift) AS id,
-      pd.id_product_distribution
-      FROM product_distribution pd";
+      pd.id_product_distribution,
+      d.date date_init
+      FROM product_distribution pd
+      LEFT JOIN distribution d ON pd.fk_distribution = d.id_distribution";
     
     if ($user != null) {
       $sql .= " LEFT JOIN product pr ON pr.id_product = pd.fk_product
@@ -68,7 +70,7 @@ class ProductDistributionRepository extends EntityRepository
       $sql .= " AND r.fk_user=:id_user";    
       $params['id_user'] = $user->getIdUser();
     }
-    $sql .= " GROUP BY pd.id_product_distribution";//TODO requete preparee
+    $sql .= " GROUP BY pd.id_product_distribution";
     $stmt = $conn->prepare($sql);
     $stmt->execute($params);
     return $stmt->fetchAll(\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
