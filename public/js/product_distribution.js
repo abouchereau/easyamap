@@ -127,6 +127,7 @@ var app = {
         $("#selected").val(selected.join(","));
         $("#new_id_distribution").val($("#distribution_new").val());
         $("#report_type").val($('input[name="report_type"]:checked').val());
+        app.has_unsaved_changes = false;
         $("#hidden-form").submit();
       });
     }

@@ -305,6 +305,14 @@ td.distri-explication {
 .modal-header {
     background-color:#F4F4F4;
 }
+
+#product-distribution td {
+    vertical-align:bottom;
+}
+#product-distribution .label {
+    display:inline-block;
+    width: 100%;
+}
 /* contrat */
 #purchase .spinner {
   width:42px;
