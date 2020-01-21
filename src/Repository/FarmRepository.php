@@ -53,14 +53,15 @@ class FarmRepository extends EntityRepository
     }
     
     public function findForContract($id_contract) {
-        $conn = $this->getEntityManager()->getConnection();
         $sql = "select distinct(fk_farm), 1
             from farm f
             left join product p on p.fk_farm = f.id_farm
             left join contract_product cp on cp.fk_product = p.id_product
-            where cp.fk_contract=".$id_contract;//TODO requete preparee
-         $r = $conn->query($sql);
-         return $r->fetchAll(\PDO::FETCH_KEY_PAIR);
+            where cp.fk_contract=:id_contract";
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['id_contract' => $id_contract]);
+        return $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
     }
     
 

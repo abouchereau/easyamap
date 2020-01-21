@@ -66,9 +66,9 @@ class BoothRepository extends EntityRepository
     
     public function unlockOld() {
         $conn = $this->getEntityManager()->getConnection();
-        $sql = "delete from booth
-            where started_at < (now() - interval ".self::UNLOCK_TIMEOUT." minute)";//TODO requete preparee
-        return $conn->exec($sql);
+        $sql = "delete from booth where started_at < (now() - interval :timeout minute)";
+        $stmt = $conn->prepare($sql);        
+        return $stmt->execute([":timeout" => self::UNLOCK_TIMEOUT]);
     }
     
     

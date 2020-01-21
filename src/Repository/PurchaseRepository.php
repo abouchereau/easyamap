@@ -17,13 +17,13 @@ class PurchaseRepository extends EntityRepository
       LEFT JOIN product p   ON p.id_product = pd.fk_product
       LEFT JOIN farm f      ON f.id_farm = p.fk_farm
       LEFT JOIN distribution d ON d.id_distribution = pd.fk_distribution
-      WHERE pu.fk_user = ".$user->getIdUser()."
+      WHERE pu.fk_user = :id_user
       AND pd.fk_distribution IN (".implode(', ',  array_keys($distris)).")
       GROUP BY pd.fk_distribution, p.id_product
-      ORDER BY d.date, f.sequence, p.sequence";//TODO requete preparee
-    
-    $r = $conn->query($sql);
-    $products = $r->fetchAll(\PDO::FETCH_GROUP);
+      ORDER BY d.date, f.sequence, p.sequence";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute(['id_user' => $user->getIdUser()]);
+    $products = $stmt->fetchAll(\PDO::FETCH_GROUP);
     $tab = array();
     foreach($distris as $id => $dateStr)
     {
@@ -43,13 +43,13 @@ class PurchaseRepository extends EntityRepository
       LEFT JOIN purchase pu ON pu.fk_product_distribution = pd.id_product_distribution
       LEFT JOIN product p   ON p.id_product = pd.fk_product
       LEFT JOIN distribution d ON d.id_distribution = pd.fk_distribution
-      WHERE p.fk_farm=".$farm->getIdFarm()."
+      WHERE p.fk_farm=:id_farm
       AND pd.fk_distribution IN (".implode(', ',  array_keys($distris)).")
       GROUP BY pd.fk_distribution, p.id_product
-      ORDER BY d.date, p.sequence";//TODO requete preparee
-   
-    $r = $conn->query($sql);
-    $products = $r->fetchAll(\PDO::FETCH_GROUP);
+      ORDER BY d.date, p.sequence";
+      $stmt = $conn->prepare($sql);
+      $stmt->execute(['id_farm' => $farm->getIdFarm()]);
+    $products = $stmt->fetchAll(\PDO::FETCH_GROUP);
     $tab = array();
     foreach($distris as $id => $dateStr)
     {
@@ -67,10 +67,11 @@ class PurchaseRepository extends EntityRepository
     $conn = $this->getEntityManager()->getConnection();
     $sql = "SELECT id_distribution, date 
       FROM distribution 
-      WHERE date >= '".$date."' 
-      LIMIT ".$limit;//TODO requete preparee
-    $r = $conn->query($sql);
-    return $r->fetchAll(\PDO::FETCH_KEY_PAIR);
+      WHERE date >= :date
+      LIMIT :limit";
+      $stmt = $conn->prepare($sql);
+      $stmt->execute(['date' => $date,'limit' => $limit]);
+    return $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
   }
   
   public function getPurchase($ids_distributions, $id_user,$contract)
@@ -81,11 +82,11 @@ class PurchaseRepository extends EntityRepository
             LEFT JOIN product_distribution pd ON p.fk_product_distribution = pd.id_product_distribution
             LEFT JOIN distribution d ON d.id_distribution = pd.fk_distribution
             WHERE d.id_distribution IN (".implode(',',$ids_distributions).")
-            AND p.fk_user=".$id_user."
-            AND p.fk_contract=".$contract->getIdContract();      //TODO requete preparee     
-    
-     $r = $conn->query($sql);
-     return $r->fetchAll(\PDO::FETCH_KEY_PAIR);
+            AND p.fk_user=:id_user
+            AND p.fk_contract=:id_contract";        
+      $stmt = $conn->prepare($sql);
+      $stmt->execute(['id_user' => $id_user,'id_contract' => $contract->getIdContract()]);
+     return $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
   }
   
   public function emptyContract($id_contract, $id_user, $referent=null)
@@ -97,21 +98,25 @@ class PurchaseRepository extends EntityRepository
     }*/
     //$list = array_column($product_distributions,'id_product_distribution');// PHP 5.5
     $conn = $this->getEntityManager()->getConnection();
+    $params = [];
     if ($referent == null || $referent->getIsAdmin()) {
         $sql = "DELETE FROM purchase
-            WHERE fk_user=".$id_user."
-            AND fk_contract=".$id_contract;// IN(".implode(',',$list).")";
+            WHERE fk_user=:id_user
+            AND fk_contract=:id_contract";
+            $params = ['id_user' => $id_user,'id_contract' => $id_contract];
     } else {
         $sql = "DELETE p FROM purchase p
             left join product_distribution pd on pd.id_product_distribution = p.fk_product_distribution
             left join product pr on pr.id_product = pd.fk_product
             left join farm f on f.id_farm = pr.fk_farm
             left join referent r on r.fk_farm = f.id_farm
-            WHERE p.fk_user=".$id_user." 
-            and r.fk_user=".$referent->getIdUser()." 
-            AND p.fk_contract=".$id_contract;//fk_product_distribution IN(".implode(',',$list).")";//à vérifier
-    }//TODO requete preparee
-    $nb = $conn->exec($sql);
+            WHERE p.fk_user=:id_user
+            and r.fk_user=:id_referent
+            AND p.fk_contract=:id_contract";        
+            $params = ['id_user' => $id_user,'id_contract' => $id_contract,"id_referent"=>$referent->getIdUser()];
+    }
+      $stmt = $conn->prepare($sql);
+      $nb = $stmt->execute($params);
     return $nb;
   }
   
@@ -210,24 +215,8 @@ $sql .= "
 group by f.label, d.date, pr.fk_farm, pr.id_product, f.sequence, pr.sequence, d2.date
 ) v
 ORDER BY v.f_seq, v.DATE, v.pr_seq, v.is_shift";
-      
-      
-      /*
-      $sql = "SELECT 
-          f.label AS entity, 
-          v.date, 
-          v.nb, 
-          v.produit
-          FROM view_distribution_farm_product v
-          LEFT JOIN farm f ON f.id_farm = v.fk_farm
-          WHERE date IN ('".implode("','",$dates)."')";
-        if ($farms != null)
-        {
-          $sql .= " AND v.fk_farm IN (".implode(',',$farms_id).")";
-        }
-      //  $sql .= " ORDER BY f.label";
-        $sql .= " ORDER BY v.f_seq, v.date, v.pr_seq";//TODO requete preparee
-      */  $r = $conn->query($sql);
+
+        $r = $conn->query($sql);
         $tab = $r->fetchAll(\PDO::FETCH_GROUP);
         return $this->fetchGroupTwoLevels($tab);
   }     
@@ -369,11 +358,12 @@ SELECT
                 left join distribution dis on dis.id_distribution = pd.fk_distribution
                 left join product pr on pr.id_product = pd.fk_product
                 where pd.fk_product in(".implode(',',$id_products).")
-                and pu.fk_user = ".$user->getIdUser()."
-                and dis.date > '".$date->format('Y-m-d')."'
+                and pu.fk_user = :id_user
+                and dis.date > :date
                 group by pd.fk_product";//TODO requete preparee
-       $r = $conn->query($sql);
-       return $r->fetchAll(\PDO::FETCH_ASSOC); 
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(array('id_user'=>$user->getIdUser(), 'date'=>$date->format('Y-m-d')));
+       return $stmt->fetchAll(\PDO::FETCH_ASSOC); 
   }
   
   public function getQuantities($id_farm,$date_debut,$date_fin) {

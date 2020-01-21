@@ -164,21 +164,23 @@ class DistributionRepository extends EntityRepository
       LEFT JOIN product_distribution pd ON pd.fk_distribution = d.id_distribution
       LEFT JOIN product p ON p.id_product = pd.fk_product
       LEFT JOIN farm f ON f.id_farm = p.fk_farm
-      WHERE d.date='".$date."'";//TODO requete preparee
+      WHERE d.date=:date";
     $conn = $this->getEntityManager()->getConnection();
-    $r = $conn->query($sql);
-    return $r->fetchAll(\PDO::FETCH_COLUMN);
+    $stmt = $conn->prepare($sql);
+    $stmt->execute(array('date' => $date));
+    return $stmt->fetchAll(\PDO::FETCH_COLUMN);
   }
   
   public function getBetween($startDate, $startEnd)
   {
     $sql = "SELECT date 
             FROM distribution
-            WHERE date BETWEEN '".$startDate."' AND '".$startEnd."'
+            WHERE date BETWEEN :startDate AND :startEnd
             ORDER BY date";
     $conn = $this->getEntityManager()->getConnection();
-    $r = $conn->query($sql);
-    return $r->fetchAll(\PDO::FETCH_COLUMN);
+    $stmt = $conn->prepare($sql);
+    $stmt->execute(array('startDate' => $startDate,'startEnd'=>$startEnd));
+    return $stmt->fetchAll(\PDO::FETCH_COLUMN);
   }
   
   public function findNextDate()
@@ -197,39 +199,40 @@ class DistributionRepository extends EntityRepository
   {
     $sql = "SELECT date 
         FROM distribution 
-        WHERE date >= '".addslashes($date)."'
+        WHERE date >= :date
         ORDER BY date ASC
-        LIMIT ".$n;//TODO requete preparee
+        LIMIT :n";
     $conn = $this->getEntityManager()->getConnection();
-    $r = $conn->query($sql);
-    return $r->fetchAll(\PDO::FETCH_COLUMN);
+    $stmt = $conn->prepare($sql);
+    $stmt->execute(['date' => $date,'n'=>$n]);
+    return $stmt->fetchAll(\PDO::FETCH_COLUMN);
   }
   
    public function getDistributionsForContract($id_contract) {
      $sql = "SELECT date 
             FROM distribution
             WHERE date 
-            BETWEEN (select period_start from contract where id_contract=".$id_contract.") 
-            AND (select period_end from contract where id_contract=".$id_contract.") 
-            ORDER BY date";//TODO requete preparee
+            BETWEEN (select period_start from contract where id_contract=:id_contract) 
+            AND (select period_end from contract where id_contract=:id_contract) 
+            ORDER BY date";
     $conn = $this->getEntityManager()->getConnection();
-    $r = $conn->query($sql);
-    return $r->fetchAll(\PDO::FETCH_COLUMN);
+    $stmt = $conn->prepare($sql);
+    $stmt->execute(['id_contract' => $id_contract]);
+    return $stmt->fetchAll(\PDO::FETCH_COLUMN);
     }
     
     public function getMonthsForContract($id_contract) {
      $sql = "SELECT date_format(date, '%Y-%m')
             FROM distribution
             WHERE date 
-            BETWEEN (select period_start from contract where id_contract=".$id_contract.") 
-            AND (select period_end from contract where id_contract=".$id_contract.")
+            BETWEEN (select period_start from contract where id_contract=:id_contract) 
+            AND (select period_end from contract where id_contract=:id_contract)
             group by date_format(date, '%Y-%m')
-            ORDER BY date";//TODO requete preparee
+            ORDER BY date";
     $conn = $this->getEntityManager()->getConnection();
-  /*  $stmt = $conn->prepare($sql);
-    $stmt->execute(array('id_contract' => $id_contract));*/
-    $r = $conn->query($sql);
-    return $r->fetchAll(\PDO::FETCH_COLUMN);
+    $stmt = $conn->prepare($sql);
+    $stmt->execute(['id_contract' => $id_contract]);
+    return $stmt->fetchAll(\PDO::FETCH_COLUMN);
     }
     
     public function getInMonth($mois,$annee) {

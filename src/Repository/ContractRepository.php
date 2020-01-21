@@ -120,13 +120,17 @@ class ContractRepository extends EntityRepository
     
     public function getOverlappingContractsWithSameProducts($id_contract = null)
     {
+      $params = [];
       $conn = $this->getEntityManager()->getConnection();
       $sql = "SELECT contrat, distribution, produit
               FROM view_contract_conflict";
-      if ($id_contract != null)
-        $sql .= " WHERE id_contract = ".$id_contract;//TODO requete preparee
-      $r = $conn->query($sql);
-      return $r->fetchAll(\PDO::FETCH_ASSOC);
+      if ($id_contract != null) {
+        $sql .= " WHERE id_contract = :id_contract";
+        $params['id_contract'] = $id_contract;
+      }
+      $stmt = $conn->prepare($sql);
+      $stmt->query($params);
+      return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     
     public function nbPurchaser()
@@ -145,11 +149,12 @@ class ContractRepository extends EntityRepository
               CASE WHEN vcp.fk_user IS NULL THEN "no" ELSE "yes" END AS answered,
               u.firstname, u.lastname, u.email              
               FROM user u
-              LEFT JOIN view_contract_purchaser vcp ON vcp.fk_user = u.id_user AND vcp.id_contract = '.$id_contrat.'
+              LEFT JOIN view_contract_purchaser vcp ON vcp.fk_user = u.id_user AND vcp.id_contract = :id_contract
               WHERE u.is_active=1
-              ORDER BY u.lastname ASC';//TODO requete preparee
-      $r = $conn->query($sql);
-      return $r->fetchAll(\PDO::FETCH_GROUP);
+              ORDER BY u.lastname ASC';
+      $stmt = $conn->prepare($sql);
+      $stmt->execute(['id_contract'=>$id_contract]);
+      return $stmt->fetchAll(\PDO::FETCH_GROUP);
     }
     
     public function getAvailabilities($id_contract)
@@ -164,21 +169,11 @@ class ContractRepository extends EntityRepository
               LEFT JOIN product_distribution pd ON pd.fk_distribution = d.id_distribution
               INNER JOIN contract_product cp ON cp.fk_product = pd.fk_product AND cp.fk_contract = c.id_contract
               LEFT JOIN purchase p ON p.fk_product_distribution = pd.id_product_distribution
-              WHERE c.id_contract = '.$id_contract;//TODO requete preparee
+              WHERE c.id_contract = :id_contract';
       
-      
-   /*   $sql = 'SELECT cp.fk_product, d.date, IFNULL(SUM(p.quantity),0) AS nb_purchase
-              FROM contract c
-              LEFT JOIN contract_product cp ON cp.fk_contract = c.id_contract
-              LEFT JOIN distribution d ON (d.date BETWEEN c.period_start AND c.period_end)
-              LEFT JOIN product_distribution pd ON (pd.fk_distribution = d.id_distribution AND pd.fk_product = cp.fk_product)
-              LEFT JOIN purchase p ON p.fk_product_distribution
-              WHERE c.id_contract = '.$id_contract.'
-              AND pd.id_product_distribution IS NOT NULL
-              GROUP BY cp.fk_product, d.date
-              ORDER BY cp.fk_product, d.date';*/
-      $r = $conn->query($sql);
-      $tab = $r->fetchAll(\PDO::FETCH_GROUP);
+      $stmt = $conn->prepare($sql);
+      $stmt->execute([':id_contract' => $id_contract]);
+      $tab = $stmt->fetchAll(\PDO::FETCH_GROUP);
       $new = array();
       foreach ($tab as $fk_product => $dates)
       {
@@ -198,10 +193,11 @@ class ContractRepository extends EntityRepository
       $sql = 'SELECT d.id_distribution, d.date
               FROM contract c
               LEFT JOIN distribution d ON (d.date BETWEEN c.period_start AND c.period_end)
-              WHERE c.id_contract = '.$id_contract.'
-              ORDER BY d.date';//TODO requete preparee
-      $r = $conn->query($sql);
-      return $r->fetchAll(\PDO::FETCH_KEY_PAIR);
+              WHERE c.id_contract = :id_contract
+              ORDER BY d.date';
+      $stmt = $conn->prepare($sql);
+      $stmt->execute(['id_contract' => $id_contract]);
+      return $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
     }
     
     public function getCommandesExistantes($id_contract, $id_user) {
@@ -253,10 +249,11 @@ class ContractRepository extends EntityRepository
               LEFT JOIN contract_product cp ON cp.fk_contract = c.id_contract
               LEFT JOIN product p ON p.id_product = cp.fk_product
               LEFT JOIN farm f ON f.id_farm = p.fk_farm
-              WHERE c.id_contract = ".$id_contract."
-              ORDER BY f.label, p.label";//TODO requete preparee
-      $r = $conn->query($sql);
-      return $r->fetchAll(\PDO::FETCH_GROUP);
+              WHERE c.id_contract = :id_contract
+              ORDER BY f.label, p.label";
+      $stmt = $conn->prepare($sql);
+      $stmt->execute(array('id_contract'=>$id_contract));
+      return $stmt->fetchAll(\PDO::FETCH_GROUP);
     }
     
     public function getProductsOrderByFarm($id_contract)
@@ -266,7 +263,7 @@ class ContractRepository extends EntityRepository
       
     public function getReport($id_contract, $id_farm = null) {
       $conn = $this->getEntityManager()->getConnection();
-      
+      $params = [];
       
       $sql = "SELECT 
                 CONCAT(ifnull(u.lastname,''), ' ',ifnull(u.firstname,'')) AS name,
@@ -283,18 +280,21 @@ class ContractRepository extends EntityRepository
                 LEFT JOIN distribution d ON d.id_distribution = pd.fk_distribution
                 LEFT JOIN product pr ON pr.id_product = pd.fk_product
                 LEFT JOIN farm f ON pr.fk_farm = f.id_farm
-                WHERE p.fk_contract=".$id_contract;
+                WHERE p.fk_contract=:id_contract";
         if ($id_farm != null) {
-            $sql .= " AND pr.fk_farm=".$id_farm;            
+            $sql .= " AND pr.fk_farm=:id_farm";            
+            $params['id_farm'] = $id_farm;
         }
         $sql .= " GROUP BY p.id_purchase
-                ORDER BY u.lastname, d.date, f.sequence, pr.sequence";//TODO requete preparee
+                ORDER BY u.lastname, d.date, f.sequence, pr.sequence";
+        $params['id_contract'] = $id_contract;
       $r = $conn->query($sql);
       return $r->fetchAll(\PDO::FETCH_GROUP);
     }
     
     public function getShipping($id_contract, $id_farm = null) {
         $conn = $this->getEntityManager()->getConnection();
+        $params = [];
         $sql = "SELECT 
                 pr.id_product,
                 pr.label,
@@ -310,33 +310,17 @@ class ContractRepository extends EntityRepository
                 LEFT JOIN distribution d ON d.id_distribution = pd.fk_distribution
                 LEFT JOIN product pr ON pr.id_product = pd.fk_product
                 LEFT JOIN farm f ON pr.fk_farm = f.id_farm
-                WHERE c.id_contract=".$id_contract;//TODO requete preparee
-       /* $sql = "SELECT 
-                pr.id_product,
-                pr.label,
-                d.date,
-                pr.unit,
-                pr.ratio,
-                pr.base_price,
-                SUM(p.quantity) as quantity,
-                pd.price
-                FROM contract c
-                LEFT JOIN distribution d ON d.date BETWEEN c.period_start AND c.period_end
-                LEFT JOIN product_distribution pd ON pd.fk_distribution = d.id_distribution
-                INNER JOIN contract_product cp ON cp.fk_product = pd.fk_product AND cp.fk_contract = c.id_contract
-                LEFT JOIN purchase p ON p.fk_product_distribution = pd.id_product_distribution
-                LEFT JOIN product pr ON pr.id_product = cp.fk_product
-                LEFT JOIN farm f ON pr.fk_farm = f.id_farm
-                WHERE c.id_contract=".$id_contract;*/
-              //ajout 22/10/2017
-     // $sql .= " AND p.fk_contract=".$id_contract;
+                WHERE c.id_contract=:id_contract";
+        $params['id_contract'] = $id_contract;
       if ($id_farm != null) {
-          $sql .= " AND pr.fk_farm=".$id_farm;
+          $sql .= " AND pr.fk_farm=:id_farm";
+          $params['id_farm'] = $id_farm;
       }
         $sql .= " GROUP BY pr.id_product, d.id_distribution 
                 ORDER BY f.sequence, pr.sequence, d.date";
-      $r = $conn->query($sql);
-      $tab = $r->fetchAll(\PDO::FETCH_ASSOC);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+      $tab = $stmt->fetchAll(\PDO::FETCH_ASSOC);
       $new_tab = array();
       foreach ($tab as $infos) {
         if (!isset($new_tab[$infos['id_product']])) {  
@@ -354,6 +338,7 @@ class ContractRepository extends EntityRepository
     
     public function getVentilation($id_contract, $id_farm = null) {
         $conn = $this->getEntityManager()->getConnection();
+        $params = [];
         $sql = "SELECT 
                 pr.id_product,
                 pr.label,
@@ -369,30 +354,16 @@ class ContractRepository extends EntityRepository
                 LEFT JOIN product pr ON pr.id_product = pd.fk_product
                 LEFT JOIN farm f ON pr.fk_farm = f.id_farm
                 LEFT JOIN user u ON u.id_user = p.fk_user
-                WHERE c.id_contract=".$id_contract;//TODO requete preparee
-        /*$sql = "SELECT 
-                pr.id_product,
-                pr.label,
-                pr.base_price,
-                pr.unit,
-                d.date,
-                p.quantity,
-                u.lastname
-                FROM contract c
-                LEFT JOIN distribution d ON d.date BETWEEN c.period_start AND c.period_end
-                RIGHT JOIN product_distribution pd ON pd.fk_distribution = d.id_distribution
-                INNER JOIN contract_product cp ON cp.fk_product = pd.fk_product AND cp.fk_contract = c.id_contract
-                LEFT JOIN purchase p ON p.fk_product_distribution = pd.id_product_distribution
-                LEFT JOIN product pr ON pr.id_product = cp.fk_product
-                LEFT JOIN farm f ON pr.fk_farm = f.id_farm
-                LEFT JOIN user u ON u.id_user = p.fk_user
-                WHERE c.id_contract=".$id_contract;*/
+                WHERE c.id_contract=:id_contract";
+        $params['id_contract'] = $id_contract;
         if ($id_farm != null) {
-          $sql .= " AND pr.fk_farm=".$id_farm;
+          $sql .= " AND pr.fk_farm=:id_farm";
+          $params['id_farm'] = $id_farm;
         }
         $sql .= " ORDER BY f.sequence, pr.sequence, d.date, u.lastname";
-        $r = $conn->query($sql);
-        $tab = $r->fetchAll(\PDO::FETCH_ASSOC);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+        $tab = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         $new_tab = array();
         foreach ($tab as $infos) {
           if (!isset($new_tab[$infos['id_product']])) {  
@@ -417,6 +388,7 @@ class ContractRepository extends EntityRepository
     //paiments par mois par produit pour un contrat
     public function getShippingPayment($id_contract, $id_farm = null) {
         $conn = $this->getEntityManager()->getConnection();
+        $params = ['id_contract' => $id_contract];
         $sql = "SELECT 
                 pr.id_product,
                 DATE_FORMAT(d.date,'%Y-%m') as date,                
@@ -427,13 +399,14 @@ class ContractRepository extends EntityRepository
                 INNER JOIN contract_product cp ON cp.fk_product = pd.fk_product AND cp.fk_contract = c.id_contract
                 LEFT JOIN purchase p ON p.fk_product_distribution = pd.id_product_distribution
                 LEFT JOIN product pr ON pr.id_product = cp.fk_product
-                WHERE c.id_contract=".$id_contract;
+                WHERE c.id_contract=:id_contract";
               //ajout 22/10/2017
-        $sql .= " AND p.fk_contract=".$id_contract;
+        $sql .= " AND p.fk_contract=:id_contract";
         if ($id_farm != null) {
-          $sql .= " AND pr.fk_farm=".$id_farm;
+          $sql .= " AND pr.fk_farm=:id_farm";
+          $params['id_farm'] = $id_farm;
         }
-            $sql .= " group by year(d.date), month(d.date), pr.id_product";
+        $sql .= " group by year(d.date), month(d.date), pr.id_product";
             
         $sql .= " union
                 SELECT 
@@ -447,15 +420,16 @@ class ContractRepository extends EntityRepository
                 LEFT JOIN purchase p ON p.fk_product_distribution = pd.id_product_distribution
                 LEFT JOIN product pr ON pr.id_product = cp.fk_product
                 WHERE pr.ratio is null
-                and c.id_contract=".$id_contract;
-                $sql .= " AND p.fk_contract=".$id_contract;
+                and c.id_contract=:id_contract";
+                $sql .= " AND p.fk_contract=:id_contract";
             if ($id_farm != null) {
-              $sql .= " AND pr.fk_farm=".$id_farm;
+              $sql .= " AND pr.fk_farm=:id_farm".$id_farm;
             }
             $sql .= "
                 group by year(d.date), month(d.date)";//TODO requete preparee
-        $r = $conn->query($sql);
-        $tab = $r->fetchAll(\PDO::FETCH_GROUP);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+        $tab = $stmt->fetchAll(\PDO::FETCH_GROUP);
         $new_tab = array();
         foreach ($tab as $id_product => $arr) {
             if (!isset($new_tab[$id_product])) {
@@ -470,6 +444,7 @@ class ContractRepository extends EntityRepository
     
     public function getPaymentByMonth($id_contract, $id_farm = null) {
         $conn = $this->getEntityManager()->getConnection();
+        $params = array('id_contract' => $id_contract);
         $sql = "select 
                 f.label as producteur,
                 concat(ifnull(u.lastname,''), ' ',ifnull(u.firstname,'')) as adherent,
@@ -482,12 +457,9 @@ class ContractRepository extends EntityRepository
                 where p.fk_contract = :id_contract";
         if ($id_farm != null) {
             $sql .= " and p.fk_farm = :id_farm";
-        }
-        $sql .= " order by f.sequence, u.lastname, ps.date";
-        $params = array('id_contract' => $id_contract);
-        if ($id_farm != null) {
             $params['id_farm'] = $id_farm;
         }
+        $sql .= " order by f.sequence, u.lastname, ps.date";
         $stmt = $conn->prepare($sql);
         $stmt->execute($params);
         $tmp = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -512,21 +484,12 @@ class ContractRepository extends EntityRepository
         $sql = "select pd.fk_product,1
                 from purchase p
                 left join product_distribution pd on p.fk_product_distribution = pd.id_product_distribution
-                where p.fk_contract = ".addslashes($id_contract)."
+                where p.fk_contract = :id_contract
                 group by pd.fk_product
-                having IFNULL(sum(p.quantity),0) > 0";//TODO requete preparee
-      /*  $sql = "SELECT 
-              pd.fk_product, 1
-              FROM contract c
-              LEFT JOIN distribution d ON d.date BETWEEN c.period_start AND c.period_end
-              LEFT JOIN product_distribution pd ON pd.fk_distribution = d.id_distribution
-              INNER JOIN contract_product cp ON cp.fk_product = pd.fk_product AND cp.fk_contract = c.id_contract
-              LEFT JOIN purchase p ON p.fk_product_distribution = pd.id_product_distribution
-              WHERE c.id_contract = ".addslashes($id_contract)."
-              group by pd.fk_product
-              having IFNULL(sum(p.quantity),0) > 0";*/
-        $r = $conn->query($sql);
-        return $r->fetchAll(\PDO::FETCH_KEY_PAIR);
+                having IFNULL(sum(p.quantity),0) > 0";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['id_contract'=>$id_contract]);
+        return $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
     }
     
     public function getNbProductAvailable($id_contract) {

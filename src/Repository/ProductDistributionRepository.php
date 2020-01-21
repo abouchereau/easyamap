@@ -88,8 +88,9 @@ class ProductDistributionRepository extends EntityRepository
     {
       if ($checked == '0')
       {
-        $sql = "DELETE FROM product_distribution WHERE id_product_distribution=".$id_product_distribution;//TODO requete preparee
-        $conn->exec($sql);
+        $sql = "DELETE FROM product_distribution WHERE id_product_distribution=:id_product_distribution";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['id_product_distribution' => $id_product_distribution]);
         $nb_suppr++;
       }
     }
@@ -104,8 +105,9 @@ class ProductDistributionRepository extends EntityRepository
         $distribution = $tmp[1];
         $sql = "INSERT INTO product_distribution(fk_product, fk_distribution, price)
               SELECT ".$product.", ".$distribution.", base_price
-              FROM product WHERE id_product=".$product;        
-        $conn->exec($sql);
+              FROM product WHERE id_product=:id_product";        
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['id_product' => $id_product]);
         $nb_insert++;
       }
     }
@@ -125,10 +127,11 @@ class ProductDistributionRepository extends EntityRepository
       LEFT JOIN distribution d ON d.date BETWEEN c.period_start AND c.period_end
       LEFT JOIN product_distribution pd ON pd.fk_distribution = d.id_distribution
       INNER JOIN contract_product cp ON cp.fk_product = pd.fk_product AND cp.fk_contract = c.id_contract
-      WHERE c.id_contract = ".$id_contract."
-      GROUP BY pd.id_product_distribution";//TODO requete preparee
-    $r = $conn->query($sql);
-    return $r->fetchAll(\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
+      WHERE c.id_contract = :id_contract
+      GROUP BY pd.id_product_distribution";
+      $stmt = $conn->prepare($sql);
+      $stmt->execute(['id_contract' => $id_contract]);
+      return $stmt->fetchAll(\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
   }
   
   public function getRemaining($id_contract)
@@ -141,23 +144,12 @@ class ProductDistributionRepository extends EntityRepository
                 IFNULL(pd.max_quantity-SUM(p.quantity),pd.max_quantity) as remaining
             FROM product_distribution pd 
             left join purchase p on p.fk_product_distribution = pd.id_product_distribution
-            where p.fk_contract=".$id_contract."
+            where p.fk_contract=:id_contract
             and pd.max_quantity is not null
-            group by pd.id_product_distribution";//TODO requete preparee
-    /*select
-                CONCAT(pd.fk_product, '-', pd.fk_distribution) AS id,  
-                pd.max_quantity, 
-                IFNULL(pd.max_quantity-SUM(p.quantity),pd.max_quantity) as remaining
-            FROM contract c
-            LEFT JOIN distribution d ON d.date BETWEEN c.period_start AND c.period_end
-            LEFT JOIN product_distribution pd ON pd.fk_distribution = d.id_distribution
-            left join purchase p on p.fk_product_distribution = pd.id_product_distribution
-            INNER JOIN contract_product cp ON cp.fk_product = pd.fk_product AND cp.fk_contract = c.id_contract
-            where c.id_contract=".$id_contract."
-            and pd.max_quantity is not null
-            group by pd.id_product_distribution";*/
-    $r = $conn->query($sql);
-    return $r->fetchAll(\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
+            group by pd.id_product_distribution";
+      $stmt = $conn->prepare($sql);
+      $stmt->execute(['id_contract' => $id_contract]);
+      return $stmt->fetchAll(\PDO::FETCH_UNIQUE|\PDO::FETCH_ASSOC);
   }
   
   public function getLivraisonsInMonth($mois, $annee) {

@@ -14,10 +14,11 @@ class ParticipationRepository extends EntityRepository
                 left join user u on u.id_user = p.fk_user
                 right join distribution d on d.id_distribution = p.fk_distribution
                 left join task t on t.id_task = p.fk_task
-                where d.date between now() - interval 3 day and last_day(now() + interval ".$nb_month." month) 
-                order by d.date asc, t.id_task";//TODO requete preparee
-        $r = $conn->query($sql);
-        $tab = $r->fetchAll(\PDO::FETCH_ASSOC);
+                where d.date between now() - interval 3 day and last_day(now() + interval :nb_month month) 
+                order by d.date asc, t.id_task";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['nb_month' => $nb_month]);
+        $tab = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         $all = array();
         foreach($tab as $t) {
             if (!isset($all[$t['month']])) {
@@ -48,6 +49,7 @@ class ParticipationRepository extends EntityRepository
 
     
     public function getTasks($dates, $id_user=null) {
+        $params = [];
         $sql = "SELECT CONCAT(ifnull(u.lastname,''),'<br>',ifnull(u.firstname,'')) AS user, 
             DATE_FORMAT(d.date,'%Y-%m-%d') as date, 
             t.label
@@ -57,11 +59,13 @@ class ParticipationRepository extends EntityRepository
             left join distribution d on d.id_distribution=p.fk_distribution
             where d.date IN ('".implode("','",$dates)."')";
         if ($id_user != null) {
-            $sql .= " and fk_user=".$id_user;//TODO requete preparee
+            $sql .= " and fk_user=:id_user";
+            $params['id_user'] = $id_user;
         }
         $conn = $this->getEntityManager()->getConnection();
-        $r = $conn->query($sql);
-        $tab = $r->fetchAll(\PDO::FETCH_ASSOC);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+        $tab = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         $out = [];
         foreach($tab as $each) {
             if (!isset($out[$each['user']])) {

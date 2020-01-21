@@ -507,69 +507,32 @@ class PaymentRepository extends EntityRepository
       $conn = $this->getEntityManager()->getConnection();
       $sql = "SELECT COUNT(id_payment) AS nb 
           FROM payment 
-          WHERE fk_user=".$user->getIdUser()." 
-          AND received_at is null";//TODO requete preparee
-      $r = $conn->query($sql);
-      return $r->fetch(\PDO::FETCH_COLUMN);
+          WHERE fk_user=:id_user
+          AND received_at is null";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['id_user' => $user->getIdUser()]);
+      return $stmt->fetch(\PDO::FETCH_COLUMN);
     }
     
     public function stats($year, $id_user=null, $id_farm=null) 
     {
         $mois = array('','Jan','Fev','Mar','Avr','Mai','Juin','Juil','Aou','Sep','Oct','Nov','Dec');
         $conn = $this->getEntityManager()->getConnection();
-      /*  if($by_payment) {
-            $split = true;
-            if (!$split) {//à partir des montants de payment
-                $sql = "select month(c.period_start) as x, round(sum(p.amount),2) as y
-                    from payment p
-                    left join contract c on c.id_contract=p.fk_contract
-                    where c.period_start between '".$year."-01-01' AND '".$year."-12-31'";
-                if ($id_user != null)
-                    $sql .= " and p.fk_user=".$id_user;
-                if ($id_farm != null) 
-                    $sql .= " and p.fk_farm=".$id_farm;
-                $sql .= " group by month(c.period_start)";
-            } else {//à partir des montants de payment_split
-                $sql = "select month(ps.date) as x, round(sum(ps.amount),2) as y
-                    from payment_split ps
-                    left join payment p on p.id_payment = ps.fk_payment
-                    where ps.date between '".$year."-01-01' AND '".$year."-12-31'";
-                if ($id_user != null)
-                    $sql .= " and p.fk_user=".$id_user;
-                if ($id_farm != null) 
-                    $sql .= " and p.fk_farm=".$id_farm;
-                $sql .= " group by month(ps.date)";
-            }
-        }
-        else {
-        $sql = "select month(date), sum(somme) 
-            from (
-            select pd.fk_product, di.date, sum(pu.quantity), pd.price, round((sum(pu.quantity)*pd.price),2) as somme
-            from purchase pu
-            left join product_distribution pd on pu.fk_product_distribution = pd.id_product_distribution
-            left join distribution di on pd.fk_distribution = di.id_distribution
-            left join product pr on pd.fk_product = pr.id_product
-            where di.date between '".$year."-01-01' AND '".$year."-12-31'";
-            if ($id_user != null)
-                $sql .= " and pu.fk_user=".$id_user;
-            if ($id_farm != null) 
-                $sql .= " and pr.fk_farm=".$id_farm;
-            $sql .= " group by pd.fk_product, di.date
-            ) pre_somme
-            group by month(date)"; 
-            
-            */
-            
+        $params = [];
         $sql = "select month(date), round(sum(price),2) as somme 
             from (
             select fk_purchase, date, p.quantity*price as price
             from purchase_ratio_price prp
             left join purchase p on p.id_purchase = prp.fk_purchase
             where date between '".$year."-01-01' AND '".$year."-12-31'";
-            if ($id_user != null)
-                $sql .= " and prp.fk_user=".$id_user;
-            if ($id_farm != null) 
-                $sql .= " and prp.fk_farm=".$id_farm;
+            if ($id_user != null) {
+                $sql .= " and prp.fk_user=:id_user";
+                $params['id_user'] = $id_user;
+            }
+            if ($id_farm != null) {
+                $sql .= " and prp.fk_farm=:id_farm";
+                $params['id_farm'] = $id_farm;
+            }
             $sql .= " group by fk_purchase, date
             union all
             select pu.id_purchase, di.date, pu.quantity*pd.price as price
@@ -585,9 +548,10 @@ class PaymentRepository extends EntityRepository
                 $sql .= " and pr.fk_farm=".$id_farm;
             $sql .= " group by pu.id_purchase, di.date
             ) pre_somme
-            group by month(date)";//TODO requete preparee
-        $r = $conn->query($sql);
-        $tab = $r->fetchAll(\PDO::FETCH_KEY_PAIR);
+            group by month(date)";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+        $tab = $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
         $out = array();
         $total = 0;
         for ($i=1; $i<=12; $i++) 
@@ -608,8 +572,9 @@ class PaymentRepository extends EntityRepository
                     where fk_purchase in (
             select pu.id_purchase
             from purchase pu
-            where pu.fk_payment=".$id_payment.")";
-            $conn->exec($sql);                  
+            where pu.fk_payment=:id_payment)";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute(['id_payment' => $id_payment]);                 
             
             
             $sql = "insert into purchase_ratio_price(fk_purchase, date, fk_user, fk_farm, price)
@@ -641,8 +606,9 @@ class PaymentRepository extends EntityRepository
                 ) j2 on j2.id_payment = pay.id_payment and j2.fk_contract = pu.fk_contract
                 where pr.ratio is not null
                 and pay.fk_farm is not null
-                and pu.fk_payment=".$id_payment;//TODO requete preparee
-            $conn->exec($sql);
+                and pu.fk_payment=:id_payment";
+                $stmt = $conn->prepare($sql);
+                $stmt->execute(['id_payment' => $id_payment]);    
         }
         catch(\Exception $e) {
             return false;
@@ -719,15 +685,18 @@ class PaymentRepository extends EntityRepository
     
     public function getForContract($id_contract, $id_farm = null) {
         $conn = $this->getEntityManager()->getConnection();
+        $params = ['id_contract' => $id_contract];
         $sql = "SELECT fk_user, SUM(amount) AS amount, SUM(received) AS received
                  FROM payment
-                 WHERE fk_contract=".$id_contract;
+                 WHERE fk_contract=:id_contract";
         if ($id_farm != null) {         
-            $sql .= " AND fk_farm=".$id_farm;
+            $sql .= " AND fk_farm=:id_farm";
+            $params['id_farm'] = $id_farm;
         }
-        $sql .= " GROUP BY fk_user";//TODO requete preparee
-        $r = $conn->query($sql);
-        return $r->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE);
+        $sql .= " GROUP BY fk_user";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE);
     }
     
     public function checkReceived($amount,$split) {               
