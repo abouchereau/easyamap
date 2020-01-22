@@ -23,10 +23,10 @@ class SettingType extends AbstractType
             ->add('logoSmallUrl',TextType::class, array('label' => 'URL petit logo (90px)','required' => false))
             ->add('logoLargeUrl',TextType::class, array('label' => 'URL grand logo (256px)','required' => false))
             ->add('logoSecondary',TextType::class, array('label' => 'URL logo secondaire (90px)','required' => false))
-            ->add('useAddress',CheckboxType::class,  array('label' => 'Coordonnées adhérents','required' => false))
-            //->add('cotisation',CheckboxType::class,  array('label' => 'Gestion des cotisations','required' => false))
-            ->add('registerDistribution',CheckboxType::class,  array('label' => 'Inscription aux distributions','required' => false))                
-            ->add('useReport',CheckboxType::class,  array('label' => 'Rapports de distributions','required' => false)) 
+            ->add('useAddress',CheckboxType::class,  array('label' => 'OPTION - Coordonnées adhérents','required' => false))
+            //->add('cotisation',CheckboxType::class,  array('label' => 'Gestion des cotisations','required' => false))              
+            ->add('useReport',CheckboxType::class,  array('label' => 'OPTION - Compte-rendu de distributions','required' => false)) 
+            ->add('registerDistribution',CheckboxType::class,  array('label' => 'OPTION - Inscription aux distributions','required' => false))  
             ->add('textRegisterDistribution',TextareaType::class,array('label' => 'Texte Inscription Distribution','required' => false))
         ;
     }

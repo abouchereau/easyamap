@@ -26,7 +26,7 @@ class ProductType extends AbstractType
     {
         $builder
             ->add('label',TextType::class,     array('label' => 'Nom *',     'required' => true))
-            ->add('unit',TextType::class,      array('label' => 'Unité (exemple : kg)','required' => false))
+            ->add('unit',TextType::class,      array('label' => 'Conditionnement (exemple : 200g)','required' => false))
             ->add('basePrice',MoneyType::class,array('label' => 'Prix en € * (exemple: 3,20)','required' => true,'currency' =>'','scale' => 2))
             ->add('ratio',CheckboxType::class,array('label' => 'Au poids (montant calculé à la livraison)','required' => false))
             ->add('isSubscription',CheckboxType::class,array('label' => 'Mode Abonnement','required' => false))
