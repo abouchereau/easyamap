@@ -107,7 +107,7 @@ class ProductDistributionRepository extends EntityRepository
               SELECT ".$product.", ".$distribution.", base_price
               FROM product WHERE id_product=:id_product";        
         $stmt = $conn->prepare($sql);
-        $stmt->execute(['id_product' => $id_product]);
+        $stmt->execute(['id_product' => $product]);
         $nb_insert++;
       }
     }

@@ -201,10 +201,10 @@ class DistributionRepository extends EntityRepository
         FROM distribution 
         WHERE date >= :date
         ORDER BY date ASC
-        LIMIT :n";
+        LIMIT ".$n;
     $conn = $this->getEntityManager()->getConnection();
     $stmt = $conn->prepare($sql);
-    $stmt->execute(['date' => $date,'n'=>$n]);
+    $stmt->execute(['date' => $date]);
     return $stmt->fetchAll(\PDO::FETCH_COLUMN);
   }
   

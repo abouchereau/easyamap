@@ -665,7 +665,7 @@ class PaymentRepository extends EntityRepository
             and p.fk_farm=:id_farm
             and year(ps.date)=:year
             group by p.id_payment
-            order by ps.date ASC";        
+            order by min(ps.date) ASC";        
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
         $stmt->execute(array('id_user'=> $user->getIdUser(),'id_farm'=> $farm->getIdFarm(), 'year'=>$year));
