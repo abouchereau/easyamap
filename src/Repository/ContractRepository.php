@@ -129,7 +129,7 @@ class ContractRepository extends EntityRepository
         $params['id_contract'] = $id_contract;
       }
       $stmt = $conn->prepare($sql);
-      $stmt->query($params);
+      $stmt->execute($params);
       return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     
@@ -153,7 +153,7 @@ class ContractRepository extends EntityRepository
               WHERE u.is_active=1
               ORDER BY u.lastname ASC';
       $stmt = $conn->prepare($sql);
-      $stmt->execute(['id_contract'=>$id_contract]);
+      $stmt->execute(['id_contract'=>$id_contrat]);
       return $stmt->fetchAll(\PDO::FETCH_GROUP);
     }
     
@@ -288,8 +288,9 @@ class ContractRepository extends EntityRepository
         $sql .= " GROUP BY p.id_purchase
                 ORDER BY u.lastname, d.date, f.sequence, pr.sequence";
         $params['id_contract'] = $id_contract;
-      $r = $conn->query($sql);
-      return $r->fetchAll(\PDO::FETCH_GROUP);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);      
+      return $stmt->fetchAll(\PDO::FETCH_GROUP);
     }
     
     public function getShipping($id_contract, $id_farm = null) {
@@ -316,7 +317,7 @@ class ContractRepository extends EntityRepository
           $sql .= " AND pr.fk_farm=:id_farm";
           $params['id_farm'] = $id_farm;
       }
-        $sql .= " GROUP BY pr.id_product, d.id_distribution 
+        $sql .= " GROUP BY pr.id_product, d.id_distribution, pr.label, d.date, pr.unit, pr.ratio, pr.base_price, pd.price 
                 ORDER BY f.sequence, pr.sequence, d.date";
         $stmt = $conn->prepare($sql);
         $stmt->execute($params);
@@ -406,7 +407,7 @@ class ContractRepository extends EntityRepository
           $sql .= " AND pr.fk_farm=:id_farm";
           $params['id_farm'] = $id_farm;
         }
-        $sql .= " group by year(d.date), month(d.date), pr.id_product";
+        $sql .= " group by DATE_FORMAT(d.date,'%Y-%m'), pr.id_product";
             
         $sql .= " union
                 SELECT 
@@ -423,10 +424,10 @@ class ContractRepository extends EntityRepository
                 and c.id_contract=:id_contract";
                 $sql .= " AND p.fk_contract=:id_contract";
             if ($id_farm != null) {
-              $sql .= " AND pr.fk_farm=:id_farm".$id_farm;
+              $sql .= " AND pr.fk_farm=:id_farm";
             }
             $sql .= "
-                group by year(d.date), month(d.date)";//TODO requete preparee
+                group by DATE_FORMAT(d.date,'%Y-%m'), month(d.date)";
         $stmt = $conn->prepare($sql);
         $stmt->execute($params);
         $tab = $stmt->fetchAll(\PDO::FETCH_GROUP);

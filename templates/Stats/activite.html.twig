@@ -27,15 +27,15 @@
                         <td></td>
                         {% set lastyear = "" %}
                         {% for month in months %}                            
-                            {% if lastyear != month|slice(2,4) %}
-                                {% set lastyear = month|slice(2,4) %}
+                            {% if lastyear != month|slice(0,4) %}
+                                {% set lastyear = month|slice(0,4) %}
                                 <th class="newyear">
                                 {{ lastyear }}
                              {% else %}
                                 <th>
                              {% endif %}
                              <br />
-                            {{ month|slice(0,2)|mois }}</th>
+                            {{ month|slice(4,2)|mois }}</th>
                         {% endfor %}
                     </tr>
                 {% endif %}
@@ -43,8 +43,8 @@
                     <th>{{ name }}</th>
                     {% set lastyear = "" %}
                     {% for month in months %}
-                        <td class="{% if lastyear != month|slice(2,4) %}newyear {#
-                                #}{% set lastyear = month|slice(2,4) %}{#
+                        <td class="{% if lastyear != month|slice(0,4) %}newyear {#
+                                #}{% set lastyear = month|slice(0,4) %}{#
                              #}{% endif %}{#
                     #}{% if month in monthTab %}success{% else %}active{% endif %}"></td>
                     {% endfor %}

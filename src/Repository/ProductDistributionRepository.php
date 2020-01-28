@@ -163,7 +163,7 @@ CONCAT(d.date,'_', p.fk_farm) AS id, 1
             AND year(d.DATE)=:annee
             AND p.is_active=1
             AND pd.fk_distribution_shift IS NULL
-            group by d.date, p.fk_farm
+            group by CONCAT(d.date,'_', p.fk_farm)
 UNION
 SELECT
 CONCAT(d2.date,'_', p.fk_farm) AS id, 1
@@ -175,7 +175,7 @@ CONCAT(d2.date,'_', p.fk_farm) AS id, 1
             AND year(d.DATE)=:annee 
             AND p.is_active=1
             AND pd.fk_distribution_shift IS NOT NULL
-            group by d.date, p.fk_farm
+            group by CONCAT(d2.date,'_', p.fk_farm)
 ) v
 order BY v.id";
         $conn = $this->getEntityManager()->getConnection();

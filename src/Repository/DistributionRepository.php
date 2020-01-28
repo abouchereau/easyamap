@@ -123,11 +123,11 @@ class DistributionRepository extends EntityRepository
   
   public function findAllForStat() {
       $conn = $this->getEntityManager()->getConnection();
-    $sql = 'SELECT distinct(date_format(date,"%m%Y"))
+    $sql = 'SELECT distinct(date_format(date,"%Y%m"))
             FROM distribution
             WHERE date<=date_add(curdate(), INTERVAL 3 MONTH)
             AND date>=date_add(curdate(), INTERVAL -21 MONTH)
-            ORDER BY date ASC';
+            ORDER BY date_format(date,"%Y%m") ASC';
     $r = $conn->query($sql);
     return $r->fetchAll(\PDO::FETCH_COLUMN);
   }
@@ -228,7 +228,7 @@ class DistributionRepository extends EntityRepository
             BETWEEN (select period_start from contract where id_contract=:id_contract) 
             AND (select period_end from contract where id_contract=:id_contract)
             group by date_format(date, '%Y-%m')
-            ORDER BY date";
+            ORDER BY date_format(date, '%Y-%m')";
     $conn = $this->getEntityManager()->getConnection();
     $stmt = $conn->prepare($sql);
     $stmt->execute(['id_contract' => $id_contract]);

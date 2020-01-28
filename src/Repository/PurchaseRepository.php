@@ -11,7 +11,11 @@ class PurchaseRepository extends EntityRepository
   {
     $distris = $this->getNextDistributions($date, $limit);
     $conn = $this->getEntityManager()->getConnection();
-    $sql = "SELECT pd.fk_distribution AS id_distribution, pu.quantity, CONCAT(ifnull(p.label,''), ' ', ifnull(p.unit,'')) AS produit
+    $sql = "SELECT pd.fk_distribution AS id_distribution, 
+        pu.quantity, 
+        CONCAT(ifnull(p.label,''), 
+        ' ', 
+        ifnull(p.unit,'')) AS produit
       FROM product_distribution pd
       LEFT JOIN purchase pu ON pu.fk_product_distribution = pd.id_product_distribution
       LEFT JOIN product p   ON p.id_product = pd.fk_product
@@ -334,13 +338,13 @@ SELECT
       $conn = $this->getEntityManager()->getConnection();
       $sql = 'SELECT
                 u.lastname,
-                date_format(d.date, "%m%Y")
+                date_format(d.date, "%Y%m")
                 from user u
                 left join purchase p on u.id_user = p.fk_user
                 left join product_distribution pd on pd.id_product_distribution = p.fk_product_distribution
                 left join distribution d on d.id_distribution = pd.fk_distribution
                 where u.is_active=1
-                group by u.lastname, date_format(d.date, "%m%Y")
+                group by u.lastname, date_format(d.date, "%Y%m")
                 order by u.lastname';
       $r = $conn->query($sql);
       return $r->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_COLUMN);
@@ -369,7 +373,11 @@ SELECT
   public function getQuantities($id_farm,$date_debut,$date_fin) {
       $conn = $this->getEntityManager()->getConnection();
       $sql = "select fullname, id_product, sum(quantity) as quantity, sum(price) as price from (
-            select concat(u.lastname,' ',u.firstname) as fullname, pr.id_product, pr.sequence, pu.quantity,round((pu.quantity*pd.price),2) as price
+            select concat(u.lastname,' ',u.firstname) as fullname, 
+            pr.id_product, 
+            pr.sequence, 
+            pu.quantity,
+            round((pu.quantity*pd.price),2) as price
             from purchase pu
             left join user u on u.id_user = pu.fk_user
             left join product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
@@ -379,7 +387,11 @@ SELECT
             and d.date BETWEEN :date_debut and :date_fin   
             group by u.id_user, pr.id_product, pu.id_purchase
             union all
-            select concat(u.lastname,' ',u.firstname) as fullname, pr.id_product, pr.sequence,  pu.quantity,round((pu.quantity*prp.price),2) as price
+            select concat(u.lastname,' ',u.firstname) as fullname, 
+            pr.id_product, 
+            pr.sequence, 
+            pu.quantity,
+            round((pu.quantity*prp.price),2) as price
             from purchase pu
             join purchase_ratio_price prp on prp.fk_purchase = pu.id_purchase
             left join user u on u.id_user = pu.fk_user
@@ -389,7 +401,7 @@ SELECT
             where pr.fk_farm = :id_farm           
             and d.date BETWEEN :date_debut and :date_fin             
             group by u.id_user, pr.id_product, pu.id_purchase) t
-            group by fullname, id_product
+            group by fullname, id_product, sequence
         order by fullname, sequence";
         $stmt = $conn->prepare($sql);
         $stmt->execute(array('date_debut'=>$date_debut->format('Y-m-d'), 'date_fin'=>$date_fin->format('Y-m-d'), 'id_farm'=>$id_farm));

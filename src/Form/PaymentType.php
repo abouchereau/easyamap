@@ -46,8 +46,8 @@ class PaymentType extends AbstractType
               }
               
               ))            
-            ->add('amount',MoneyType::class,array('label' => 'Montant *','required' => true,'currency' =>'€','scale' => 2))
-            ->add('received',MoneyType::class,array('label' => 'Reçu *','required' => true,'currency' =>'€','scale' => 2))
+            ->add('amount',MoneyType::class,array('label' => 'Montant *','required' => true,'currency' =>'EUR','scale' => 2))
+            ->add('received',MoneyType::class,array('label' => 'Reçu *','required' => true,'currency' =>'EUR','scale' => 2))
             ->add('description',TextareaType::class, array('label' => 'Description','required' => false))
         ;
     }

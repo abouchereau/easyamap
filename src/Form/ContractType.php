@@ -53,8 +53,8 @@ class ContractType extends AbstractType
               'widget' => 'single_text',
               'html5' => false,
               'format' =>'yyyy-MM-dd',
-              'label' => '(option) Compter les produits déjà commandés depuis le (année-mois-jour)', 
-              'required' => true))
+              'label' => '(optionnel) Compter les produits déjà commandés depuis le (année-mois-jour)', 
+              'required' => false))
             ->add('products',EntityType::class,array(
               'label' => 'Produits',
               'class' => Product::class, 
