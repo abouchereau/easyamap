@@ -8,7 +8,7 @@ Easyamap est un logiciel en ligne de gestion des commandes pour les AMAP, basé 
 Site de présentation : https://www.easyamap.fr
 
 Pour mettre en place l'outil dans votre AMAP, vous pouvez me contacter à cette adresse : anthony [arobase] easyamap [point] fr.
-Nous pourrons mettre en place une solution hébergée, vous n'aurez rien besoin d'installer.
+Nous pouvons mettre en place une solution hébergée, vous n'avez rien besoin d'installer.
 
 Si vous souhaitez installer vous-mêmes le logiciel, merci de suivre les étapes de l'installation décrite ci-dessous.
 **Note** : _aucun support n'est garanti_ pour l'installation du logiciel.
