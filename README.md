@@ -73,7 +73,11 @@ doctrine:
 
 ## Avertissements
 À utiliser à vos propres risques.
+
 Il est recommandé d'effectuer régulièrement des sauvegardes de la base de données.
 
+## Licence
+
 ## Crédits
+* Copyright Anthony BOUCHEREAU - 2015-2020
 
