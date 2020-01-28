@@ -72,12 +72,12 @@ doctrine:
 
 
 ## Avertissements
-À utiliser à vos propres risques.
-
+L'utilisation d'Easyamap sur votre serveur est sous votre entière responsabilité.
 Il est recommandé d'effectuer régulièrement des sauvegardes de la base de données.
+Nous déclinons toute responsabilité quant à toute perte et tout dommage quels qu’ils soient.
 
 ## Licence
 
 ## Crédits
-* Copyright Anthony BOUCHEREAU - 2015-2020
+* Copyright Anthony BOUCHEREAU, 2015-2020
 
