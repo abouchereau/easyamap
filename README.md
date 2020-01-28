@@ -59,8 +59,7 @@ mysql -u root -p
 ```
 ```sql
 create database easyamap;
-CREATE USER 'easyamap'@'localhost';
-ALTER USER 'easyamap'@'localhost' IDENTIFIED WITH mysql_native_password BY 'MonMotDePasse';
+CREATE USER 'easyamap'@'localhost' IDENTIFIED WITH mysql_native_password BY 'MonMotDePasse';
 GRANT ALL ON easyamap.* to 'easyamap'@'localhost';
 ```
 Modifier le fichier config/packages/prod/doctrine.yaml
