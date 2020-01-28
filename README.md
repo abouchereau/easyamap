@@ -53,7 +53,7 @@ composer install
 ```
 _Note :_ Il est recommandé d'utiliser le HTTPS. Ajuster si besoin votre Virtual Host en ajoutant votre certificat, le port 443 etc...
 
-## Création de la base de données
+### Création de la base de données
 ```bash
 mysql -u root -p
 ```
@@ -71,6 +71,9 @@ doctrine:
 ```
 
 
+## Avertissements
+À utiliser à vos propres risques.
+Il est recommandé d'effectuer régulièrement des sauvegardes de la base de données.
 
-
+## Crédits
 
