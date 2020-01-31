@@ -7,15 +7,12 @@ GROUP BY c.id_contract, pu.fk_user
 ORDER BY c.id_contract;
 
 
-
 CREATE OR REPLACE VIEW view_contract_nb_purchaser AS
 SELECT c.id_contract, COUNT(DISTINCT(pu.fk_user)) AS nb_purchaser
 FROM contract c
 LEFT JOIN purchase pu ON pu.fk_contract =  c.id_contract
 GROUP BY c.id_contract
 ORDER BY c.id_contract;
-
-
 
 
 CREATE OR REPLACE VIEW view_contract_conflict AS 
@@ -91,24 +88,6 @@ WHERE pd.max_quantity IS NOT NULL
 GROUP BY pd.id_product_distribution
 HAVING SUM(p.quantity) > pd.max_quantity ;
 
-
-
-CREATE OR REPLACE VIEW view_distribution_farm_product AS 
-select d.date AS date,pr.fk_farm AS fk_farm, sum(pu.quantity) AS nb, concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit, f.sequence as f_seq, pr.sequence as pr_seq
-from purchase pu 
-left join product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
-left join distribution d on d.id_distribution = pd.fk_distribution 
-left join product pr on pr.id_product = pd.fk_product 
-left join farm f on f.id_farm = pr.fk_farm
-group by d.date,pr.id_product ;
-
-CREATE OR REPLACE VIEW view_distribution_user_product AS 
-select d.date AS date,pu.fk_user AS fk_user,pu.quantity AS nb,concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit,pr.sequence as pr_seq 
-from purchase pu 
-left join product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution 
-left join distribution d on d.id_distribution = pd.fk_distribution 
-left join product pr on pr.id_product = pd.fk_product ;
-
 create or replace view view_deletable_contract as 
 select id_contract as fk_contract from contract
 where id_contract not in (
@@ -119,16 +98,6 @@ LEFT JOIN purchase p ON p.fk_contract =  c.id_contract
 group by c.id_contract
 having sum(p.quantity) is not null
 and sum(p.quantity) >0);
-
-/*
-create or replace view view_contract_product_distribution as
-SELECT c.id_contract,
-pd.id_product_distribution
-FROM product_distribution pd 
-LEFT JOIN distribution d ON d.id_distribution = pd.fk_distribution 
-LEFT JOIN contract c ON (d.date BETWEEN c.period_start AND c.period_end) 
-JOIN contract_product cp ON cp.fk_product = pd.fk_product AND cp.fk_contract = c.id_contract;
-*/
 
 CREATE OR REPLACE VIEW view_payment_purchase AS
 select id_payment as fk_payment, pu.id_purchase as fk_purchase
