@@ -77,7 +77,10 @@ Il est recommandé d'effectuer régulièrement des sauvegardes de la base de don
 Nous déclinons toute responsabilité quant à toute perte et tout dommage quels qu’ils soient.
 
 ## Licence
+Ce logiciel est mis à disposition selon les termes de la [Licence Creative Commons Attribution - Pas d’Utilisation Commerciale - Partage dans les Mêmes Conditions 4.0 International](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 
-## Crédits
-* Copyright Anthony BOUCHEREAU, 2015-2020
+![Creative Commons Logo](https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png)
+
+## Auteur
+* Anthony BOUCHEREAU, 2015-2020
 
