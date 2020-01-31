@@ -67,6 +67,7 @@ exit;
 mysql -u easyamap -p
 ```
 ```sql
+use easyamap;
 source /var/www/easyamap/data/amap_init.sql;
 ```
 
