@@ -62,6 +62,13 @@ create database easyamap;
 CREATE USER 'easyamap'@'localhost' IDENTIFIED WITH mysql_native_password BY 'MonMotDePasse';
 GRANT ALL ON easyamap.* to 'easyamap'@'localhost';
 ```
+```bash
+mysql -u easyamap -p
+```
+```sql
+source /var/www/easyamap/data/amap_init.sql;
+```
+
 Modifier le fichier config/packages/prod/doctrine.yaml
 
 ```yml
