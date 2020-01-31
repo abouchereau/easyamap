@@ -61,6 +61,7 @@ mysql -u root -p
 create database easyamap;
 CREATE USER 'easyamap'@'localhost' IDENTIFIED WITH mysql_native_password BY 'MonMotDePasse';
 GRANT ALL ON easyamap.* to 'easyamap'@'localhost';
+exit;
 ```
 ```bash
 mysql -u easyamap -p
