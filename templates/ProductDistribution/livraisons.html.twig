@@ -1,0 +1,68 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Tableau des livraisons{% endblock %}
+
+    
+{% block body %}
+   
+<div class="row">  
+    <div class="col-md-2">
+          {% if mois==1 %}
+                <a href="{{ path('tableau_livraisons', {'date':'12-'~(annee-1)}) }}" class="btn btn-primary no-print"><span class="glyphicon glyphicon-arrow-left"></span> Mois précédent</a>
+           {% else %}
+               <a href="{{ path('tableau_livraisons', {'date':(mois-1)|two_digits~'-'~annee}) }}" class="btn btn-primary no-print"><span class="glyphicon glyphicon-arrow-left"></span> Mois précédent</a>
+        {% endif %}
+    </div>
+  <div class="col-md-8">
+      <div class="pull-right no-print">
+        <button class="btn btn-default no-print" onclick="window.print();"><span class="glyphicon glyphicon-print"></span> Imprimer</button>
+      </div>
+      <h2>{{ mois|month_long_fr }} {{ annee }}</h2>
+
+      
+      <table class="table table-bordered">
+          <tr>
+              <td style="width:300px"></td>
+              {% for distribution in distributions %}
+                  <th class="success text-center">{{ distribution|date_fr }}</th>
+              {% endfor %}    
+          </tr>
+          {% for farm in farms %}
+              <tr>
+                  <td style="width:300px" class="warning"><b>{{ farm.productType }}</b><br />
+                      <small>{{ farm.label }}</small> 
+                        <small class="text-muted"> ({% for referent in farm.referents %}{#
+                            #}{{ referent.firstname}} {{ referent.lastname}}{#
+                            #}{% if not loop.last %}, {% endif %}{#
+                        #}{% endfor %})</small>
+                  </td>
+                  {% for distribution in distributions %}
+                      <td class="text-center" style="vertical-align: middle;">
+                          {% set index = distribution ~ '_' ~ farm.idFarm %}
+                          {% if livraisons[index] is defined %}
+                              <span class="glyphicon glyphicon-ok text-success" style="font-size:30px;"></span>
+                           {% endif %}                          
+                      </td>
+                {% endfor %}   
+              </tr>
+          {% endfor %}
+              <tr>
+                  <td class="success">Total</td>
+                  {% for distribution in distributions %}
+                      <td class="text-center lead" style="vertical-align: middle;">
+                          {% if totaux[distribution] is defined %}
+                              {{ totaux[distribution] }}
+                           {% endif %}                          
+                      </td>
+                {% endfor %}  
+              </tr>
+      </table>
+  </div>
+  <div class="col-md-2 text-right">
+        {% if mois==12 %}
+            <a href="{{ path('tableau_livraisons', {'date':'01-'~(annee+1)}) }}" class="btn btn-primary no-print">Mois suivant <span class="glyphicon glyphicon-arrow-right"></span></a>
+           {% else %}
+               <a href="{{ path('tableau_livraisons', {'date':(mois+1)|two_digits~'-'~annee}) }}" class="btn btn-primary no-print">Mois suivant <span class="glyphicon glyphicon-arrow-right"></span></a>
+        {% endif %}
+  </div>
+</div>
+{% endblock %}

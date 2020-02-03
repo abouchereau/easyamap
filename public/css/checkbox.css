@@ -1,0 +1,32 @@
+input[type="checkbox"], input[type="radio"] {
+    display:none;
+}
+input[type="checkbox"] + label span, input[type="radio"] + label span, .pretty-checkbox {
+    display:inline-block;
+    width:22px;
+    height:22px;    
+    background:url(../images/checkbox-blue.png) left top no-repeat;
+    background-color:#FFF;
+    cursor:pointer;
+}
+input[type="checkbox"]:disabled + label span,input[type="radio"]:disabled + label span {
+  cursor:default;
+  background-position: -72px 0;
+}
+input[type="checkbox"]:checked + label span, input[type="radio"]:checked + label span, .pretty-checkbox {
+  background-position: -48px 0;
+}
+input[type="checkbox"]:not(:checked):not(:disabled) + label span:hover, input[type="radio"]:not(:checked):not(:disabled) + label span:hover {
+  background-position: -24px 0;
+}
+input[type="checkbox"]:disabled:checked + label span, input[type="checkbox"].checkbox-disabled:checked + label span,input[type="radio"]:disabled:checked + label span, input[type="radio"].checkbox-disabled:checked + label span {
+  cursor:default;
+  background-position: -96px 0;
+}
+
+.farm-checkbox {
+  display:none;
+}
+.pretty-checkbox {
+  cursor: initial;
+}

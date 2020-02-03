@@ -1,0 +1,149 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Compte-rendu de distribution du {{ distri.date|full_date_fr }}{% endblock %}
+{% block header_css %}{% endblock %}
+
+{% block body %}
+    <style type="text/css">
+        .ta-container {
+            padding:0 !important;
+        }
+        .ta-container textarea {
+            width:100%;
+            height:120px;
+        }
+        .cke-text {            
+            font-family: sans-serif, Arial, Verdana, "Trebuchet MS", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+             font-size: 13px;    
+             line-height: 1.6;
+            word-wrap: break-word;
+        }
+    </style>
+    {% if isEdit %}
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+    {% endif %}
+
+    
+    <div class="row">        
+        <div class="col-md-2">
+            <a href="{{ path('rapport_distribution') }}" class="btn btn-primary"><span class="glyphicon glyphicon-list"></span> Liste</a>
+        </div>   
+        <div class="col-md-8">            
+            <table class="table table-bordered">
+                <tr><td colspan="2" class="success"><h4>Liste des personnes présentes à la distribution</h4></td></tr>
+                {% for participation in participations %}
+                    {% if participation.id_distribution == distri.idDistribution %}                
+                        <tr><th>{{ participation.tache }}</th><td>{{ participation.inscrits }}</td></tr>
+                    {% endif %}
+                {% endfor %}
+            </table>        
+        </div>        
+    </div>
+            
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <table class="table table-bordered">
+                <tr><td class="success"><h4>Produits livrés</h4></td></tr>
+                {% for farm in farms %}            
+                        <tr><td>{{ farm.product_type }} ({{ farm.label }})</td></tr>
+                {% endfor %}
+            </table>        
+        </div>        
+    </div>
+            
+    <div class="row" id="infoLivraison">
+        <div class="col-md-8 col-md-offset-2">
+            <table class="table table-bordered">
+                <tr><td class="warning"><h4>Contrôles de livraison</h4></td></tr> 
+                <tr><td{% if isEdit %} class="ta-container"{% else %} class="cke-text"{% endif %}>{% if isEdit %}
+                        {{ form_widget(form.infoLivraison) }}
+                        {% else %}
+                        {{ distri.infoLivraison|raw }}
+                        {% endif %}</td></tr>
+            {% if isEditable and not isEdit %}
+                <tr><td class="text-center"><a href="{{ path('rapport_distribution_edit', {'id':distri.idDistribution}) }}#infoLivraison" class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Modifier</a></td></tr>
+            {% endif %}
+            {% if isEdit %}    
+                <tr><td class="text-center">{{ form_widget(form.submit, { 'attr': {'class': 'btn btn-success'} })|replace({'Enregistrer':'<span class="glyphicon glyphicon-floppy-disk"></span> Enregistrer'})|raw }}</td></tr>
+            {% endif %}
+            </table>        
+        </div>        
+    </div>
+    
+    <div class="row" id="infoDistribution">
+        <div class="col-md-8 col-md-offset-2">
+            <table class="table table-bordered">
+                <tr><td class="warning"><h4>Bilan fin distribution</h4></td></tr> 
+                <tr><td{% if isEdit %} class="ta-container"{% else %} class="cke-text"{% endif %}>{% if isEdit %}
+                        {{ form_widget(form.infoDistribution) }}
+                        {% else %}
+                        {{ distri.infoDistribution|raw }}
+                        {% endif %}</td></tr>            
+            {% if isEditable and not isEdit %}
+                <tr><td class="text-center"><a href="{{ path('rapport_distribution_edit', {'id':distri.idDistribution}) }}#infoDistribution" class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Modifier</a></td></tr>
+            {% endif %}
+            {% if isEdit %}    
+                <tr><td class="text-center"><button type="submit" id="distribution_submit2" name="distribution[submit]" class="btn btn-success"><span class="glyphicon glyphicon-floppy-disk"></span> Enregistrer</button></td></tr>
+            {% endif %}
+            </table>        
+        </div>        
+    </div>
+            
+    <div class="row" id="infoDivers">
+        <div class="col-md-8 col-md-offset-2">
+            <table class="table table-bordered">
+                <tr><td class="info"><h4>Infos diverses</h4></td></tr> 
+                <tr><td{% if isEdit %} class="ta-container"{% else %} class="cke-text"{% endif %}>{% if isEdit %}
+                        {{ form_widget(form.infoDivers) }}
+                        {% else %}
+                        {{ distri.infoDivers|raw }}
+                        {% endif %}</td></tr>
+            {% if isEditable and not isEdit %}
+                <tr><td class="text-center"><a href="{{ path('rapport_distribution_edit', {'id':distri.idDistribution}) }}#infoDivers" class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Modifier</a></td></tr>
+            {% endif %}
+            {% if isEdit %}    
+                <tr><td class="text-center"><button type="submit" id="distribution_submit3" name="distribution[submit]" class="btn btn-success"><span class="glyphicon glyphicon-floppy-disk"></span> Enregistrer</button></td></tr>
+            {% endif %}
+            </table>        
+        </div>        
+    </div>
+                
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <table class="table table-bordered">
+                <tr><td colspan="2" class="success"><h4>Liste des personnes inscrites à la distribution suivante</h4></td></tr>
+                {% for participation in participations %}
+                    {% if participation.id_distribution != distri.idDistribution %}                
+                        <tr><th>{{ participation.tache }}</th><td>{{ participation.inscrits }}</td></tr>
+                    {% endif %}
+                {% endfor %}
+            </table>        
+        </div>        
+    </div>
+            
+{% if isEdit %}{{ form_end(form) }}{% endif %}
+    
+{%  endblock %}
+    
+{% block footer_js %}
+    <script src="https://cdn.ckeditor.com/4.13.1/basic/ckeditor.js"></script>
+    <script type="text/javascript">    
+        window.has_unsaved_changes = false;
+        var editor1 = CKEDITOR.replace('distribution_infoLivraison', {height: 150, removeButtons:'Link,Unlink,Anchor,Cut,Copy,Paste,Subscript,Superscript,Undo,Redo,Strike,About,Indent,Outdent' });
+        var editor2 = CKEDITOR.replace('distribution_infoDistribution', {height: 150, removeButtons:'Link,Unlink,Anchor,Cut,Copy,Paste,Subscript,Superscript,Undo,Redo,Strike,About,Indent,Outdent'});
+        var editor3 = CKEDITOR.replace('distribution_infoDivers', {height: 150, removeButtons:'Link,Unlink,Anchor,Cut,Copy,Paste,Subscript,Superscript,Undo,Redo,Strike,About,Indent,Outdent'});        
+        editor1.on('change',()=>{window.has_unsaved_changes = true;});
+        editor2.on('change',()=>{window.has_unsaved_changes = true;});
+        editor3.on('change',()=>{window.has_unsaved_changes = true;});
+        
+ window.onbeforeunload = function () {
+  if (window.has_unsaved_changes)
+    return "Des modifications n'ont pas été enregistrées.";
+};
+
+document.forms['distribution'].onsubmit=()=>{
+    window.has_unsaved_changes = false;
+    return true;
+};
+    </script>
+{%  endblock %}

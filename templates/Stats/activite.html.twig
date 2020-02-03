@@ -1,0 +1,57 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Statistiques{% endblock %}
+{% block header_css %}
+        <link href="{{  asset('css/morris.css') }}" rel="stylesheet" />
+{% endblock %}
+{% block body %}
+<style>
+.form-group {
+    width: 25%;
+    float: left;
+    text-align: center;
+}
+.form-control {
+    width:95%;
+}
+</style>
+        {% include 'Stats/_menu.html.twig' %}  
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-bordered table-hover table-condensed" id="activite">
+            
+            {% set iterate = 0 %}
+            {% for name, monthTab in userMonth %}
+                {% if iterate%20 == 0 %}
+                    <tr>
+                        <td></td>
+                        {% set lastyear = "" %}
+                        {% for month in months %}                            
+                            {% if lastyear != month|slice(0,4) %}
+                                {% set lastyear = month|slice(0,4) %}
+                                <th class="newyear">
+                                {{ lastyear }}
+                             {% else %}
+                                <th>
+                             {% endif %}
+                             <br />
+                            {{ month|slice(4,2)|mois }}</th>
+                        {% endfor %}
+                    </tr>
+                {% endif %}
+                <tr>
+                    <th>{{ name }}</th>
+                    {% set lastyear = "" %}
+                    {% for month in months %}
+                        <td class="{% if lastyear != month|slice(0,4) %}newyear {#
+                                #}{% set lastyear = month|slice(0,4) %}{#
+                             #}{% endif %}{#
+                    #}{% if month in monthTab %}success{% else %}active{% endif %}"></td>
+                    {% endfor %}
+                </tr>
+                {% set iterate = iterate+1 %}
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

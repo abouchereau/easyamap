@@ -1,0 +1,31 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Rapports{% endblock %}
+{% block header_css %}{% endblock %}
+
+{% block body %}
+    
+<div class="row">
+    
+   <div class="col-md-12 text-center">
+       {% include 'Partials/_pagination.html.twig' with {'pagination': pagination, 'route':'rapport_distribution' } %}
+   </div>
+   
+  <div class="col-md-6 col-md-offset-3 filterable">
+          {% for distri in distris %}
+    <a href="{{ path('rapport_distribution_show', {'id': distri.idDistribution }) }}" class="btn btn-success btn-lg btn-xl">
+        {% if distri.infoLivraison is not empty or distri.infoDistribution is not empty or distri.infoDivers is not empty  %}
+            <div class="pull-left"><span class="glyphicon glyphicon-check"></span></div>
+            {% endif %}
+        {{ distri.date|full_date_fr }}
+    </a>
+    {% endfor %}
+    
+  </div>
+    
+   <div class="col-md-12 text-center">
+       {% include 'Partials/_pagination.html.twig' with {'pagination': pagination, 'route':'rapport_distribution' } %}
+   </div>
+   
+</div>
+    
+{% endblock %}

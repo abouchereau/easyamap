@@ -1,0 +1,91 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Contrats{% endblock %}
+
+{% block body %}
+
+<div class="row">
+
+    
+  <div class="col-md-6 col-md-offset-3 filterable">
+    <div class="page-header">Contrats en cours</div>
+    {% set hasOccurence = false %}
+    {% for contract in contracts %}
+      {% if contract.isActive %}
+        {% set hasOccurence = true %}
+        {% include 'Purchase/_index_contract.html.twig' with {'contract':contract, 'size':'L', 'style':'success', 'filled':filled}%}  
+      {% endif %}
+    {% endfor %}
+    {% if not hasOccurence %}
+    <p class="text-muted">Pas de contrat en cours.</p>
+    {% endif %}
+
+    <div class="page-header">Archives</div>
+    {% set hasOccurence = false %}
+    {% for contract in contracts %}
+      {% if not contract.isActive and contract.isArchive %}
+        {% set hasOccurence = true %}
+        {% include 'Purchase/_index_contract.html.twig' with {'contract':contract, 'size':'M', 'style':'default', 'filled':filled}%}  
+      {% endif %}
+    {% endfor %}
+    {% if not hasOccurence %}
+    <p class="text-muted">Pas de contrat archivé.</p>
+    {% endif %}
+
+    <div class="page-header">Contrats fermés</div>
+    {% set hasOccurence = false %}
+    {% for contract in contracts %}
+      {% if not contract.isActive and not contract.isArchive %}
+        {% set hasOccurence = true %}
+        {% include 'Purchase/_index_contract.html.twig' with {'contract':contract, 'size':'M', 'style':'default', 'filled':filled}%}  
+      {% endif %}
+    {% endfor %}
+    {% if not hasOccurence %}
+    <p class="text-muted">Pas de contrat fermé.</p>
+    {% endif %}
+  </div>
+  
+    <div class="col-md-3">
+    <div class="input-group">
+       <input type="text" class="form-control" placeholder="Rechercher" id="search">
+       <div class="input-group-btn">
+         <button class="btn btn-default" type="submit" disabled="disabled"> 
+           <i class="glyphicon glyphicon-search"></i>
+         </button>
+       </div>
+     </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer_js %}
+<script type="text/javascript">
+
+    $("#search").on("keyup", function(){
+        var searchValue = normalize($(this).val());
+        $(".filterable a").each(function(){
+            var textLink = normalize($(this).text());
+            if (searchValue != "" && textLink.indexOf(searchValue) < 0) {
+             $(this).hide();
+            }
+            else {
+             $(this).show();
+            }
+        });
+    });
+    
+function normalize(str) {
+  var accents    = 'ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž';
+  var accentsOut = "AAAAAAaaaaaaOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuNnSsYyyZz";
+  str = str.split('');
+  var strLen = str.length;
+  var i, x;
+  for (i = 0; i < strLen; i++) {
+    if ((x = accents.indexOf(str[i])) != -1) {
+      str[i] = accentsOut[x];
+    }
+  }
+  return str.join('').toUpperCase();
+}
+    </script>
+{% endblock %}
+

@@ -1,0 +1,10 @@
+php_value max_input_vars 10000
+
+<IfModule mod_headers.c>
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Content-Type-Options nosniff
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    Header set Content-Security-Policy "default-src https: data: 'unsafe-inline' 'unsafe-eval'"
+    Header set Referrer-Policy "same-origin"
+</IfModule>

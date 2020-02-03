@@ -1,0 +1,34 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Edition produit{% endblock %}
+
+{% block body %}
+<div class="row">
+   <div class="col-md-4">   
+    <a href="{{ path('product') }}" class="btn btn-primary"><span class="glyphicon glyphicon-list"></span> Liste</a>
+   </div>
+   <div class="col-md-4">
+     {% form_theme form 'Form/fields.html.twig' %}
+     {{ form(form) }}    
+    </div>
+    <div class="col-md-4 text-right">
+      {% if entity.isActive %}
+        <a href="{{ path('product_activate', {'id':entity.idProduct, 'active': 0 } ) }}" class="btn btn-warning btn-xs"><span class="glyphicon glyphicon-remove-circle"></span> Désactiver</a>
+      {% else %}
+        <a href="{{ path('product_activate', {'id':entity.idProduct, 'active': 1 } ) }}" class="btn btn-warning btn-xs"><span class="glyphicon glyphicon-ok-circle"></span> Activer</a>
+      {% endif %}
+      <br />
+      <br />
+      {% if can_be_deleted %}
+         <a onclick="if(confirm('Voulez-vous vraiment supprimer le produit ?')){window.location.href=this.href;};return false;" href="{{ path('product_delete', { 'id': entity.idProduct }) }}" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash"></span> Supprimer</a>
+      {% endif %}
+        <div class="well well-lg text-justify text-muted" style="margin-top:200px;">
+          <p>Un produit désactivé ne peut plus être ajouté dans un nouveau contrat.</p>
+          <p>On ne peut supprimer un produit que s'il n'a jamais été ajouté dans un contrat.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block footer_js %}
+<script type="text/javascript" src="{{ asset('js/form.js') }}"></script>
+{% endblock %}
+

@@ -1,0 +1,19 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Nouveau produit{% endblock %}
+
+{% block body %}
+<div class="row">
+   <div class="col-md-4">   
+    <a href="{{ path('product') }}" class="btn btn-primary"><span class="glyphicon glyphicon-list"></span> Liste</a>
+   </div>
+   <div class="col-md-4">
+     {% form_theme form 'Form/fields.html.twig' %}
+     {{ form(form) }}    
+    </div>
+    <div class="col-md-4 text-right"></div>
+</div>
+{% endblock %}
+{% block footer_js %}
+<script type="text/javascript" src="{{ asset('js/form.js') }}"></script>
+{% endblock %}
+

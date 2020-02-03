@@ -1,0 +1,47 @@
+<table id="excel-table">
+    <tr>
+        <td colspan="{{ 2+dates|length }}" align="center" bgcolor="{{ bgwarning }}">
+           {% include 'Contract/_excel_thead.html.twig' with {'contract':contract, 'farm': farm } %}  
+        </td>
+    </tr>
+    <tr>
+        <th bgcolor="{{ bgsuccess}}" rowspan="3">Produit</th>
+        <th bgcolor="{{ bgsuccess}}" rowspan="3">Prix</th>
+        <th colspan="{{ dates|length }}" bgcolor="{{ bgsuccess}}">Distributions</th>
+    </tr>
+     <tr>
+        {% set last_month = '' %}
+        {% for date in dates %}     
+            {% if date|month_year_fr != last_month %}
+            <td colspan="{{ nb_per_month[date|slice(0,7)] }}">
+                {{ date|month_year_fr }}
+            </td>
+            {% endif %}
+            {% set last_month = date|month_year_fr %}
+        {% endfor %}
+    </tr>
+    <tr>
+        {% set last_month = '' %}
+        {% for date in dates %}                
+            <td bgcolor="{{ bgsuccess}}"><div>{{ date|date_fr }}</div></td>
+            {% set last_month = date|month_year_fr %}
+        {% endfor %}
+    </tr>
+    {% for product in report %}
+        <tr>
+            <td><div>{{ product.label }} {{ product.unit }}</div></td>
+            <td>{{ product.base_price|price_fr}}</td>
+            {% set last_month = '' %}
+            {% for date in dates %}
+                <td{% if product.distris[date] is defined and product.distris[date]|length > 0  %} bgcolor="{{ bgwarning }}"{% endif %}>
+                    {% if product.distris[date] is defined %}
+                     {% for name, quantity in product.distris[date] %}
+                         {{ quantity }} {{ name }}<br>
+                     {% endfor %}
+                     {% endif %}
+                </td>
+                {% set last_month = date|month_year_fr %}
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </table>

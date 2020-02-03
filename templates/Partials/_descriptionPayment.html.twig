@@ -1,0 +1,52 @@
+<div class="payment_description">
+{% if description[:1] == '[' %}    
+    {% set tab = description|json_decode() %}
+    {% set types = tab[0] %}
+    {% set payments = tab[1] %}
+    {% set payment_info = tab[2] %}    
+    {% set chosen_payment = tab[3] %}
+    <dl>
+    {% for i,choices in payments %}
+        <dt><span class="glyphicon glyphicon-{% if chosen_payment[i] %}check{% else %}unchecked{% endif %}"></span> {% if not loop.first %}ou {% endif %}<b>{{ choices|length }}</b> 
+        {% if 1 in types %}chèque{% else %}paiement{% endif %}{% if choices|length > 1 %}s{% endif %} :</dt>
+        <dd><span class="repartition">{% for choice in choices %}
+                {% if choice[2] == 1 %}{#
+                    #}<b>?</b> € <small>(selon livraison)</small>{#
+                     #}{% if not loop.last %} + {% endif %}
+                    {% else %}
+                {{ choice[1]|price_fr }}{#
+                #}{% if not loop.last %} + {% endif %}
+                {% endif %}
+            {% endfor %}
+        </span><small>({% for choice in choices %}{#
+                #}{% if choice[3] > 0 %}{# mensuel #}{#
+                   #}{{ choice[0]|creneau(choice[3]) }}{#
+                #}{% else %}{#
+                    #}{{ choice[0]|date_fr }}{#
+                #}{% endif %}{#
+                #}{% if not loop.last %} / {% endif %}{#
+            
+            #}{% endfor %})</small>
+    </dd>
+    {% endfor %}
+    </dl>
+    
+    <p class="small">
+        {% for type in types %}
+            {% if not loop.first %} / {% endif %}
+            {% if type == 1 %}
+                Chèques à l'ordre de "<i>{{ payment_info[0] }}</i>"
+            {% elseif type == 2 %}
+                Paiement en espèces
+            {% elseif type == 3 %}
+                Paiement par PayPal
+            {% endif %}
+        {% endfor %}
+    </p>
+    {% if isReferentPage is defined and isReferentPage and idPayment is defined %}{# uniquement dans  sonata 
+        #}<script>var descriptions=descriptions||{};descriptions[{{ idPayment }}]={{description|raw}};</script>{#
+    #}{% endif %}
+{% else %}
+    {{ description|replace({'OU':'<b>OU</b>'})|raw }}    
+{% endif %}
+</div>
