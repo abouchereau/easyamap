@@ -1,3 +1,0 @@
-- requetes only_full_group_by
-- requestes préparées
-
