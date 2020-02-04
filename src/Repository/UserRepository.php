@@ -19,15 +19,15 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    public function tryAuthenticate($username)
+    public function tryAuthenticate($username,$password)
     { 
 
       try {    
             $user = $this->createQueryBuilder('u')
             ->where('UPPER(u.username) =:username')
-           // ->andWhere('u.password = :password')
+            ->andWhere('u.password = :password')
             ->setParameter('username', mb_strtoupper($username, 'UTF-8'))
-           // ->setParameter('password', $password)
+            ->setParameter('password', $password)
             ->getQuery()
             ->getOneOrNullResult();          
         } catch (Exception $e) {            

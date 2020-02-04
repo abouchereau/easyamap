@@ -64,11 +64,11 @@ class Authenticator extends AbstractFormLoginAuthenticator
         }
 
         //$user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials['username']]);
-        $user = $this->entityManager->getRepository(User::class)->tryAuthenticate($credentials['username']);
+        $user = $this->entityManager->getRepository(User::class)->tryAuthenticate($credentials['username'],$credentials['password']);
 
         if (!$user) {
             // fail authentication with a custom error
-            throw new CustomUserMessageAuthenticationException('Username could not be found.');
+            throw new CustomUserMessageAuthenticationException('Le nom d\'utilisateur ou le mot de passe est incorrect');
         }
         else {
             $this->entityManager->getRepository(User::class)->loadRoles($user);
