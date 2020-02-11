@@ -190,7 +190,7 @@ left join farm f on f.id_farm = pr.fk_farm
 left join distribution d2 ON d2.id_distribution = pd.fk_distribution_shift 
 WHERE d.date IN ('".implode("','",$dates)."')";
       if($farms != null) {
-        $sql .= "AND v.fk_farm IN (".implode(',',$farms_id).") ";
+        $sql .= "AND pr.fk_farm IN (".implode(',',$farms_id).") ";
       }
 $sql .= " group by f.label, d.date, pr.fk_farm, pr.id_product, f.sequence, pr.sequence, d2.date
 UNION
@@ -213,7 +213,7 @@ left join distribution d2 ON d2.id_distribution = pd.fk_distribution_shift
 WHERE pu.fk_product_distribution IS NOT NULL
 AND d2.date IN ('".implode("','",$dates)."')";
       if($farms != null) {
-        $sql .= "AND v.fk_farm IN (".implode(',',$farms_id).") ";
+        $sql .= "AND pr.fk_farm IN (".implode(',',$farms_id).") ";
       }
 $sql .= "
 group by f.label, d.date, pr.fk_farm, pr.id_product, f.sequence, pr.sequence, d2.date
