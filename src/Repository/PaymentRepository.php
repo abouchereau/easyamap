@@ -50,7 +50,8 @@ class PaymentRepository extends EntityRepository
             ->leftJoin('App\Entity\Contract','c','WITH','p.fkContract = c.idContract')
             ->leftJoin('App\Entity\Farm','f','WITH','p.fkFarm = f.idFarm')
             ->leftJoin('App\Entity\User','u','WITH','p.fkUser = u.idUser')
-            ->addOrderBy('c.periodStart', 'DESC');
+            ->addOrderBy('c.periodStart', 'DESC')
+            ->addOrderBy('u.lastname', 'ASC');
         if ($filters['received']!=0) {
             if ($filters['received'] == '1') {
                 $qb->andWhere('p.receivedAt IS NOT NULL');

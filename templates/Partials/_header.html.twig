@@ -15,7 +15,7 @@
         {% if app is defined and app.user is not empty %}
           <ul class="nav navbar-nav navbar-right">
              <li><a href="{{ path('logout') }}" data-toggle="tooltip" data-placement="bottom" title="Déconnexion"> <span class="glyphicon glyphicon-log-out"></span> </a></li>
-             <li><a href="{{ portail }}/docs/documentation.pdf" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Documentation"> <span class="glyphicon glyphicon-info-sign"></span> </a></li>
+             <li><a href="https://cdn1.easyamap.fr/docs/documentation.pdf" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Documentation"> <span class="glyphicon glyphicon-info-sign"></span> </a></li>
              <li class="mobile-hide"><a class="link-disabled" href="#" onclick="return false;">{{ app.user.firstname ~ ' ' ~ app.user.lastname}}</a></li>
           </ul>        
         {% endif %}      
