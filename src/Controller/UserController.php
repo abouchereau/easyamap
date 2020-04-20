@@ -54,7 +54,7 @@ class UserController extends AmapBaseController
             $sendMail = $form['sendMail']->getData();
             $mailSent = 'no';
             if ($sendMail) {
-                $mailSent = $this->sendMail($entity->getEmail(),$entity->getLastname(),$entity->getPassword());
+                $mailSent = $this->sendMail($entity->getEmail(),$entity->getUsername(),$entity->getPassword());
             }
 
 
