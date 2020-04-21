@@ -235,7 +235,7 @@ SELECT
     pd.id_product_distribution,
 	d.date AS date,
     pu.fk_user AS fk_user,
-    pu.quantity AS nb,
+    SUM(pu.quantity) AS nb,
     concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit,
     pr.sequence as pr_seq,
     d2.date AS date_shift
@@ -247,6 +247,7 @@ SELECT
 	LEFT JOIN user u ON u.id_user = pu.fk_user
 	WHERE d.date IN ('".implode("','",$dates)."')
     AND (pu.fk_user=:id_user OR :id_user is null)
+	GROUP BY CONCAT(ifnull(u.lastname,''),'<br>',ifnull(u.firstname,'')), pd.id_product_distribution, d.date,pu.fk_user, concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')), pr.sequence, d2.date 
 UNION  
 SELECT     
 	CONCAT(ifnull(u.lastname,''),'<br>',ifnull(u.firstname,'')) AS entity,	 
@@ -254,7 +255,7 @@ SELECT
     pd.id_product_distribution,
 	d2.date AS date,
     pu.fk_user AS fk_user,
-    pu.quantity AS nb,
+    SUM(pu.quantity) AS nb,
     concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit,
     pr.sequence as pr_seq,
     d.date AS date_shift
@@ -266,6 +267,7 @@ SELECT
 	LEFT JOIN user u ON u.id_user = pu.fk_user
 	WHERE d2.date IN ('".implode("','",$dates)."')
     AND (pu.fk_user=:id_user OR :id_user is null)
+	GROUP BY CONCAT(ifnull(u.lastname,''),'<br>',ifnull(u.firstname,'')), pd.id_product_distribution, d.date,pu.fk_user, concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')), pr.sequence, d2.date 
 	) v
     ORDER BY v.entity, v.date, v.pr_seq";
         $stmt = $conn->prepare($sql);
