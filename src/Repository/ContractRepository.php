@@ -346,7 +346,7 @@ class ContractRepository extends EntityRepository
                 pr.base_price,
                 pr.unit,
                 d.date,
-                p.quantity,
+                SUM(p.quantity) AS quantity,
                 u.lastname
                 FROM contract c                
                 LEFT JOIN purchase p ON p.fk_contract = c.id_contract                
@@ -361,7 +361,7 @@ class ContractRepository extends EntityRepository
           $sql .= " AND pr.fk_farm=:id_farm";
           $params['id_farm'] = $id_farm;
         }
-        $sql .= " ORDER BY f.sequence, pr.sequence, d.date, u.lastname";
+        $sql .= "GROUP BY u.lastname, pr.id_product,d.date ORDER BY f.sequence, pr.sequence, d.date, u.lastname";
         $stmt = $conn->prepare($sql);
         $stmt->execute($params);
         $tab = $stmt->fetchAll(\PDO::FETCH_ASSOC);
