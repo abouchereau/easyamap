@@ -104,7 +104,7 @@ order by t.date, t.id_task";
         $sql = "select count(*) as nb from participation where fk_distribution=:id_distribution and fk_user=:id_user";
         $stmt = $conn->prepare($sql);
         $stmt->execute([':id_distribution'=>$id_distribution,':id_user'=>$id_user]);
-        return $stmt->fetch(\PDO::FETCH_COLUMN) == '1'; 
+        return $stmt->fetch(\PDO::FETCH_COLUMN) > 0; 
     }
             
 }
