@@ -48,13 +48,14 @@ class UserController extends AmapBaseController
         $form->handleRequest($request);
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            $website = $em->getRepository('App\Entity\Setting')->get('link', $_SERVER['APP_ENV']);
             $entity->setCreatedAt(new \DateTime());
             $em->persist($entity);
             $em->flush();
             $sendMail = $form['sendMail']->getData();
             $mailSent = 'no';
             if ($sendMail) {
-                $mailSent = $this->sendMail($entity->getEmail(),$entity->getUsername(),$entity->getPassword());
+                $mailSent = $this->sendMail($entity->getEmail(),$website,$entity->getUsername(),$entity->getPassword());
             }
 
 
@@ -266,10 +267,10 @@ class UserController extends AmapBaseController
         return $this->redirect($this->generateUrl('user_edit',array('id' => $id)));
     }
     
-    protected function sendMail($email, $lastname, $password) {
+    protected function sendMail($email, $website, $lastname, $password) {
         //$url = 'http://contrats.la-riche-en-bio.com';
         $msg = $this->renderView('Emails/new_user.html.twig',
-                array('lastname' => $lastname,'password' => $password)
+                array('website' => $website, 'lastname' => $lastname, 'password' => $password)
                 );
           
           
