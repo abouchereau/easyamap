@@ -361,7 +361,7 @@ class ContractRepository extends EntityRepository
           $sql .= " AND pr.fk_farm=:id_farm";
           $params['id_farm'] = $id_farm;
         }
-        $sql .= "GROUP BY u.lastname, pr.id_product,d.date ORDER BY f.sequence, pr.sequence, d.date, u.lastname";
+        $sql .= " GROUP BY u.lastname, pr.id_product,d.date ORDER BY f.sequence, pr.sequence, d.date, u.lastname";
         $stmt = $conn->prepare($sql);
         $stmt->execute($params);
         $tab = $stmt->fetchAll(\PDO::FETCH_ASSOC);
