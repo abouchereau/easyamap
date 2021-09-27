@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -13,11 +14,20 @@ use App\Entity\Product;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class ContractType extends AbstractType
 {
+
+
+    protected $hours = [];
+
+    public function __construct() {
+        for($i=0;$i<24;$i++) {
+            $this->hours[$i." h 00"] = $i;
+        }
+    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -28,7 +38,6 @@ class ContractType extends AbstractType
 
         $builder
             ->add('label',TextType::class,array('label' => 'Nom * (exemple : pommes mai 2020)',     'required' => true))
-          //  ->add('isActive',CheckboxType::class,array('label' => 'Ouvrir les commandes dès maintenant',     'required' => false))
             ->add('periodStart',DateType::class,array(
               'widget' => 'single_text',
               'html5' => false,
@@ -41,13 +50,28 @@ class ContractType extends AbstractType
               'format' =>'yyyy-MM-dd',
               'label' => 'Date fin distributions (année-mois-jour) *', 
               'required' => true))
+            ->add('fillDateStart',DateType::class,array(
+                'widget' => 'single_text',
+                'html5' => false,
+                'format' =>'yyyy-MM-dd',
+                'label' => 'A remplir à partir de (année-mois-jour)',
+                'required' => false))
+            ->add('autoStartHour',ChoiceType::class, [
+                'choices'  => $this->hours,
+                'label' => 'Heure d\'ouverture automatique (laisser vide si ouverture manuelle)',
+                'attr'=> array('class'=>'not-select2'),
+                'required' => false])
             ->add('fillDateEnd',DateType::class,array(
               'widget' => 'single_text',
               'html5' => false,
               'format' =>'yyyy-MM-dd',
               'label' => 'A remplir au plus tard le (année-mois-jour) (1)', 
               'required' => false))
-            //->add('isVisible',CheckboxType::class,array('label' => 'Visible pour les adhérents','required' => false))
+            ->add('autoEndHour',ChoiceType::class, [
+                'choices'  => $this->hours,
+                'attr'=> array('class'=>'not-select2'),
+                'label' => 'Heure de fermeture automatique (laisser vide si fermeture manuelle)',
+                'required' => false])
             ->add('description',TextareaType::class,array('label' => 'Infos','required' => false))
             ->add('countPurchaseSince',DateType::class,array(
               'widget' => 'single_text',

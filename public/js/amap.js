@@ -3,6 +3,6 @@ $(document).ready(function() {
     container : 'body'
   });
   if (typeof $('').select2 == 'function') {
-    $('select:not(#nb,.input-sm,.sonata-filter-option)').select2();
+    $('select:not(#nb,.input-sm,.sonata-filter-option,.not-select2)').select2();
   }
 });

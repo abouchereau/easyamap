@@ -48,6 +48,13 @@ class Contract
      * @ORM\Column(name="period_end", type="date", nullable=true)
      */
     private $periodEnd;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fill_date_start", type="date", nullable=true)
+     */
+    private $fillDateStart;
     
     /**
      * @var \DateTime
@@ -55,6 +62,20 @@ class Contract
      * @ORM\Column(name="fill_date_end", type="date", nullable=true)
      */
     private $fillDateEnd;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="auto_start_hour", type="integer", nullable=true)
+     */
+    private $autoStartHour;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="auto_end_hour", type="integer", nullable=true)
+     */
+    private $autoEndHour;
 
     /**
     * @ORM\ManyToMany(targetEntity="App\Entity\Product")
@@ -127,6 +148,54 @@ class Contract
         }
 
         return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getFillDateStart()
+    {
+        return $this->fillDateStart;
+    }
+
+    /**
+     * @param \DateTime $fillDateStart
+     */
+    public function setFillDateStart(\DateTime $fillDateStart): void
+    {
+        $this->fillDateStart = $fillDateStart;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAutoStartHour()
+    {
+        return $this->autoStartHour;
+    }
+
+    /**
+     * @param int $autoStartHour
+     */
+    public function setAutoStartHour(int $autoStartHour): void
+    {
+        $this->autoStartHour = $autoStartHour;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAutoEndHour()
+    {
+        return $this->autoEndHour;
+    }
+
+    /**
+     * @param int $autoEndHour
+     */
+    public function setAutoEndHour(int $autoEndHour): void
+    {
+        $this->autoEndHour = $autoEndHour;
     }
 
     /**

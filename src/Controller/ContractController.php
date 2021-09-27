@@ -66,7 +66,8 @@ class ContractController extends AmapBaseController
         $entity = new Contract();
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
-        $values = $request->request->get('amap_orderbundle_contract');
+        //$values = $request->request->get('amap_orderbundle_contract');
+        $values = $request->request->all()['contract'];
         $entity->setPeriodStart(\DateTime::createFromFormat('Y-m-d', trim($values['periodStart'])));
         $entity->setPeriodEnd(\DateTime::createFromFormat('Y-m-d', trim($values['periodEnd'])));
         $entity->setFkUser($user);
