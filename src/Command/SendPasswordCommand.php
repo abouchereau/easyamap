@@ -53,7 +53,7 @@ easyamap";
 
           
           
-          $message = (new \SwiftMessage())
+          $message = (new \Swift_Message())
             ->setSubject('easyamap : identifiants connexion')
             ->setFrom(array('ne_pas_repondre@easyamap.fr' => "easyamap"))
           //  ->setFrom('anthonybouchereau@hotmail.com')

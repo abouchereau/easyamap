@@ -48,18 +48,17 @@ class UserController extends AmapBaseController
         $form->handleRequest($request);
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $website = $em->getRepository('App\Entity\Setting')->get('link', $_SERVER['APP_ENV']);
             $entity->setCreatedAt(new \DateTime());
             $em->persist($entity);
             $em->flush();
             $sendMail = $form['sendMail']->getData();
             $mailSent = 'no';
             if ($sendMail) {
-                $mailSent = $this->sendMail($entity->getEmail(),$website,$entity->getUsername(),$entity->getPassword());
+                $mailSent = $this->sendMail($entity->getEmail(),$entity->getUsername(),$entity->getPassword());
             }
 
 
-            
+
             $this->get('session')->getFlashBag()->add('notice', 'Les données ont été mises à jour.');
             if ($mailSent !== 'no') {
                 if ($mailSent)
@@ -87,7 +86,7 @@ class UserController extends AmapBaseController
      */
     private function createCreateForm(User $entity)
     {
-        $em = $this->getDoctrine()->getManager();        
+        $em = $this->getDoctrine()->getManager();
         $withAddress = $em->getRepository('App\Entity\Setting')->get('useAddress', $_SERVER['APP_ENV']);
         $form = $this->createForm(UserType::class, $entity, array(
             'action' => $this->generateUrl('user_create'),
@@ -108,13 +107,13 @@ class UserController extends AmapBaseController
     public function new()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        
+
         $entity = new User();
         $password = PasswordGenerator::make();
         $entity->setPassword($password);
         $form   = $this->createCreateForm($entity);
-        
-        
+
+
 
         return $this->render('User/new.html.twig', array(
             'entity' => $entity,
@@ -131,7 +130,7 @@ class UserController extends AmapBaseController
     public function edit($id)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        
+
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('App\Entity\User')->find($id);
@@ -152,11 +151,11 @@ class UserController extends AmapBaseController
          //   'delete_form' => $deleteForm->createView(),
         ));
     }
-    
+
     public function userEdit()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        
+
         $entity = $this->get('security.token_storage')->getToken()->getUser();
         $editForm = $this->createEditForm($entity);
         $editForm->remove('isAdmin');
@@ -177,7 +176,7 @@ class UserController extends AmapBaseController
     private function createEditForm(User $entity)
     {
         $em = $this->getDoctrine()->getManager();
-        $withAddress = $em->getRepository('App\Entity\Setting')->get('useAddress',$_SERVER['APP_ENV']);        
+        $withAddress = $em->getRepository('App\Entity\Setting')->get('useAddress',$_SERVER['APP_ENV']);
         $form = $this->createForm(UserType::class, $entity, array(
             'action' => $this->generateUrl('user_update', array('id' => $entity->getIdUser())),
             'method' => 'PUT',
@@ -185,7 +184,7 @@ class UserController extends AmapBaseController
             'with_address' => $withAddress
         ));
 
-        
+
 
         return $form;
     }
@@ -196,7 +195,7 @@ class UserController extends AmapBaseController
     public function update(Request $request, $id)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        
+
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('App\Entity\User')->find($id);
@@ -206,19 +205,19 @@ class UserController extends AmapBaseController
         }
         $form_values = $request->get('amap_orderbundle_user');
         $adherent = isset($form_values['submit_adherent']);
-        
+
      //   $deleteForm = $this->createDeleteForm($id);
         $editForm = $this->createEditForm($entity);
         $editForm->add('submit', SubmitType::class, array('label' => 'Update'));
         $editForm->handleRequest($request);
         $canBeDeleted = $em->getRepository('App\Entity\User')->canBeDeleted($id);
-        
+
         if ($editForm->isValid()) {
             $em->flush();
             $this->get('session')->getFlashBag()->add('notice', 'Les données ont été mises à jour.');
             if ($adherent)
                 return $this->redirect($this->generateUrl('informations_adherent'));
-            else                
+            else
                 return $this->redirect($this->generateUrl('user_edit', array('id' => $id)));
         }
         else {
@@ -238,7 +237,7 @@ class UserController extends AmapBaseController
     public function delete(Request $request, $id)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        
+
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('App\Entity\User')->find($id);
 
@@ -258,7 +257,7 @@ class UserController extends AmapBaseController
     public function activate($id, $active)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        
+
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('App\Entity\User')->find($id);
         $entity->setIsActive($active);
@@ -266,11 +265,11 @@ class UserController extends AmapBaseController
         $em->flush();
         return $this->redirect($this->generateUrl('user_edit',array('id' => $id)));
     }
-    
-    protected function sendMail($email, $website, $lastname, $password) {
+
+    protected function sendMail($email, $lastname, $password) {
         //$url = 'http://contrats.la-riche-en-bio.com';
         $msg = $this->renderView('Emails/new_user.html.twig',
-                array('website' => $website, 'lastname' => $lastname, 'password' => $password)
+                array('lastname' => $lastname,'password' => $password)
                 );
           
           

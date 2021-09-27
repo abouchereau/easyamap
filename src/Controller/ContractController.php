@@ -310,7 +310,7 @@ class ContractController extends AmapBaseController
         $em->flush();
 
 
-        return $this->redirect($this->generateUrl('contract'));
+        return $this->redirect($this->generateUrl('contract_index'));
     }
 
     /**

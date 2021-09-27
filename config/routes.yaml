@@ -267,8 +267,6 @@ product_distribution:
     controller: App\Controller\ProductDistributionController:index
     defaults:
         page: 1
-    requirements:
-        page: '\d+'
     
 product_distribution_save:
     path:   /product_distribution_save

@@ -5,7 +5,9 @@ doctrine:
         # IMPORTANT: You MUST configure your db driver and server version,
         # either here or in the DATABASE_URL env var (see .env file)
         #driver: 'mysql'
+        #driver: 'pdo_mysql'
         #server_version: '5.7'
+        #server_version: 'mariadb-10.3.18'
 
         # Only needed for MySQL (ignored otherwise)
         charset: utf8mb4
