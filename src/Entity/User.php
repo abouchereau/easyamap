@@ -10,7 +10,9 @@ use Doctrine\ORM\Mapping\JoinTable;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\Traits\IsActiveDefaultTrueTrait;
 use App\Entity\Traits\CreatedAtTrait;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
+ * @UniqueEntity(fields="username", message="L'identifiant de connexion est déjà utilisé par un autre adhérent. Merci de bien vouloir en choisir un différent.")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
 class User implements UserInterface
