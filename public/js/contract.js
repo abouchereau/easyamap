@@ -80,7 +80,7 @@ $(document).ready(function () {
   $('.entity label:first-child').after('<br /><button class="btn btn-xs btn-info" onclick="checkAll();return false;">Tout cocher / décocher</a>');
   
   $("#contract_periodStart, #contract_periodEnd").datepicker(options1);
-  $("#contract_fillDateEnd, #contract_countPurchaseSince").datepicker(options2);
+  $("#contract_fillDateEnd, #contract_fillDateStart, #contract_countPurchaseSince, #contract_dateTest").datepicker(options2);
   
   //on disable les produits ayant déjà eu des commandes
   $('.entity .custom-checkbox').each(function () {

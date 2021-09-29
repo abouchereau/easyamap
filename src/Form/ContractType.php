@@ -20,21 +20,16 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 class ContractType extends AbstractType
 {
 
-
-    protected $hours = [];
-
-    public function __construct() {
-        for($i=0;$i<24;$i++) {
-            $this->hours[$i." h 00"] = $i;
-        }
-    }
-
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $hours = [];
+        for($i=0;$i<24;$i++) {
+            $hours[$i."h"] = $i;
+        }
 
         $builder
             ->add('label',TextType::class,array('label' => 'Nom * (exemple : pommes mai 2020)',     'required' => true))
@@ -57,7 +52,7 @@ class ContractType extends AbstractType
                 'label' => 'A remplir à partir de (année-mois-jour)',
                 'required' => false))
             ->add('autoStartHour',ChoiceType::class, [
-                'choices'  => $this->hours,
+                'choices'  => $hours,
                 'label' => 'Heure d\'ouverture automatique (laisser vide si ouverture manuelle)',
                 'attr'=> array('class'=>'not-select2'),
                 'required' => false])
@@ -65,10 +60,11 @@ class ContractType extends AbstractType
               'widget' => 'single_text',
               'html5' => false,
               'format' =>'yyyy-MM-dd',
-              'label' => 'A remplir au plus tard le (année-mois-jour) (1)', 
+              'label' => 'A remplir au plus tard le (année-mois-jour)',
               'required' => false))
+
             ->add('autoEndHour',ChoiceType::class, [
-                'choices'  => $this->hours,
+                'choices'  => $hours,
                 'attr'=> array('class'=>'not-select2'),
                 'label' => 'Heure de fermeture automatique (laisser vide si fermeture manuelle)',
                 'required' => false])

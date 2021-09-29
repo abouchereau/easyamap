@@ -553,6 +553,9 @@ td.newyear, th.newyear {
     float:left;
     text-align:center;
 }
+#contract_autoStartHour, #contract_autoEndHour{
+    width:20%;
+}
 /** mobile **/
 
 @media screen and (max-width: 768px) {

@@ -49,19 +49,20 @@ class Contract
      */
     private $periodEnd;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="fill_date_start", type="date", nullable=true)
-     */
-    private $fillDateStart;
-    
+
     /**
      * @var \DateTime
      *
      * @ORM\Column(name="fill_date_end", type="date", nullable=true)
      */
     private $fillDateEnd;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fill_date_start", type="date", nullable=true)
+     */
+    private $fillDateStart;
 
     /**
      * @var integer
@@ -151,22 +152,6 @@ class Contract
     }
 
     /**
-     * @return \DateTime
-     */
-    public function getFillDateStart()
-    {
-        return $this->fillDateStart;
-    }
-
-    /**
-     * @param \DateTime $fillDateStart
-     */
-    public function setFillDateStart(\DateTime $fillDateStart): void
-    {
-        $this->fillDateStart = $fillDateStart;
-    }
-
-    /**
      * @return int
      */
     public function getAutoStartHour()
@@ -176,10 +161,12 @@ class Contract
 
     /**
      * @param int $autoStartHour
+     * @return Contract
      */
-    public function setAutoStartHour(int $autoStartHour): void
+    public function setAutoStartHour(int $autoStartHour)
     {
         $this->autoStartHour = $autoStartHour;
+        return $this;
     }
 
     /**
@@ -192,10 +179,12 @@ class Contract
 
     /**
      * @param int $autoEndHour
+     * @return Contract
      */
-    public function setAutoEndHour(int $autoEndHour): void
+    public function setAutoEndHour(int $autoEndHour)
     {
         $this->autoEndHour = $autoEndHour;
+        return $this;
     }
 
     /**
@@ -216,7 +205,9 @@ class Contract
      */
     public function setFillDateEnd($fillDateEnd)
     {
-        $this->fillDateEnd = $fillDateEnd;
+        if ($fillDateEnd != null) {
+            $this->fillDateEnd = $fillDateEnd;
+        }
 
         return $this;
     }
@@ -230,6 +221,32 @@ class Contract
     public function getFillDateEnd()
     {
         return $this->fillDateEnd;
+    }
+
+    /**
+     * Set fillDateEnd
+     *
+     * @param \DateTime $fillDateStart
+     * @return Contract
+     */
+    public function setFillDateStart($fillDateStart)
+    {
+        if ($fillDateStart != null) {
+            $this->fillDateStart = $fillDateStart;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get fillDateEnd
+     *
+     * @return \DateTime
+     */
+
+    public function getFillDateStart()
+    {
+        return $this->fillDateStart;
     }
     
     

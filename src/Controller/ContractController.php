@@ -75,7 +75,6 @@ class ContractController extends AmapBaseController
         if ($form->isValid()) {      
             $em->persist($entity);
             $em->flush();
-              
             
             //obsolète : détection des confilts
           /*  $conflicts = $em->getRepository('App\Entity\Contract')->getOverlappingContractsWithSameProducts($entity->getIdContract());

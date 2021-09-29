@@ -528,4 +528,22 @@ class ContractRepository extends EntityRepository
         return $stmt->fetch(\PDO::FETCH_COLUMN)>0;
         
     }
+
+    public function autoOpen() {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "update contract set is_active = 1
+            where fill_date_start = CURDATE() 
+            and auto_start_hour = hour(now())";
+        $stmt = $conn->prepare($sql);
+        return $stmt->execute();
+    }
+
+    public function autoClose() {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "update contract set is_active = 0
+            where fill_date_end = CURDATE() 
+            and auto_end_hour = hour(now())";
+        $stmt = $conn->prepare($sql);
+        return $stmt->execute();
+    }
 }
