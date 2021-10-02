@@ -392,12 +392,17 @@ class PurchaseController extends AmapBaseController
       return $nb;
   }
   
-  public function rapport() {
-      $this->denyAccessUnlessGranted(array('ROLE_REFERENT','ROLE_FARMER'));  
-      $id_farm = isset($_GET['id_farm'])?$_GET['id_farm']:null;
-      $date_debut = isset($_GET['date_debut'])?$_GET['date_debut']:null;
-      $date_fin = isset($_GET['date_fin'])?$_GET['date_fin']:null;
-      
+  public function rapport()
+  {
+      $this->denyAccessUnlessGranted(array('ROLE_REFERENT', 'ROLE_FARMER'));
+      $id_farm = isset($_GET['id_farm']) ? $_GET['id_farm'] : null;
+      $date_debut = isset($_GET['date_debut']) ? $_GET['date_debut'] : null;
+      $date_fin = isset($_GET['date_fin']) ? $_GET['date_fin'] : null;
+      $id_user = isset($_GET['id_user']) ? $_GET['id_user'] : null;
+      if ($id_user == "all") {
+          $id_user = null;
+      }
+
       $user = $this->get('security.token_storage')->getToken()->getUser();
       $em = $this->getDoctrine()->getManager();
       $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);
@@ -421,7 +426,7 @@ class PurchaseController extends AmapBaseController
       }
       
       $products = $em->getRepository('App\Entity\Product')->findForFarm($farm);
-      $quantities = $em->getRepository('App\Entity\Purchase')->getQuantities($farm->getIdFarm(),$date_debut,$date_fin);
+      $quantities = $em->getRepository('App\Entity\Purchase')->getQuantities($farm->getIdFarm(), $date_debut, $date_fin, $id_user);
       
       return $this->render('Stats/rapport.html.twig', array(
             'farms' => $farms,
@@ -429,7 +434,8 @@ class PurchaseController extends AmapBaseController
             'products' => $products,
             'farm' => $farm,
             'date_debut' => $date_debut,
-            'date_fin' => $date_fin
+            'date_fin' => $date_fin,
+            'id_user' => $id_user
         ));
   }
 }

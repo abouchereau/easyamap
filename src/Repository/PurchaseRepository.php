@@ -372,10 +372,10 @@ SELECT
        return $stmt->fetchAll(\PDO::FETCH_ASSOC); 
   }
   
-  public function getQuantities($id_farm,$date_debut,$date_fin) {
+  public function getQuantities($id_farm,$date_debut,$date_fin,$id_user) {
       $conn = $this->getEntityManager()->getConnection();
       $sql = "select fullname, id_product, sum(quantity) as quantity, sum(price) as price from (
-            select concat(u.lastname,' ',u.firstname) as fullname, 
+            select concat(u.lastname,' ',u.firstname,'|',u.id_user) as fullname, 
             pr.id_product, 
             pr.sequence, 
             pu.quantity,
@@ -386,10 +386,11 @@ SELECT
             left join product pr on pr.id_product = pd.fk_product and pr.ratio is null
             left join distribution d on d.id_distribution = pd.fk_distribution
             where pr.fk_farm = :id_farm
-            and d.date BETWEEN :date_debut and :date_fin   
+            and d.date BETWEEN :date_debut and :date_fin    
+            and (:id_user IS NULL or pu.fk_user = :id_user)
             group by u.id_user, pr.id_product, pu.id_purchase
             union all
-            select concat(u.lastname,' ',u.firstname) as fullname, 
+            select concat(u.lastname,' ',u.firstname,'|',u.id_user) as fullname, 
             pr.id_product, 
             pr.sequence, 
             pu.quantity,
@@ -401,12 +402,17 @@ SELECT
             left join product pr on pr.id_product = pd.fk_product and pr.ratio is not null
             left join distribution d on d.id_distribution = pd.fk_distribution
             where pr.fk_farm = :id_farm           
-            and d.date BETWEEN :date_debut and :date_fin             
+            and d.date BETWEEN :date_debut and :date_fin     
+            and (:id_user IS NULL or pu.fk_user = :id_user)
             group by u.id_user, pr.id_product, pu.id_purchase) t
             group by fullname, id_product, sequence
         order by fullname, sequence";
         $stmt = $conn->prepare($sql);
-        $stmt->execute(array('date_debut'=>$date_debut->format('Y-m-d'), 'date_fin'=>$date_fin->format('Y-m-d'), 'id_farm'=>$id_farm));
+        $stmt->execute(array(
+            'date_debut'=>$date_debut->format('Y-m-d'),
+            'date_fin'=>$date_fin->format('Y-m-d'),
+            'id_farm'=>$id_farm,
+            'id_user'=>$id_user));
         $tab = $stmt->fetchAll(\PDO::FETCH_ASSOC); 
         $out = array('by_user'=>[],'total_quantity'=>[],'total_price'=>[],'total_total_quantity'=>0,'total_total_price'=>0);
         foreach ($tab as $line) {

@@ -16,29 +16,36 @@
 {% block body %}
 
     <div class="row bg-success no-print">
-        <div class="col-md-12">
-            <form action="" method="GET">
-                <div class="form-group">
-                    <label>Producteur</label><br />
-                    <select class="form-control" name="id_farm">
-                        {% for eachFarm in farms %}
-                            <option value="{{ eachFarm.idFarm }}"{% if eachFarm.idFarm==farm.idFarm %} selected="selected"{% endif %}>{{ eachFarm }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Date Début</label><br />
-                    <input class="form-control datepicker" type="text" name="date_debut" value="{{ date_debut|date('Y-m-d') }}" />
-                </div>
-                 <div class="form-group">
-                    <label>Date Fin</label><br />
-                    <input class="form-control datepicker" type="text" name="date_fin" value="{{ date_fin|date('Y-m-d') }}" />
-                </div>
-                <div class="form-group no-print">&nbsp;<br />
-                    <button type="submit" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-chevron-right"></span> Valider</button>
-                </div>
-            </form>
-        </div>
+        <form action="" method="GET">
+            <div class="form-group col-md-3">
+                <label>Producteur</label><br />
+                <select class="form-control" name="id_farm">
+                    {% for eachFarm in farms %}
+                        <option value="{{ eachFarm.idFarm }}"{% if eachFarm.idFarm==farm.idFarm %} selected="selected"{% endif %}>{{ eachFarm }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-md-3">
+                <label>Adhérent</label><br />
+                <select class="form-control" name="id_user">
+                    <option value="all">Tous</option>
+                    {% for fullname,quantity in quantities.by_user  %}
+                        <option value="{{ fullname|split('|')[1]}}"{% if fullname|split('|')[1]==id_user %} selected="selected"{% endif %}>{{ fullname|split('|')[0]}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-md-3">
+                <label>Date Début</label><br />
+                <input class="form-control datepicker" type="text" name="date_debut" value="{{ date_debut|date('Y-m-d') }}" />
+            </div>
+             <div class="form-group col-md-3">
+                <label>Date Fin</label><br />
+                <input class="form-control datepicker" type="text" name="date_fin" value="{{ date_fin|date('Y-m-d') }}" />
+            </div>
+            <div class="no-print col-md-12 text-center">&nbsp;<br />
+                <button type="submit" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-chevron-right"></span> Valider</button>
+            </div>
+        </form>
     </div>
   <div class="row no-print" style="margin:10px 0;">
         <div class="col-md-12">
@@ -68,7 +75,7 @@
                {% endfor %}
            </tr>           
            {% for fullname,quantity in quantities.by_user %}
-               <tr><td class="bg-success" colspan="2">{{ fullname }}</td>
+               <tr><td class="bg-success" colspan="2">{{ fullname|split('|')[0]}}</td>
                    {% for product in products %}
                         <td>{% if quantity[product.idProduct] is defined %}{{ quantity[product.idProduct].quantity }}{% endif %}</td>
                    {% endfor %}
