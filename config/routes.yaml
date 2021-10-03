@@ -329,6 +329,14 @@ contract_payment:
 contrat_list:
     path: liste_contrats
     controller: App\Controller\PurchaseController:index
+    defaults:
+        isArchive: false
+
+contrat_list_archives:
+    path: liste_contrats_archives
+    controller: App\Controller\PurchaseController:index
+    defaults:
+        isArchive: true
     
 contrat_view:
     path: contrat/{id_contract}/{id_user}

@@ -7,6 +7,8 @@
 
     
   <div class="col-md-6 col-md-offset-3 filterable">
+
+{% if isArchive == false %}
     <div class="page-header">Contrats en cours</div>
     {% set hasOccurence = false %}
     {% for contract in contracts %}
@@ -19,6 +21,9 @@
     <p class="text-muted">Pas de contrat en cours.</p>
     {% endif %}
 
+      <p><a href="{{ path('contrat_list_archives') }}">Archives</a></p>
+{% else %}
+    <p><a href="{{ path('contrat_list') }}">Contrats ouverts</a></p>
     <div class="page-header">Archives</div>
     {% set hasOccurence = false %}
     {% for contract in contracts %}
@@ -42,8 +47,9 @@
     {% if not hasOccurence %}
     <p class="text-muted">Pas de contrat fermé.</p>
     {% endif %}
+
+{%  endif %}
   </div>
-  
     <div class="col-md-3">
     <div class="input-group">
        <input type="text" class="form-control" placeholder="Rechercher" id="search">

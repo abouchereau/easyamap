@@ -40,7 +40,7 @@
        {% if contract.fillDateEnd is not empty %}
             <div class="pull-right text-right">
                 <p class="small">A remplir au plus tard le :</p>
-                <h4><span class="label label-warning" style="font-weight:bold;border-radius:100px;">{{ contract.fillDateEnd|full_date_fr }}</span></h4>
+                <h4><span class="label label-warning" style="font-weight:bold;border-radius:100px;">{{ contract.fillDateEnd|full_date_fr }} {%  if contract.autoEndHour %}à {{ contract.autoEndHour }}h{% endif %}</span></h4>
             </div>
     {% endif %}
    </div>

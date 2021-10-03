@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class PurchaseController extends AmapBaseController
 {
-  public function index()
+  public function index($isArchive = false)
   {
     $this->denyAccessUnlessGranted('ROLE_ADHERENT');    
     
@@ -22,7 +22,8 @@ class PurchaseController extends AmapBaseController
     $filled = $em->getRepository('App\Entity\Contract')->getFilledContracts($user);
           return $this->render('Purchase/index.html.twig', array(
             'contracts' => $contracts,
-            'filled' => $filled
+            'filled' => $filled,
+            'isArchive' => $isArchive
         ));
   } 
   
@@ -427,7 +428,8 @@ class PurchaseController extends AmapBaseController
       
       $products = $em->getRepository('App\Entity\Product')->findForFarm($farm);
       $quantities = $em->getRepository('App\Entity\Purchase')->getQuantities($farm->getIdFarm(), $date_debut, $date_fin, $id_user);
-      
+      $user_list = $em->getRepository('App\Entity\User')->findAllOrderByLastname();
+
       return $this->render('Stats/rapport.html.twig', array(
             'farms' => $farms,
             'quantities' => $quantities,
@@ -435,7 +437,8 @@ class PurchaseController extends AmapBaseController
             'farm' => $farm,
             'date_debut' => $date_debut,
             'date_fin' => $date_fin,
-            'id_user' => $id_user
+            'id_user' => $id_user,
+            'user_list' => $user_list
         ));
   }
 }

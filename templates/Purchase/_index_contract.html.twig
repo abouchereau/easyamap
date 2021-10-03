@@ -5,6 +5,6 @@
 #}{% if filled[contract.idContract] is defined %}<div class="pull-left"><span data-toggle="tooltip" data-placement="bottom" title="Commande passée" class="glyphicon glyphicon-check"></span></div>{% endif %}{#
 #}{{ contract.label }}{#
 #}{% if contract.fillDateEnd is not empty %}{#
-#}<br /><small{% if style=='success' and date(contract.fillDateEnd)<date('+3days') %} class="label label-warning" style="border-radius:10px;"> <span class="glyphicon glyphicon-alert"></span> {% else %}>{% endif %}Date limite : {{ contract.fillDateEnd|full_date_fr2 }}</small>{#
+#}<br /><small{% if style=='success' and date(contract.fillDateEnd)<date('+3days') %} class="label label-warning" style="border-radius:10px;"> <span class="glyphicon glyphicon-alert"></span> {% else %}>{% endif %}Date limite : {{ contract.fillDateEnd|full_date_fr2 }} {%  if contract.autoEndHour %}à {{ contract.autoEndHour }}h{% endif %}</small>{#
 #}{% endif %}{#
 #}</a>

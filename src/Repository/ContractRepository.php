@@ -60,6 +60,7 @@ class ContractRepository extends EntityRepository
             count(distinct(d.id_distribution)) as nbDistribution,
             min(d.date) as firstDistribution,
             c.fill_date_end as fillDateEnd,
+            c.auto_end_hour as autoEndHour, 
             case when c.fill_date_end <= date_sub(now(),interval 1 hour) then 1 else 0 end as isArchive
             from contract c
             left join distribution d on d.date between c.period_start and c.period_end
