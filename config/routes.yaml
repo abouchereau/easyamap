@@ -525,3 +525,13 @@ shift_save:
     path: shift_save
     controller: App\Controller\ProductDistributionController:shiftSave
     methods: POST
+
+api_farms:
+    path: api/farms
+    controller: App\Controller\ApiController:getAllFarms
+    methods: GET
+
+api_products:
+    path: api/products
+    controller: App\Controller\ApiController:getAllProducts
+    methods: GET

@@ -166,4 +166,14 @@ class FarmRepository extends EntityRepository
         }
         return $this->payment_freqs[$id_farm];
     }
+
+    public function getAllFarms() {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "select id_farm, label, product_type, check_payable_to, description, link 
+            from farm
+            where is_active=1
+            order by sequence";
+        $r = $conn->query($sql);
+        return $r->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }
