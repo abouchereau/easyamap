@@ -22,7 +22,7 @@
 </div>
 
       
-{% if distributions is defined %}
+{% if distribution_select is defined %}
 <div class="modal fade" id="form-report">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -32,7 +32,7 @@
     </div>
       <div class="modal-body">
           <select id="distribution_new">
-        {% for id_distribution,date in distributions %}
+        {% for id_distribution,date in distribution_select %}
             <option value="{{ id_distribution }}">{{ date|full_date_fr2 }}</option>
         {% endfor %}
           </select>

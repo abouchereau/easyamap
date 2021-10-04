@@ -21,6 +21,6 @@ class ApiController extends Controller
     public function getAllProducts() {
         $em = $this->getDoctrine()->getManager();
         $products = $em->getRepository('App\Entity\Product')->getAllProducts();
-        return new Response(json_encode($products));
+        return new JsonResponse($products);
     }
 }

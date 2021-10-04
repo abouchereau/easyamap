@@ -10,6 +10,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DistributionRepository extends EntityRepository 
 {
+
+    protected $all = null;
+
   public function toggle($date)
   {    
     $id_distribution = $this->retrieveFromDate($date);
@@ -96,32 +99,40 @@ class DistributionRepository extends EntityRepository
     $r = $conn->query($sql);
     return $r->fetchAll(\PDO::FETCH_KEY_PAIR);
   }
-  
-  public function findAllOffset($first, $nb)
-  {
-    $conn = $this->getEntityManager()->getConnection();
-    $sql = "SELECT id_distribution, date
+
+  private function loadAll() {
+      $conn = $this->getEntityManager()->getConnection();
+      $sql = "SELECT id_distribution, date
             FROM distribution            
             ORDER BY date ASC";
-    $r = $conn->query($sql);
-    $all = $r->fetchAll(\PDO::FETCH_KEY_PAIR);
-    $next = null;
-    $now = new \DateTime();
-    $i = 0;
-    $index = 0;
-    foreach($all as $date) {
-        $dt = \DateTime::createFromFormat('Y-m-d',$date);
-        if ($dt > $now) {
-            $next = $date;
-            $index = $i;
-            break;
-        }
-        $i++;
-    }
-    return array_slice($all,$index+$first,$nb,true);
+      $r = $conn->query($sql);
+      $this->all = $r->fetchAll(\PDO::FETCH_KEY_PAIR);
   }
-  
-  public function findAllForStat() {
+
+  public function findAllOffset($first, $nb)
+  {
+      if ($this->all == null) {
+         $this->loadAll();
+      }
+      $next = null;
+      $now = new \DateTime();
+      $i = 0;
+      $index = 0;
+      foreach($this->all as $date) {
+      $dt = \DateTime::createFromFormat('Y-m-d',$date);
+      if ($dt > $now) {
+          $next = $date;
+          $index = $i;
+          break;
+      }
+      $i++;
+      }
+      return array_slice($this->all,$index+$first,$nb,true);
+  }
+
+
+
+    public function findAllForStat() {
       $conn = $this->getEntityManager()->getConnection();
     $sql = 'SELECT distinct(date_format(date,"%Y%m"))
             FROM distribution

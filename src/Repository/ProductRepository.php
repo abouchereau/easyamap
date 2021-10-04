@@ -125,5 +125,17 @@ class ProductRepository extends EntityRepository
             return false;
         }
         return true;
-    }  
+    }
+
+    public function getAllProducts() {
+      $conn = $this->getEntityManager()->getConnection();
+      $sql = "select p.id_product, f.label as farm, p.label, p.unit, p.description, p.base_price, p.ratio, p.is_active, p.is_subscription, p.is_certified, p.created_at, p.updated_at
+            from product p
+            left join farm f on f.id_farm = p.fk_farm
+            where f.is_active = 1
+            and p.is_active = 1
+            order by f.sequence, p.sequence";
+        $r = $conn->query($sql);
+        return $r->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }
