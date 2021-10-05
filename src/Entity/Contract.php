@@ -163,7 +163,7 @@ class Contract
      * @param int $autoStartHour
      * @return Contract
      */
-    public function setAutoStartHour(int $autoStartHour)
+    public function setAutoStartHour($autoStartHour)
     {
         $this->autoStartHour = $autoStartHour;
         return $this;
@@ -181,7 +181,7 @@ class Contract
      * @param int $autoEndHour
      * @return Contract
      */
-    public function setAutoEndHour(int $autoEndHour)
+    public function setAutoEndHour($autoEndHour)
     {
         $this->autoEndHour = $autoEndHour;
         return $this;
