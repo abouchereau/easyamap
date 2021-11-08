@@ -175,7 +175,7 @@ class ProductDistributionController extends AmapBaseController
     
     //on récupère l'ensemble des distributions our les n mois à venir
     $distributions = $em->getRepository('App\Entity\Distribution')->findAllOffset($first, self::NB_PER_PAGE);
-    $distribution_select = $em->getRepository('App\Entity\Distribution')->findAllOffset($first - self::NB_PER_PAGE, self::NB_PER_PAGE);
+    $distribution_select = $em->getRepository('App\Entity\Distribution')->findAllOffset($first - self::NB_PER_PAGE, self::NB_PER_PAGE*2);
     $nb_per_month = Utils::getNbPerMonth($distributions);  
 
     //on récupère la liste des produits en fonction du référent / ou admin, groupés par producteur   
