@@ -2,9 +2,6 @@
 {% block header_title %}Liste distribution par {{ group_by=='farm'?'producteur':'adhérent' }}{% endblock %}
 {% block header_css %}
 <link href="{{  asset('jquery-ui/jquery-ui.min.css') }}" rel="stylesheet" />
-<style type="text/css" media="print">
-  @page { size: landscape; }
-</style>
 {% endblock %}
 
 {% block body %}
