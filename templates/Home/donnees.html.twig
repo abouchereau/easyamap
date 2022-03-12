@@ -1,0 +1,15 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Données{% endblock %}
+
+
+{% block body %}
+    <div class="row">
+        <div class="col">
+            <ul class="list-group">
+                {% for backup in backups %}
+                    <li class="list-group-item">{{ backup }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

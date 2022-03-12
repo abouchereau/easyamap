@@ -67,5 +67,10 @@ class SettingRepository extends EntityRepository
             }
         }
     }
+
+    public function getBackups() {
+        $files = scandir(__DIR__."/../../../../backup");
+        return $files;
+    }
    
 }

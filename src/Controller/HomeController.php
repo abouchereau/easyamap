@@ -241,6 +241,14 @@ class HomeController extends AmapBaseController
             'Paramètres',
             'Définir les paramètres de l\'application et les dates de distribution.'
             );
+        if (strpos($_SERVER['HTTP_HOST'], "easyamap.fr") !== false) {
+            $list[] = array(
+                $this->generateUrl('donnees'),
+                'hdd',
+                'Données de l\'application',
+                'Visualiser et récupérer les données de l\'application.'
+            );
+        }
         return $list;
     }
     
@@ -287,5 +295,14 @@ class HomeController extends AmapBaseController
     
     public function environment() {
         return new Response($_SERVER['APP_ENV']);
+    }
+
+    public function donnees() {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $em = $this->getDoctrine()->getManager();
+        $backups = $em->getRepository("App\Entity\Setting")->getBackups();
+        return $this->render('Home/donnees.html.twig', array(
+            'backups' => $backups
+        ));
     }
 }

@@ -526,6 +526,10 @@ shift_save:
     controller: App\Controller\ProductDistributionController:shiftSave
     methods: POST
 
+donnees:
+    path: donnees
+    controller: App\Controller\HomeController:donnees
+
 api_farms:
     path: api/farms
     controller: App\Controller\ApiController:getAllFarms
