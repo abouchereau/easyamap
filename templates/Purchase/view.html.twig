@@ -97,7 +97,7 @@
           <tr>
             <td class="success text-center" colspan="3"><b>{{ product.fkFarm }}</b><br />({{ product.fkFarm.productType }})<br /><small>Référent{% if product.fkFarm.getReferents()|length > 1 %}s{% endif %} : 
                     {% for referent in product.fkFarm.getReferents() %}
-                            {{ referent }} (<a href="mailto:{{ referent.email }}">{{ referent.email }}</a>{%  if referent.tel1 is defined %}- {{ refeterent.tel1 }}{% endif %}{%  if referent.tel2 is defined %}- {{ refeterent.tel2 }}{% endif %}){% if not loop.last %}, {% endif %}
+                            {{ referent }} (<a href="mailto:{{ referent.email }}">{{ referent.email }}</a>{%  if referent.tel1 is defined %}- {{ referent.tel1 }}{% endif %}{%  if referent.tel2 is defined %}- {{ referent.tel2 }}{% endif %}){% if not loop.last %}, {% endif %}
                     {% endfor %}</small></td>
             <td colspan="{{ distributions|length }}" class="success text-center" style="border-left:none;"><small>{{ product.fkFarm.description|nl2br }}{% if product.fkFarm.link != ''%}<br /><a href="{{ product.fkFarm.link }}" target="_blank">{{ product.fkFarm.link }}</a>{% endif %}</small></td>
             
