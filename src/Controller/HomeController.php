@@ -300,6 +300,7 @@ class HomeController extends AmapBaseController
     public function donnees() {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $em = $this->getDoctrine()->getManager();
+        die($em->getConnection()->getDatabase());
         $backups = $em->getRepository("App\Entity\Setting")->getBackups();
         return $this->render('Home/donnees.html.twig', array(
             'backups' => $backups
