@@ -8,7 +8,7 @@
         <div class="col">
             <ul class="list-group">
                 {% for backup in backups %}
-                    <li class="list-group-item">{{ backup }}</li>
+                    <li class="list-group-item"><a href="{{ path('download_backup', {'file':backup}) }}">{{ backup }}</a></li>
                 {% endfor %}
             </ul>
         </div>

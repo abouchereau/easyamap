@@ -530,6 +530,10 @@ donnees:
     path: donnees
     controller: App\Controller\HomeController:donnees
 
+download_backup:
+    path: download_backup/{file}
+    controller: App\Controller\HomeController:downloadBackup
+
 api_farms:
     path: api/farms
     controller: App\Controller\ApiController:getAllFarms

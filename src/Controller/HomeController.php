@@ -300,10 +300,29 @@ class HomeController extends AmapBaseController
     public function donnees() {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $em = $this->getDoctrine()->getManager();
-        die($em->getConnection()->getDatabase());
-        $backups = $em->getRepository("App\Entity\Setting")->getBackups();
+        $backups = $em->getRepository("App\Entity\Setting")->getBackups($em->getConnection()->getDatabase());
         return $this->render('Home/donnees.html.twig', array(
             'backups' => $backups
         ));
+    }
+
+    public function downloadBackup($file) {
+        if (strpos($file,'/')!==false) {
+            return;
+        }
+
+        $path = __DIR__."/../../../../backup/".$file;
+        if (!is_file($path)) {
+            return;
+        }
+
+        $file_name = basename($path);
+
+        header("Content-Type: application/zip");
+        header("Content-Disposition: attachment; filename=$file_name");
+        header("Content-Length: " . filesize($path));
+
+        readfile($path);
+        exit;
     }
 }
