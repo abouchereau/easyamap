@@ -76,6 +76,7 @@ class SettingRepository extends EntityRepository
                 $out[] = $file;
             }
         }
+        $out = array_reverse($out);
         return $out;
     }
     
