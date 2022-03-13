@@ -2,7 +2,6 @@
 {% block header_title %}Mes données personnelles{% endblock %}
 {% block body %}
 
-    <h3>Mes données personnelles</h3>
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <table class="table table-striped">
@@ -19,10 +18,10 @@
                     <th class="text-right">Nom</th><td>{{ user.lastname }}</td>
                 </tr>
                 <tr>
-                    <th class="text-right">Adhérent ?</th><td>{% if user.isAdherent %}<i class="glyphicon glyphicon-ok"></i>{% else %}<i class="glyphicon glyphicon-remove"></i>{%  endif %}</td>
+                    <th class="text-right">Adhérent ?</th><td>{% if user.isAdherent %}<i class="glyphicon glyphicon-ok text-success"></i>{% else %}<i class="glyphicon glyphicon-remove text-danger"></i>{%  endif %}</td>
                 </tr>
                 <tr>
-                    <th class="text-right">Administrateur ?</th><td>{% if user.isAdmin %}<i class="glyphicon glyphicon-ok"></i>{% else %}<i class="glyphicon glyphicon-remove"></i>{%  endif %}</td>
+                    <th class="text-right">Administrateur ?</th><td>{% if user.isAdmin %}<i class="glyphicon glyphicon-ok text-success"></i>{% else %}<i class="glyphicon glyphicon-remove text-danger"></i>{%  endif %}</td>
                 </tr>
                 <tr>
                     <th class="text-right">Date création</th><td>{{ user.createdAt }}</td>
