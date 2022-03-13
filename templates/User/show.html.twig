@@ -19,10 +19,10 @@
                     <th>Nom</th><td>{{ user.lastname }}</td>
                 </tr>
                 <tr>
-                    <th>Adhérent ?</th><td>{{ if user.is_adherent }}<i class="glyphicon glyphicon-ok"></i>{% else %}<i class="glyphicon glyphicon-remove"></i>{%  endif %}</td>
+                    <th>Adhérent ?</th><td>{% if user.is_adherent %}<i class="glyphicon glyphicon-ok"></i>{% else %}<i class="glyphicon glyphicon-remove"></i>{%  endif %}</td>
                 </tr>
                 <tr>
-                    <th>Administrateur ?</th><td>{{ if user.is_admin }}<i class="glyphicon glyphicon-ok"></i>{% else %}<i class="glyphicon glyphicon-remove"></i>{%  endif %}</td>
+                    <th>Administrateur ?</th><td>{% if user.is_admin %}<i class="glyphicon glyphicon-ok"></i>{% else %}<i class="glyphicon glyphicon-remove"></i>{%  endif %}</td>
                 </tr>
                 <tr>
                     <th>Date création</th><td>{{ user.created_at }}</td>
