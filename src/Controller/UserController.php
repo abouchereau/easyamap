@@ -281,4 +281,9 @@ class UserController extends AmapBaseController
            $mailer = $this->get('mailer');
            return $mailer->send($message);
     }
+
+    public function displayCurrentUser() {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        return $this->render('User/show.html.twig', array('user' => $user));
+    }
 }

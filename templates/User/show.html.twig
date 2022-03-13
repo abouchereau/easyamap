@@ -1,0 +1,51 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Mes données personnelles{% endblock %}
+{% block body %}
+
+    <h3>Mes données personnelles</h3>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <tr>
+                    <th>Email</th><td>{{ user.email }}</td>
+                </tr>
+                <tr>
+                    <th>Identifiant de connexion</th><td>{{ user.username }}</td>
+                </tr>
+                <tr>
+                    <th>Prénom</th><td>{{ user.firstname }}</td>
+                </tr>
+                <tr>
+                    <th>Nom</th><td>{{ user.lastname }}</td>
+                </tr>
+                <tr>
+                    <th>Adhérent ?</th><td>{{ if user.is_adherent }}<i class="glyphicon glyphicon-ok"></i>{% else %}<i class="glyphicon glyphicon-remove"></i>{%  endif %} %}</td>
+                </tr>
+                <tr>
+                    <th>Administrateur ?</th><td>{{ if user.is_admin }}<i class="glyphicon glyphicon-ok"></i>{% else %}<i class="glyphicon glyphicon-remove"></i>{%  endif %} %}</td>
+                </tr>
+                <tr>
+                    <th>Date création</th><td>{{ user.created_at }}</td>
+                </tr>
+                <tr>
+                    <th>Téléphone 1</th><td>{{ user.tel1 }}</td>
+                </tr>
+                <tr>
+                    <th>Téléphone 2</th><td>{{ user.tel2 }}</td>
+                </tr>
+                <tr>
+                    <th>Adresse</th><td>{{ user.address }}</td>
+                </tr>
+                <tr>
+                    <th>Code Postal</th><td>{{ user.zipcode }}</td>
+                </tr>
+                <tr>
+                    <th>Ville</th><td>{{ user.town }}</td>
+                </tr>
+            </table>
+            <br />
+            <button class="btn btn-primary" onclick="alert('Fonctionnalité absente pour le moment')">Modifier</button>
+        </div>
+    </div>
+
+{% endblock %}

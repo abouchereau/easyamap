@@ -239,7 +239,10 @@ user_activate:
     path: /user/{id}/activate/{active}
     controller: App\Controller\UserController:activate
 
-    
+donnees_personnelles:
+    path: /donnees_personnelles
+    controller: App\Controller\UserController:displayCurrentUser
+
 distribution:
     path:   /parametres/distribution
     controller: App\Controller\DistributionController:index
