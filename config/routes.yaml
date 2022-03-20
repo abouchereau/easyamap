@@ -122,8 +122,10 @@ product_show:
     controller: App\Controller\ProductController:show
 
 product_new:
-    path: /product/new
+    path: /product/new/{id}
     controller: App\Controller\ProductController:new
+    defaults:
+        id: null
 
 product_create:
     path: /product/create',
