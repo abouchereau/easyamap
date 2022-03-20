@@ -25,7 +25,7 @@
         {% for entity in entities %}
             {% if entity.isActive %}
          <tr id="{{ entity.idProduct }}" onclick="window.location.href='{{ path('product_edit', { 'id': entity.idProduct }) }}';">
-                <td style="min-width:350px;">{% if entity.ratio %}<div class="pull-right"><span class="glyphicon glyphicon-scale text-muted"></span></div>{% endif %}{{ entity.label }}</td><!--class="product2"-->
+                <td style="min-width:300px;">{% if entity.ratio %}<div class="pull-right"><span class="glyphicon glyphicon-scale text-muted"></span></div>{% endif %}{{ entity.label }}</td><!--class="product2"-->
                 <td style="max-width:100px;">{{ entity.unit }}</td>
                 <td>{{ entity.basePrice|number_format(2,',',' ') }}€{% if entity.ratio %}/kg{% endif %}</td>
                 <td>{{ entity.fkFarm }}</td>
