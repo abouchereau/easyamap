@@ -1,5 +1,5 @@
 {% extends 'layout.html.twig' %}
-{% block header_title %}Nouveau produit{% endblock %}
+{% block header_title %}{%  if id != null %}Dupliquer{% else %}Nouveau{%  endif %} produit{% endblock %}
 
 {% block body %}
 <div class="row">

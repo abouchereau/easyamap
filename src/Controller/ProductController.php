@@ -115,6 +115,7 @@ class ProductController extends AmapBaseController
         $form   = $this->createCreateForm($entity);
 
         return $this->render('Product/new.html.twig', array(
+            'id' => $id,
             'entity' => $entity,
             'form'   => $form->createView(),
         ));
