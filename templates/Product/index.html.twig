@@ -42,6 +42,7 @@
                 <td>{{ entity.basePrice|number_format(2,',',' ') }}</td>
                 <td>{{ entity.fkFarm }}</td>
                 <td>{% if entity.updatedAt is not empty %}{{ entity.updatedAt|date("Y-m-d") }}{% endif %}</td>
+                <td></td>
             </tr>
             {% endif %}
         {% endfor %}
