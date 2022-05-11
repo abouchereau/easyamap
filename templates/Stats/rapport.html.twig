@@ -11,6 +11,11 @@
 .form-control {
     width:95%;
 }
+@media print {
+    .table-bordered th, .table-bordered td {
+        border: 1px solid #666 !important;
+    }
+}
 </style>
 {% endblock %}
 {% block body %}
@@ -41,6 +46,9 @@
              <div class="form-group col-md-3">
                 <label>Date Fin</label><br />
                 <input class="form-control datepicker" type="text" name="date_fin" value="{{ date_fin|date('Y-m-d') }}" />
+            </div>
+            <div class="form-group col-md-3">
+                <label><input type="checkbox" {% if hide_empty_products %}checked {% endif %} />Cacher les colonnes vides</label>
             </div>
             <div class="no-print col-md-12 text-center">&nbsp;<br />
                 <button type="submit" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-chevron-right"></span> Valider</button>

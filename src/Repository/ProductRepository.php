@@ -27,10 +27,13 @@ class ProductRepository extends EntityRepository
       ->getResult();
   }
   
-  public function findForFarm($farm) {
-      return $this->createQueryBuilder('p')
-      ->where('p.fkFarm =:farm')
-      ->orderBy('p.sequence')
+  public function findForFarm($farm, $filterProductId = []) {
+      $qb = $this->createQueryBuilder('p')
+      ->where('p.fkFarm =:farm');
+      if (count($filterProductId) > 0) {
+          $qb->andWhere($qb->expr()->in('p.idProduct', $filterProductId));
+      }
+      return  $qb->orderBy('p.sequence')
       ->setParameter('farm',$farm)
       ->getQuery()
       ->getResult();
