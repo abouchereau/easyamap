@@ -89,7 +89,7 @@ class DistributionController extends AmapBaseController
             'urlTemplate' => $urlTemplate,
             'distributions' => $distributions,
             'date' => $date,
-            'nb' => $nb
+            'nb' => $nb,
             'farms' => $farms
         ));
     }
