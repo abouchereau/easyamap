@@ -21,8 +21,7 @@
     <p class="text-muted">Pas de contrat ouvert.</p>
     {% endif %}
 
-    <p><a href="{{ path('contrat_list') }}">Contrats en cours</a></p>
-    <div class="page-header">Archives</div>
+    <div class="page-header">Contrats en cours</div>
     {% set hasOccurence = false %}
     {% for contract in contracts %}
       {% if not contract.isActive and not contract.isArchive %}
@@ -34,9 +33,9 @@
     <p class="text-muted">Pas de contrat en cours.</p>
     {% endif %}
 
-      <p><a href="{{ path('contrat_list_archives') }}">Archives</a></p>
+    <p><a href="{{ path('contrat_list_archives') }}">Archives</a></p>
 {% else %}
-    <p><a href="{{ path('contrat_list') }}">Contrats archivés</a></p>
+    <p><a href="{{ path('contrat_list') }}">Contrats en cours</a></p>
     <div class="page-header">Archives</div>
     {% set hasOccurence = false %}
     {% for contract in contracts %}
