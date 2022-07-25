@@ -77,7 +77,14 @@ window.onload = function()
   $("#nb").change(function () {
       var date = options._formatDate($("#datepicker").datepicker('getDate'));
       var nb = $("#nb").val();
-      var nb = $("#farm").val();
+      var farm = $("#farm").val();
+      var url = urlTemplate.replace('%DATE%',date).replace('%NB%',nb).replace('%FARM%',farm);
+      window.location.href = url;
+  });
+  $("#farm").change(function () {
+      var date = options._formatDate($("#datepicker").datepicker('getDate'));
+      var nb = $("#nb").val();
+      var farm = $("#farm").val();
       var url = urlTemplate.replace('%DATE%',date).replace('%NB%',nb).replace('%FARM%',farm);
       window.location.href = url;    
   });
