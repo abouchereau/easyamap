@@ -340,6 +340,7 @@ class PurchaseController extends AmapBaseController
       $nb = $this->checkNbDistri($nb);
       $dates = $em->getRepository('App\Entity\Distribution')->findNDateFrom($date, $nb);
       $list = $em->getRepository('App\Entity\Purchase')->getProductsToRecover($dates, null, $farm);
+      $user = $this->get('security.token_storage')->getToken()->getUser();
       $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);
       $participation = $em->getRepository('App\Entity\Participation')->getTasks($dates);
 
