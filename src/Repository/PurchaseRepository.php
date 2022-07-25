@@ -226,7 +226,7 @@ ORDER BY v.f_seq, v.DATE, v.pr_seq, v.is_shift";
         return $this->fetchGroupTwoLevels($tab);
   }     
   
-  public function getProductsToRecover($dates, $id_user=null)
+  public function getProductsToRecover($dates, $id_user=null, $id_farm=null)
   {
         $conn = $this->getEntityManager()->getConnection();
         $sql = "SELECT * FROM (
@@ -272,11 +272,12 @@ SELECT
 	LEFT JOIN user u ON u.id_user = pu.fk_user
 	WHERE d2.date IN ('".implode("','",$dates)."')
     AND (pu.fk_user=:id_user OR :id_user is null)
+    AND (f.id_farm=:id_farm OR :id_farm is null)
 	GROUP BY CONCAT(ifnull(u.lastname,''),'<br>',ifnull(u.firstname,'')), pd.id_product_distribution, d.date,pu.fk_user, concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')), pr.sequence, d2.date 
 	) v
     ORDER BY v.entity, v.date, v.f_seq, v.pr_seq";
         $stmt = $conn->prepare($sql);
-        $stmt->execute(['id_user'=>$id_user]);
+        $stmt->execute(['id_user'=>$id_user, 'id_farm'=>$id_farm]);
         $tab = $stmt->fetchAll(\PDO::FETCH_GROUP);
         return $this->fetchGroupTwoLevels($tab);
   }
