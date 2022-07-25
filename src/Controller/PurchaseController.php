@@ -181,7 +181,7 @@ class PurchaseController extends AmapBaseController
       $dates = $em->getRepository('App\Entity\Distribution')->findNDateFrom($date, $nb);
       $user = $this->get('security.token_storage')->getToken()->getUser();
       $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);
-      $list = $em->getRepository('App\Entity\Purchase')->getProductsToShip($dates, $farms);
+      $list = $em->getRepository('App\Entity\Purchase')->getProductsToShip($dates);
 
       foreach($dates as $key => $date)
       {
@@ -340,7 +340,7 @@ class PurchaseController extends AmapBaseController
       $nb = $this->checkNbDistri($nb);
       $dates = $em->getRepository('App\Entity\Distribution')->findNDateFrom($date, $nb);
       $list = $em->getRepository('App\Entity\Purchase')->getProductsToRecover($dates, null, $farm);
-      $farms = $em->getRepository('App\Entity\Farm')->getAllFarms();
+      $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);
       $participation = $em->getRepository('App\Entity\Participation')->getTasks($dates);
 
       foreach($dates as $key => $date)
