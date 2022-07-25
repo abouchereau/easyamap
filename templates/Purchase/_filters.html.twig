@@ -6,9 +6,9 @@
                     <div class="filter_container active">
                             
                         <div class="form-group">
-                            <label for="filter-farm">Producteur</label>                                    
+                            <label for="farm">Producteur</label>
                            <br />
-                            <select id="filter-farm" class="form-control">
+                            <select id="farm" class="form-control">
                                 <option value="0">Tous</option>
                                 {% for farm in farms %}{#
                                     #}<option value="{{ farm.idFarm }}"{% if farm.idFarm == filters.farm %} selected="selected"{% endif %}>{{ farm.label }}</option>{#
