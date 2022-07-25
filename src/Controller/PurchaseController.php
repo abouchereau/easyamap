@@ -181,7 +181,7 @@ class PurchaseController extends AmapBaseController
       $dates = $em->getRepository('App\Entity\Distribution')->findNDateFrom($date, $nb);
       $user = $this->get('security.token_storage')->getToken()->getUser();
       $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);
-      $list = $em->getRepository('App\Entity\Purchase')->getProductsToShip($dates);
+      $list = $em->getRepository('App\Entity\Purchase')->getProductsToShip($dates, $farms);
 
       foreach($dates as $key => $date)
       {
