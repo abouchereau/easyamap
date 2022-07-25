@@ -8,6 +8,9 @@
 {% set jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'] %}  
 {% set mois = ['','Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'] %}
 
+
+{% include 'Payment/_filters.html.twig' with {'filters': filters, 'farms':farms} %}
+
     <div class="row no-print">
         <div class="col-md-12">
             <div class="pull-left mobile-hide">

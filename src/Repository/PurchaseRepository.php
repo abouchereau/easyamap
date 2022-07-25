@@ -22,6 +22,7 @@ class PurchaseRepository extends EntityRepository
       LEFT JOIN farm f      ON f.id_farm = p.fk_farm
       LEFT JOIN distribution d ON d.id_distribution = pd.fk_distribution
       WHERE pu.fk_user = :id_user
+      AND f.id_farm = :id_farm
       AND pd.fk_distribution IN (".implode(', ',  array_keys($distris)).")
       GROUP BY pd.fk_distribution, p.id_product
       ORDER BY d.date, f.sequence, p.sequence";

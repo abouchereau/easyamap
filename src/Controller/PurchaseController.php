@@ -340,6 +340,7 @@ class PurchaseController extends AmapBaseController
       $nb = $this->checkNbDistri($nb);
       $dates = $em->getRepository('App\Entity\Distribution')->findNDateFrom($date, $nb);
       $list = $em->getRepository('App\Entity\Purchase')->getProductsToRecover($dates);      
+      $farms = $em->getRepository('App\Entity\Farm')->getAllFarms();
       $participation = $em->getRepository('App\Entity\Participation')->getTasks($dates);
 
       foreach($dates as $key => $date)
@@ -348,6 +349,7 @@ class PurchaseController extends AmapBaseController
       }       
       return $this->render('Purchase/distributionSummary.html.twig', array(
             'list' => $list,
+            'farms' => $farms,
             'group_by' => 'adhérent',
             'dates' => $dates,
             'nb' => $nb,
