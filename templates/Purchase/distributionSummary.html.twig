@@ -21,12 +21,11 @@
 
             </div>
             <div class="pull-right text-center distri-right">            
-                {{ render(controller('App\\Controller\\DistributionController:distripicker', {'urlTemplate':urlTemplate,'date':dates[0]|date('Y-m-d'),'nb':nb })) }}
+                {{ render(controller('App\\Controller\\DistributionController:distripicker', {'urlTemplate':urlTemplate,'date':dates[0]|date('Y-m-d'),'nb':nb , 'farms':farms})) }}
             </div>
         </div>
     </div>
 
-{% include 'Purchase/_filters.html.twig' with {'filters': filters, 'farms':farms} %}
 
     <div class="row">
         <div class="{% if direction == 'H' or list|length>1 %}col-md-12{% else %}col-md-8 col-md-offset-2{% endif %}">

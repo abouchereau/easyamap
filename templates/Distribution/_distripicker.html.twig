@@ -5,6 +5,14 @@
 </select> 
 distributions à partir de 
 <input type="text"  class="form-control" id="datepicker" style="display:inline;width:auto;" value="{{ date }}" />
+Du producteur 
+<select id="farm" class="form-control" style="display:inline;width:auto;">
+<option value="0">Tous</option>
+{% for farm in farms %}{#
+  #}<option value="{{ farm.idFarm }}"{% if farm.idFarm == filters.farm %} selected="selected"{% endif %}>{{ farm.label }}</o
+ption>{#
+#}{% endfor %}
+</select>
 </p>
 <!--<div id="datepicker"></div>
 <input type="hidden" name="date" id="date" value="{{ date }}" />-->
