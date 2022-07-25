@@ -81,7 +81,7 @@ class DistributionController extends AmapBaseController
         return new Response(json_encode($distris));
     }
     
-    public function distripicker($urlTemplate, $date, $nb)
+    public function distripicker($urlTemplate, $date, $nb, $id_farm, $farms)
     {
         $em = $this->getDoctrine()->getManager();
         $distributions = $em->getRepository('App\Entity\Distribution')->findAllForDistripicker();
@@ -89,7 +89,9 @@ class DistributionController extends AmapBaseController
             'urlTemplate' => $urlTemplate,
             'distributions' => $distributions,
             'date' => $date,
-            'nb' => $nb
+            'nb' => $nb,
+            'id_farm' => $id_farm,
+            'farms' => $farms
         ));
     }
     

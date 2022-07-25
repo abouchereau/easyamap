@@ -5,6 +5,13 @@
 </select> 
 distributions à partir de 
 <input type="text"  class="form-control" id="datepicker" style="display:inline;width:auto;" value="{{ date }}" />
+du producteur 
+<select id="farm" class="form-control" style="display:inline;width:auto;">
+<option value="0">Tous</option>
+{% for farm in farms %}{#
+  #}<option value="{{ farm.idFarm }}"{% if farm.idFarm == id_farm %} selected="selected"{% endif %}>{{ farm.label }}</option>{#
+#}{% endfor %}
+</select>
 </p>
 <!--<div id="datepicker"></div>
 <input type="hidden" name="date" id="date" value="{{ date }}" />-->
@@ -40,7 +47,8 @@ var options = {
     {
       var date = options._formatDate($("#datepicker").datepicker('getDate'));
       var nb = $("#nb").val();
-      var url = urlTemplate.replace('%DATE%',date).replace('%NB%',nb);
+      var farm = $("#farm").val();
+      var url = urlTemplate.replace('%DATE%',date).replace('%NB%',nb).replace('%FARM%',farm);
       window.location.href = url;      
     },
     beforeShowDay: function (date)
@@ -68,8 +76,16 @@ window.onload = function()
   $("#nb").change(function () {
       var date = options._formatDate($("#datepicker").datepicker('getDate'));
       var nb = $("#nb").val();
-      var url = urlTemplate.replace('%DATE%',date).replace('%NB%',nb);
-      window.location.href = url;    
+      var farm = $("#farm").val();
+      var url = urlTemplate.replace('%DATE%',date).replace('%NB%',nb).replace('%FARM%',farm);
+      window.location.href = url;
+  });
+  $("#farm").change(function () {
+      var date = options._formatDate($("#datepicker").datepicker('getDate'));
+      var nb = $("#nb").val();
+      var farm = $("#farm").val();
+      var url = urlTemplate.replace('%DATE%',date).replace('%NB%',nb).replace('%FARM%',farm);
+      window.location.href = url;
   });
 };
 
