@@ -249,7 +249,7 @@ SELECT
     left join farm f on f.id_farm = pr.fk_farm
 	LEFT JOIN user u ON u.id_user = pu.fk_user
 	WHERE d.date IN ('".implode("','",$dates)."')
-    AND (f.id_farm=:id_farm OR :id_farm is null)
+    AND (f.id_farm=:id_farm OR :id_farm = 0)
     AND (pu.fk_user=:id_user OR :id_user is null)
 	GROUP BY CONCAT(ifnull(u.lastname,''),'<br>',ifnull(u.firstname,'')), pd.id_product_distribution, d.date,pu.fk_user, concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')), pr.sequence, d2.date 
 UNION  
