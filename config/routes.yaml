@@ -415,6 +415,7 @@ list_distribution_adherent:
     defaults:
         date: null
         nb: 4
+        farm: null
     
 #produits à livrer 
 list_distribution_farm:
