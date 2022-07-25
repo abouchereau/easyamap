@@ -410,12 +410,12 @@ informations_adherent:
     
 #produits à récupérer
 list_distribution_adherent:
-    path: liste_distribution_adherent/{date}/{nb}/{farm}
+    path: liste_distribution_adherent/{date}/{nb}/{id_farm}
     controller:  App\Controller\PurchaseController:listDistributionAdherent
     defaults:
         date: null
         nb: 4
-        farm: 0
+        id_farm: 0
     
 #produits à livrer 
 list_distribution_farm:

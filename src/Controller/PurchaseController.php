@@ -329,7 +329,7 @@ class PurchaseController extends AmapBaseController
     return $nb_per_farm;
   }
   
-  public function listDistributionAdherent($date = null, $nb = 4, $farm = 0)
+  public function listDistributionAdherent($date = null, $nb = 4, $id_farm = 0)
   {
       $this->denyAccessUnlessGranted('ROLE_ADMIN');
       $em = $this->getDoctrine()->getManager();
@@ -339,7 +339,7 @@ class PurchaseController extends AmapBaseController
       }
       $nb = $this->checkNbDistri($nb);
       $dates = $em->getRepository('App\Entity\Distribution')->findNDateFrom($date, $nb);
-      $list = $em->getRepository('App\Entity\Purchase')->getProductsToRecover($dates, null, $farm);
+      $list = $em->getRepository('App\Entity\Purchase')->getProductsToRecover($dates, null, $id_farm);
       $user = $this->get('security.token_storage')->getToken()->getUser();
       $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);
       $participation = $em->getRepository('App\Entity\Participation')->getTasks($dates);
@@ -351,10 +351,10 @@ class PurchaseController extends AmapBaseController
       return $this->render('Purchase/distributionSummary.html.twig', array(
             'list' => $list,
             'farms' => $farms,
+            'id_farm' => $id_farm,
             'group_by' => 'adhérent',
             'dates' => $dates,
             'nb' => $nb,
-            'id_farm' => $farm,
             'urlTemplate' => 'liste_distribution_adherent/%DATE%/%NB%/%FARM%',
             'direction' => 'H',
             'participation' => $participation
