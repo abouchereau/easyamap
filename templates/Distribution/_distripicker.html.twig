@@ -9,8 +9,7 @@ du producteur
 <select id="farm" class="form-control" style="display:inline;width:auto;">
 <option value="0">Tous</option>
 {% for farm in farms %}{#
-  #}<option value="{{ farm.idFarm }}"{% if farm.idFarm == filters.farm %} selected="selected"{% endif %}>{{ farm.label }}</o
-ption>{#
+  #}<option value="{{ farm.idFarm }}"{% if farm.idFarm == id_farm %} selected="selected"{% endif %}>{{ farm.label }}</option>{#
 #}{% endfor %}
 </select>
 </p>
@@ -86,7 +85,7 @@ window.onload = function()
       var nb = $("#nb").val();
       var farm = $("#farm").val();
       var url = urlTemplate.replace('%DATE%',date).replace('%NB%',nb).replace('%FARM%',farm);
-      window.location.href = url;    
+      window.location.href = url;
   });
 };
 

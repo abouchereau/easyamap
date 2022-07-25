@@ -21,7 +21,7 @@
 
             </div>
             <div class="pull-right text-center distri-right">            
-                {{ render(controller('App\\Controller\\DistributionController:distripicker', {'urlTemplate':urlTemplate,'date':dates[0]|date('Y-m-d'),'nb':nb , 'farms':farms})) }}
+                {{ render(controller('App\\Controller\\DistributionController:distripicker', {'urlTemplate':urlTemplate,'date':dates[0]|date('Y-m-d'),'nb':nb , 'id_farm':id_farm, 'farms':farms})) }}
             </div>
         </div>
     </div>

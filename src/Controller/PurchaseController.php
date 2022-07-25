@@ -354,7 +354,7 @@ class PurchaseController extends AmapBaseController
             'group_by' => 'adhérent',
             'dates' => $dates,
             'nb' => $nb,
-            'farm' => $farm,
+            'id_farm' => $farm,
             'urlTemplate' => 'liste_distribution_adherent/%DATE%/%NB%/%FARM%',
             'direction' => 'H',
             'participation' => $participation
