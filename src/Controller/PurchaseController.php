@@ -205,7 +205,23 @@ class PurchaseController extends AmapBaseController
             'direction' => $direction
         ));
   }
-  
+
+    public function getDeliveryNextDistributionMultiAmap($date = null, $nb = 4)
+    {
+        $this->denyAccessUnlessGranted('ROLE_FARMER');
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);
+        die(var_dump($farms));
+       /* return $this->render('Purchase/distributionSummary.html.twig', array(
+            'list' => [],
+            'group_by' => 'farm',
+            'dates' => [],
+            'nb' => 1,
+            'urlTemplate' => 'produits_a_livrer/%DATE%/%NB%',
+            'direction' => "H"
+        ));*/
+    }
   
   //$farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);
   /*public function getProductsNextDistribution(Request $request)
