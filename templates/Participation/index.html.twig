@@ -5,12 +5,17 @@
 {% set mois = ['','Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'] %}
 {% set jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'] %}  
 {% set last_month = 0 %}
-<div class="row">
+<div class="row no-print">
     <div class="col-md-6 col-md-offset-3">
         <p class="bg-info text-center">
             <span class="glyphicon glyphicon-info-sign"></span><br />
             {{ setting.textRegisterDistribution|nl2br }}
         </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 text-right">
+        <button class="btn btn-default no-print" onclick="window.print();"><span class="glyphicon glyphicon-print"></span> Imprimer</button>
     </div>
 </div>
 {% for month, data1 in data %}    
@@ -60,10 +65,10 @@
                                 {% for user in data1.tasks[id_task][distribution.id_distribution] %}
                                     <span class="glyphicon glyphicon-chevron-right"></span> {{ user.name }}
                                     {% if admin %}
-                                        <a data-toggle="tooltip" data-placement="bottom" title="Désinscrire {{ user.name }}" onclick="if(confirm('Voulez-vous vraiment désinscrire {{ user.name|addslashes }} ?')){window.location.href=this.href;};return false;" href="{{ path('participation_remove',{'id_participation': user.id_participation,'admin':true }) }}"><span class="glyphicon glyphicon-minus text-danger"></span></a>
+                                        <a class="no-print" data-toggle="tooltip" data-placement="bottom" title="Désinscrire {{ user.name }}" onclick="if(confirm('Voulez-vous vraiment désinscrire {{ user.name|addslashes }} ?')){window.location.href=this.href;};return false;" href="{{ path('participation_remove',{'id_participation': user.id_participation,'admin':true }) }}"><span class="glyphicon glyphicon-minus text-danger"></span></a>
                                     {% elseif user.id == current_user.idUser %}
                                         {% set iam_in = true %}
-                                        <a data-toggle="tooltip" data-placement="bottom" title="Se désinscrire" onclick="if(confirm('Voulez-vous vraiment vous désinscrire ?')){window.location.href=this.href;};return false;" href="{{ path('participation_remove',{'id_participation': user.id_participation }) }}"><span class="glyphicon glyphicon-minus text-danger"></span></a>
+                                        <a class="no-print"  data-toggle="tooltip" data-placement="bottom" title="Se désinscrire" onclick="if(confirm('Voulez-vous vraiment vous désinscrire ?')){window.location.href=this.href;};return false;" href="{{ path('participation_remove',{'id_participation': user.id_participation }) }}"><span class="glyphicon glyphicon-minus text-danger"></span></a>
                                     {% endif %}
                                     <br />
                                 {% endfor %}
@@ -72,9 +77,9 @@
                             {% endif %}
                                 
                             {% if admin %}
-                                <small><a href="#" onclick="participation.add({{ distribution.id_distribution }},{{ id_task }});return false;"><span class="glyphicon glyphicon-plus"></span> Inscrire un adhérent</a></small>
+                                <small class="no-print"><a href="#" onclick="participation.add({{ distribution.id_distribution }},{{ id_task }});return false;"><span class="glyphicon glyphicon-plus"></span> Inscrire un adhérent</a></small>
                             {% elseif not iam_in %}
-                                <small><a href="{{ path('participation_add',{'id_distribution': distribution.id_distribution, 'id_task':id_task}) }}"><span class="glyphicon glyphicon-plus"></span> Je m'inscris</a></small>
+                                <small class="no-print"><a href="{{ path('participation_add',{'id_distribution': distribution.id_distribution, 'id_task':id_task}) }}"><span class="glyphicon glyphicon-plus"></span> Je m'inscris</a></small>
                             {% endif %} 
                         </td>
                     {% endfor %}

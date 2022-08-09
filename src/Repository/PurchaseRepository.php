@@ -418,7 +418,7 @@ SELECT
             'id_farm'=>$id_farm,
             'id_user'=>$id_user));
         $tab = $stmt->fetchAll(\PDO::FETCH_ASSOC); 
-        $out = array('by_user'=>[],'total_quantity'=>[],'total_price'=>[],'total_total_quantity'=>0,'total_total_price'=>0);
+        $out = array('by_user'=>[],'total_quantity'=>[],'total_price'=>[],'total_total_quantity'=>0,'total_total_price'=>0, 'product_list' => []);
         foreach ($tab as $line) {
             if (!isset($out['by_user'][$line['fullname']])) {
                 $out['by_user'][$line['fullname']] = [];
@@ -432,6 +432,10 @@ SELECT
             $out['total_total_quantity'] += $line['quantity'];
             $out['total_price'][$line['id_product']] += $line['price'];
             $out['total_total_price'] += $line['price'];
+            if (!in_array($line['id_product'], $out['product_list'])) {
+                $out['product_list'][] = $line['id_product'];
+            }
+
         }
         return $out;
   }

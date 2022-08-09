@@ -416,6 +416,7 @@ class PurchaseController extends AmapBaseController
       $date_debut = isset($_GET['date_debut']) ? $_GET['date_debut'] : null;
       $date_fin = isset($_GET['date_fin']) ? $_GET['date_fin'] : null;
       $id_user = isset($_GET['id_user']) ? $_GET['id_user'] : null;
+      $hide_empty_products = isset($_GET['hide_empty_products']);
       if ($id_user == "all") {
           $id_user = null;
       }
@@ -442,8 +443,8 @@ class PurchaseController extends AmapBaseController
           $date_fin = \DateTime::createFromFormat('Y-m-d', $date_fin);
       }
       
-      $products = $em->getRepository('App\Entity\Product')->findForFarm($farm);
       $quantities = $em->getRepository('App\Entity\Purchase')->getQuantities($farm->getIdFarm(), $date_debut, $date_fin, $id_user);
+      $products = $em->getRepository('App\Entity\Product')->findForFarm($farm, $hide_empty_products?$quantities['product_list']:[]);
       $user_list = $em->getRepository('App\Entity\User')->findAllOrderByLastname();
 
       return $this->render('Stats/rapport.html.twig', array(
@@ -454,7 +455,8 @@ class PurchaseController extends AmapBaseController
             'date_debut' => $date_debut,
             'date_fin' => $date_fin,
             'id_user' => $id_user,
-            'user_list' => $user_list
+            'user_list' => $user_list,
+            'hide_empty_products' => $hide_empty_products
         ));
   }
 }
