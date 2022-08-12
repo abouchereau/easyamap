@@ -208,7 +208,7 @@ class PurchaseController extends AmapBaseController
 
     public function getDeliveryNextDistributionMultiAmap($date = null, $nb = 4)
     {
-        //$this->denyAccessUnlessGranted('ROLE_FARMER');
+        $this->denyAccessUnlessGranted('ROLE_FARMER');
         $em = $this->getDoctrine()->getManager();
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);

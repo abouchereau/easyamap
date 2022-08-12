@@ -223,9 +223,71 @@ ORDER BY v.f_seq, v.DATE, v.pr_seq, v.is_shift";
         $r = $conn->query($sql);
         $tab = $r->fetchAll(\PDO::FETCH_GROUP);
         return $this->fetchGroupTwoLevels($tab);
-  }     
-  
-  public function getProductsToRecover($dates, $id_user=null)
+  }
+
+    public function getProductsToShipMulti($dates, $farms)
+    {
+        if ($farms != null) {
+            $farms_id = array();
+            foreach ($farms as $farm) {
+                $farms_id[] = $farm->getIdFarm();
+            }
+        }
+
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "SELECT * FROM (";
+        foreach($farms as $farm) {
+            $sql += "
+SELECT 
+f.label AS entity,
+d.date AS date,
+pr.fk_farm AS fk_farm, 
+sum(pu.quantity) AS nb, 
+concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit, 
+f.sequence as f_seq, 
+pr.sequence as pr_seq,
+d2.date AS date_shift,
+0 is_shift
+from ".$farm['db'].".purchase pu 
+left join ".$farm['db'].".product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
+left join ".$farm['db'].".distribution d on d.id_distribution = pd.fk_distribution 
+left join ".$farm['db'].".product pr on pr.id_product = pd.fk_product 
+left join ".$farm['db'].".farm f on f.id_farm = pr.fk_farm
+left join ".$farm['db'].".distribution d2 ON d2.id_distribution = pd.fk_distribution_shift 
+WHERE d.date = :date 
+AND AND pr.fk_farm=".$farm['id_farm']."
+ group by f.label, d.date, pr.fk_farm, pr.id_product, f.sequence, pr.sequence, d2.date
+UNION
+SELECT 
+f.label AS entity,
+d2.date AS date,
+pr.fk_farm AS fk_farm, 
+sum(pu.quantity) AS nb, 
+concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit, 
+f.sequence as f_seq, 
+pr.sequence as pr_seq,
+d.date AS date_shift,
+1 is_shift
+from ".$farm['db'].".purchase pu 
+left join ".$farm['db'].".product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
+left join ".$farm['db'].".distribution d on d.id_distribution = pd.fk_distribution 
+left join ".$farm['db'].".product pr on pr.id_product = pd.fk_product 
+left join ".$farm['db'].".farm f on f.id_farm = pr.fk_farm
+left join ".$farm['db'].".distribution d2 ON d2.id_distribution = pd.fk_distribution_shift 
+WHERE pu.fk_product_distribution IS NOT NULL
+AND d2.date = :date 
+AND AND pr.fk_farm=".$farm['id_farm']."
+group by f.label, d.date, pr.fk_farm, pr.id_product, f.sequence, pr.sequence, d2.date";
+        }
+        $sql += ") v
+ORDER BY v.f_seq, v.DATE, v.pr_seq, v.is_shift";
+
+        $r = $conn->query($sql);
+        $tab = $r->fetchAll(\PDO::FETCH_GROUP);
+        return $this->fetchGroupTwoLevels($tab);
+    }
+
+    public function getProductsToRecover($dates, $id_user=null)
   {
         $conn = $this->getEntityManager()->getConnection();
         $sql = "SELECT * FROM (

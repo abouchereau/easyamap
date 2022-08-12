@@ -190,6 +190,5 @@ class FarmRepository extends EntityRepository
         WHERE c1.id_farm IN(".implode(",",$farms_id).") and c1.db=:db";
         $r = $conn->executeQuery($sql, array('db' => $db));
         return $r->fetchAll(\PDO::FETCH_ASSOC);
-        //TODO ajouter celles qui n'on
     }
 }
