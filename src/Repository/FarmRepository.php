@@ -185,8 +185,8 @@ class FarmRepository extends EntityRepository
         }
 
         $sql = "select c2.db, c2.id_farm
-        from farm_corresp c2
-        left join farm_corresp c1 on c1.groupe = c2.groupe
+        from amap_corresp.farm_corresp c2
+        left join amap_corresp.farm_corresp c1 on c1.groupe = c2.groupe
         WHERE c1.id_farm IN(".implode(",",$farms_id).") and c1.db=:db";
         $r = $conn->executeQuery($sql, array('db' => $db));
         return $r->fetchAll(\PDO::FETCH_ASSOC);
