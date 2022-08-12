@@ -212,7 +212,8 @@ class PurchaseController extends AmapBaseController
         $em = $this->getDoctrine()->getManager();
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);
-        die(print_r($farms,1));
+        $farmsMulti = $em->getRepository('App\Entity\Farm')->getFarmsMulti($farms, $em->getConnection()->getDatabase());
+        die(print_r($farmsMulti,1));
        /* return $this->render('Purchase/distributionSummary.html.twig', array(
             'list' => [],
             'group_by' => 'farm',

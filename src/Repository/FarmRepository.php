@@ -176,4 +176,20 @@ class FarmRepository extends EntityRepository
         $r = $conn->query($sql);
         return $r->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    public function getFarmsMulti($farms, $db) {
+        $conn = $this->getEntityManager()->getConnection();
+        $farms_id = [];
+        foreach($farms as $farm) {
+            $farms_id[] = $farm['id_farm'];
+        }
+
+        $sql = "select c2.db, c2.id_farm
+        from farm_corresp c2
+        left join farm_corresp c1 on c1.groupe = c2.groupe
+        WHERE c1.id_farm IN(".implode(",",$farms_id).") and c1.db=:db";
+        $r = $conn->executeQuery($sql, array('db' => $db));
+        return $r->fetchAll(\PDO::FETCH_ASSOC);
+        //TODO ajouter celles qui n'on
+    }
 }
