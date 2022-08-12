@@ -184,7 +184,7 @@ class FarmRepository extends EntityRepository
             $farms_id[] = $farm->getIdFarm();
         }
 
-        $sql = "select c2.db, c2.id_farm
+        $sql = "select distinct c2.db, c2.id_farm
         from amap_corresp.farm_corresp c2
         left join amap_corresp.farm_corresp c1 on c1.groupe = c2.groupe
         WHERE c1.id_farm IN(".implode(",",$farms_id).") and c1.db=:db";
