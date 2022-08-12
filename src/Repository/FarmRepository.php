@@ -181,7 +181,7 @@ class FarmRepository extends EntityRepository
         $conn = $this->getEntityManager()->getConnection();
         $farms_id = [];
         foreach($farms as $farm) {
-            $farms_id[] = $farm['id_farm'];
+            $farms_id[] = $farm->getIdFarm();
         }
 
         $sql = "select c2.db, c2.id_farm
