@@ -213,7 +213,8 @@ class PurchaseController extends AmapBaseController
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);
         $farmsMulti = $em->getRepository('App\Entity\Farm')->getFarmsMulti($farms, $em->getConnection()->getDatabase());
-        die(print_r($farmsMulti,1));
+        $list = $em->getRepository('App\Entity\Purchase')->getProductsToShipMulti("2022-08-19", $farmsMulti);
+        die(print_r($list,1));
        /* return $this->render('Purchase/distributionSummary.html.twig', array(
             'list' => [],
             'group_by' => 'farm',

@@ -225,7 +225,7 @@ ORDER BY v.f_seq, v.DATE, v.pr_seq, v.is_shift";
         return $this->fetchGroupTwoLevels($tab);
   }
 
-    public function getProductsToShipMulti($dates, $farms)
+    public function getProductsToShipMulti($date, $farms)
     {
         if ($farms != null) {
             $farms_id = array();
@@ -236,9 +236,11 @@ ORDER BY v.f_seq, v.DATE, v.pr_seq, v.is_shift";
 
         $conn = $this->getEntityManager()->getConnection();
         $sql = "SELECT * FROM (";
-        foreach($farms as $farm) {
-            $sql += "
-SELECT 
+        $nb_farms = count($farms);
+        for($i = 0; $i < $nb_farms; $i++) {
+            $farm = $farms[$i];
+            $sql .= "
+SELECT
 f.label AS entity,
 d.date AS date,
 pr.fk_farm AS fk_farm, 
@@ -278,12 +280,18 @@ WHERE pu.fk_product_distribution IS NOT NULL
 AND d2.date = :date 
 AND AND pr.fk_farm=".$farm['id_farm']."
 group by f.label, d.date, pr.fk_farm, pr.id_product, f.sequence, pr.sequence, d2.date";
+            if ($i < $nb_farms-1) {
+                $sql .= "
+UNION
+";
+            }
         }
-        $sql += ") v
+        $sql .= ") v
 ORDER BY v.f_seq, v.DATE, v.pr_seq, v.is_shift";
-
-        $r = $conn->query($sql);
-        $tab = $r->fetchAll(\PDO::FETCH_GROUP);
+die($sql);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['date'=>$date]);
+        $tab = $stmt->fetchAll(\PDO::FETCH_GROUP);
         return $this->fetchGroupTwoLevels($tab);
     }
 
