@@ -227,13 +227,6 @@ ORDER BY v.f_seq, v.DATE, v.pr_seq, v.is_shift";
 
     public function getProductsToShipMulti($date, $farms)
     {
-        if ($farms != null) {
-            $farms_id = array();
-            foreach ($farms as $farm) {
-                $farms_id[] = $farm->getIdFarm();
-            }
-        }
-
         $conn = $this->getEntityManager()->getConnection();
         $sql = "SELECT * FROM (";
         $nb_farms = count($farms);
