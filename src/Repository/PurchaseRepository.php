@@ -280,7 +280,7 @@ UNION";
         }
         $sql .= ") v
 ORDER BY v.f_seq, v.DATE, v.pr_seq, v.is_shift";
-die($sql);
+
         $stmt = $conn->prepare($sql);
         $stmt->execute(['date_debut'=>$dateDebut->format('Y-m-d'),'date_fin'=>$dateFin->format('Y-m-d')]);
         $tab = $stmt->fetchAll(\PDO::FETCH_GROUP);
