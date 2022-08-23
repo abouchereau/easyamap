@@ -206,17 +206,33 @@ class PurchaseController extends AmapBaseController
         ));
   }
 
-    public function getDeliveryNextDistributionMultiAmap($date = null, $nb = 4)
+    public function getDeliveryNextDistributionMultiAmap($dateDebut = null, $dateFin=null)
     {
         $this->denyAccessUnlessGranted('ROLE_FARMER');
+        if ($dateDebut == null) {
+            $dateDebut = new \DateTime();
+        }
+        else {
+            $dateDebut = \DateTime::createFromFormat('Y-m-d', $dateDebut);
+        }
+
+        if ($dateFin == null) {
+            $dateFin = clone $dateDebut;
+            $interval = new \DateInterval('P7D');
+            $dateFin->add($interval);
+        }
+        else {
+            $dateFin = \DateTime::createFromFormat('Y-m-d', $dateFin);
+        }
+
         $em = $this->getDoctrine()->getManager();
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);
         $farmsMulti = $em->getRepository('App\Entity\Farm')->getFarmsMulti($farms, $em->getConnection()->getDatabase());
-        $list = $em->getRepository('App\Entity\Purchase')->getProductsToShipMulti("2022-08-19", $farmsMulti);
+        $list = $em->getRepository('App\Entity\Purchase')->getProductsToShipMulti($dateDebut, $dateFin, $farmsMulti);
         die(print_r($list,1));
        /* return $this->render('Purchase/distributionSummary.html.twig', array(
-            'list' => [],
+            'list' => $list,
             'group_by' => 'farm',
             'dates' => [],
             'nb' => 1,

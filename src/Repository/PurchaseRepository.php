@@ -225,7 +225,7 @@ ORDER BY v.f_seq, v.DATE, v.pr_seq, v.is_shift";
         return $this->fetchGroupTwoLevels($tab);
   }
 
-    public function getProductsToShipMulti($date, $farms)
+    public function getProductsToShipMulti($dateDebut, $dateFin, $farms)
     {
         $conn = $this->getEntityManager()->getConnection();
         $sql = "SELECT * FROM (";
@@ -234,7 +234,7 @@ ORDER BY v.f_seq, v.DATE, v.pr_seq, v.is_shift";
             $farm = $farms[$i];
             $sql .= "
 SELECT
-f.label AS entity,
+'".$farm['db']." - ' || f.label AS entity,
 d.date AS date,
 pr.fk_farm AS fk_farm, 
 sum(pu.quantity) AS nb, 
@@ -249,12 +249,12 @@ left join ".$farm['db'].".distribution d on d.id_distribution = pd.fk_distributi
 left join ".$farm['db'].".product pr on pr.id_product = pd.fk_product 
 left join ".$farm['db'].".farm f on f.id_farm = pr.fk_farm
 left join ".$farm['db'].".distribution d2 ON d2.id_distribution = pd.fk_distribution_shift 
-WHERE d.date = :date 
-AND AND pr.fk_farm=".$farm['id_farm']."
+WHERE d.date >= :date_debut AND d.date <= :date_fin 
+AND pr.fk_farm=".$farm['id_farm']."
  group by f.label, d.date, pr.fk_farm, pr.id_product, f.sequence, pr.sequence, d2.date
 UNION
 SELECT 
-f.label AS entity,
+'".$farm['db']." - ' || f.label AS entity,
 d2.date AS date,
 pr.fk_farm AS fk_farm, 
 sum(pu.quantity) AS nb, 
@@ -270,20 +270,19 @@ left join ".$farm['db'].".product pr on pr.id_product = pd.fk_product
 left join ".$farm['db'].".farm f on f.id_farm = pr.fk_farm
 left join ".$farm['db'].".distribution d2 ON d2.id_distribution = pd.fk_distribution_shift 
 WHERE pu.fk_product_distribution IS NOT NULL
-AND d2.date = :date 
-AND AND pr.fk_farm=".$farm['id_farm']."
+AND d2.date >= :date_debut AND d2.date <= :date_fin 
+AND pr.fk_farm=".$farm['id_farm']."
 group by f.label, d.date, pr.fk_farm, pr.id_product, f.sequence, pr.sequence, d2.date";
             if ($i < $nb_farms-1) {
                 $sql .= "
-UNION
-";
+UNION";
             }
         }
         $sql .= ") v
 ORDER BY v.f_seq, v.DATE, v.pr_seq, v.is_shift";
 die($sql);
         $stmt = $conn->prepare($sql);
-        $stmt->execute(['date'=>$date]);
+        $stmt->execute(['date_debut'=>$dateDebut->format('Y-m-d'),'date_fin'=>$dateFin->format('Y-m-d')]);
         $tab = $stmt->fetchAll(\PDO::FETCH_GROUP);
         return $this->fetchGroupTwoLevels($tab);
     }

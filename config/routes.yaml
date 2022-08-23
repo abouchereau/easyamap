@@ -369,10 +369,11 @@ products_to_ship:
         nb: 4
 
 products_to_ship_multi:
-  path: produits_a_livrer_multiamap/{date}
+  path: produits_a_livrer_multiamap/{dateDebut}/{dateFin}
   controller: App\Controller\PurchaseController:getDeliveryNextDistributionMultiAmap
   defaults:
-    date: null
+    dateDebut: null
+    dateFin: null
 
 payment_received:
     path: payment_received
