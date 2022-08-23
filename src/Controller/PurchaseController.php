@@ -230,6 +230,7 @@ class PurchaseController extends AmapBaseController
         $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);
         $farmsMulti = $em->getRepository('App\Entity\Farm')->getFarmsMulti($farms, $em->getConnection()->getDatabase());
         $list = $em->getRepository('App\Entity\Purchase')->getProductsToShipMulti($dateDebut, $dateFin, $farmsMulti);
+       // $dates = $this.retrieveFromList();
         die(print_r($list,1));
        /* return $this->render('Purchase/distributionSummary.html.twig', array(
             'list' => $list,
