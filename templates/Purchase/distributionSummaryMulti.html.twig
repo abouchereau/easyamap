@@ -176,7 +176,7 @@ var urlTemplate = "{{ path('home') ~ urlTemplate }}";
 var mois = ['Janvier','Février','Mars','Avril','Mai','Juin',
 'Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 var jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
-var options = {
+var options1 = {
     monthNames: mois,
     monthNamesShort: ['Jan','Fév','Mar','Avr','Mai','Jun',
     'Jul','Aoû','Sep','Oct','Nov','Déc'],
@@ -198,14 +198,12 @@ var options = {
     dayStatus: '\'Choisir\' le DD d MM',
     defaultStatus: 'Choisir la date',
     isRTL: false,
-    defaultDate: '{{ date }}',
+    defaultDate: '{{ dateDebut|date('Y-m-d') }}',
     onSelect: function (a)
     {
-        console.log(a);
-       /* var date = options._formatDate($("#datepicker").datepicker('getDate'));
-        var nb = $("#nb").val();
-        var url = urlTemplate.replace('%DATE%',date).replace('%NB%',nb);
-        window.location.href = url;*/
+        var date = options._formatDate($("#datepicker1").datepicker('getDate'));
+        var url = urlTemplate.replace('%DATE_DEBUT%',date);
+        window.location.href = url;
     },
     _formatDate: function (date) {
         return date.getFullYear()+'-'+options._twoDigits(date.getMonth()+1)+'-'+options._twoDigits(date.getDate());
@@ -216,10 +214,49 @@ var options = {
         return num;
     }
 };
+//TODO : faire un clone de options1
+var options2 = {
+    monthNames: mois,
+    monthNamesShort: ['Jan','Fév','Mar','Avr','Mai','Jun',
+        'Jul','Aoû','Sep','Oct','Nov','Déc'],
+    dayNames: jours,
+    dayNamesShort: ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],
+    dayNamesMin: ['Di','Lu','Ma','Me','Je','Ve','Sa'],
+    dateFormat: 'yy-mm-dd',
+    firstDay: 1,
+    prevText: '', prevStatus: 'Voir le mois précédent',
+    prevJumpText: '&#x3c;&#x3c;', prevJumpStatus: 'Voir l\'année précédent',
+    nextText: '', nextStatus: 'Voir le mois suivant',
+    nextJumpText: '&#x3e;&#x3e;', nextJumpStatus: 'Voir l\'année suivant',
+    currentText: 'Courant', currentStatus: 'Voir le mois courant',
+    todayText: 'Aujourd\'hui', todayStatus: 'Voir aujourd\'hui',
+    clearText: 'Effacer', clearStatus: 'Effacer la date sélectionnée',
+    closeText: 'Fermer', closeStatus: 'Fermer sans modifier',
+    yearStatus: 'Voir une autre année', monthStatus: 'Voir un autre mois',
+    weekText: 'Sm', weekStatus: 'Semaine de l\'année',
+    dayStatus: '\'Choisir\' le DD d MM',
+    defaultStatus: 'Choisir la date',
+    isRTL: false,
+    defaultDate: '{{ dateFin|date('Y-m-d') }}',
+    onSelect: function (a)
+    {
+        var date = options._formatDate($("#datepicker2").datepicker('getDate'));
+        var url = urlTemplate.replace('%DATE_FIN%',date);
+        window.location.href = url;
+    },
+    _formatDate: function (date) {
+        return date.getFullYear()+'-'+options._twoDigits(date.getMonth()+1)+'-'+options._twoDigits(date.getDate());
+    },
+    _twoDigits: function (num) {
+        if (num<10)
+            num = "0"+num;
+        return num;
+    }
+};
 
 window.onload = function()
 {
-    $("#datepicker1").datepicker(options);
+    $("#datepicker1").datepicker(options1);
     $("#datepicker2").datepicker(options);
 };
 
