@@ -15,7 +15,7 @@
                     <a data-toggle="tooltip" data-placement="bottom" title="Inverser le sens du tableau" class="btn btn-warning no-print" href="?direction={% if direction == 'H' %}V{%else %}H{% endif %}"><span class="glyphicon glyphicon-retweet"></span></a> 
                 {% endif %}
               <button class="btn btn-default no-print" onclick="window.print();"><span class="glyphicon glyphicon-print"></span> Imprimer</button>
-              <a download="distributions-{{ dates[0]|date('Y-m-d') }}-{{ nb }}.xls" class="btn btn-success no-print" onclick="exportExcel(this);" data-toggle="tooltip" data-placement="bottom" title="Export Excel"><span class="glyphicon glyphicon-floppy-disk"></span> Excel</a>
+              <a download="distributions-{{ dates[0]|date('Y-m-d') }}.xls" class="btn btn-success no-print" onclick="exportExcel(this);" data-toggle="tooltip" data-placement="bottom" title="Export Excel"><span class="glyphicon glyphicon-floppy-disk"></span> Excel</a>
 
             </div>
             <div class="pull-right text-center distri-right">
