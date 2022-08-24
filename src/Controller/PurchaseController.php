@@ -230,16 +230,27 @@ class PurchaseController extends AmapBaseController
         $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);
         $farmsMulti = $em->getRepository('App\Entity\Farm')->getFarmsMulti($farms, $em->getConnection()->getDatabase());
         $list = $em->getRepository('App\Entity\Purchase')->getProductsToShipMulti($dateDebut, $dateFin, $farmsMulti);
-       // $dates = $this.retrieveFromList();
-        die(print_r($list,1));
-       /* return $this->render('Purchase/distributionSummary.html.twig', array(
+        $dates = $this->retrieveDatesFromList($list);
+        return $this->render('Purchase/distributionSummary.html.twig', array(
             'list' => $list,
             'group_by' => 'farm',
-            'dates' => [],
+            'dates' => $dates,
             'nb' => 1,
             'urlTemplate' => 'produits_a_livrer/%DATE%/%NB%',
             'direction' => "H"
-        ));*/
+        ));
+    }
+
+    private function retrieveDatesFromList($list) {
+        $datesRet = [];
+        foreach($list as $entity => $dates) {
+            foreach($dates as $date => $items) {
+                if (!in_array($date, $datesRet)) {
+                    $datesRet[] = $date;
+                }
+            }
+        }
+        return $datesRet;
     }
   
   //$farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);
