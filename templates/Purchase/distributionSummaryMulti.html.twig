@@ -201,12 +201,12 @@ var options1 = {
     defaultDate: '{{ dateDebut|date('Y-m-d') }}',
     onSelect: function (a)
     {
-        var date = options._formatDate($("#datepicker1").datepicker('getDate'));
+        var date = options1._formatDate($("#datepicker1").datepicker('getDate'));
         var url = urlTemplate.replace('%DATE_DEBUT%',date);
         window.location.href = url;
     },
     _formatDate: function (date) {
-        return date.getFullYear()+'-'+options._twoDigits(date.getMonth()+1)+'-'+options._twoDigits(date.getDate());
+        return date.getFullYear()+'-'+options1._twoDigits(date.getMonth()+1)+'-'+options1._twoDigits(date.getDate());
     },
     _twoDigits: function (num) {
         if (num<10)
@@ -240,12 +240,12 @@ var options2 = {
     defaultDate: '{{ dateFin|date('Y-m-d') }}',
     onSelect: function (a)
     {
-        var date = options._formatDate($("#datepicker2").datepicker('getDate'));
+        var date = options2._formatDate($("#datepicker2").datepicker('getDate'));
         var url = urlTemplate.replace('%DATE_FIN%',date);
         window.location.href = url;
     },
     _formatDate: function (date) {
-        return date.getFullYear()+'-'+options._twoDigits(date.getMonth()+1)+'-'+options._twoDigits(date.getDate());
+        return date.getFullYear()+'-'+options2._twoDigits(date.getMonth()+1)+'-'+options2._twoDigits(date.getDate());
     },
     _twoDigits: function (num) {
         if (num<10)
@@ -257,7 +257,7 @@ var options2 = {
 window.onload = function()
 {
     $("#datepicker1").datepicker(options1);
-    $("#datepicker2").datepicker(options);
+    $("#datepicker2").datepicker(options2);
 };
 
 </script>
