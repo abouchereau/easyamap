@@ -231,12 +231,13 @@ class PurchaseController extends AmapBaseController
         $farmsMulti = $em->getRepository('App\Entity\Farm')->getFarmsMulti($farms, $em->getConnection()->getDatabase());
         $list = $em->getRepository('App\Entity\Purchase')->getProductsToShipMulti($dateDebut, $dateFin, $farmsMulti);
         $dates = $this->retrieveDatesFromList($list);
-        return $this->render('Purchase/distributionSummary.html.twig', array(
+        return $this->render('Purchase/distributionSummaryMulti.html.twig', array(
             'list' => $list,
             'group_by' => 'farm',
             'dates' => $dates,
-            'nb' => 1,
-            'urlTemplate' => 'produits_a_livrer/%DATE%/%NB%',
+            'dateDebut' => $dateDebut,
+            'dateFin' => $dateFin,
+            'urlTemplate' => 'produits_a_livrer_multiamap/%DATE_DEBUT%/%DATE_FIN%',
             'direction' => "H"
         ));
     }
