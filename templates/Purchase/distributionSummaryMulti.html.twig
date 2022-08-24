@@ -20,9 +20,9 @@
             </div>
             <div class="pull-right text-center distri-right">
                 De
-                <input type="text" class="form-control" id="datepicker1" style="display:inline;width:auto;" value="{{ dateDebut }}" />
+                <input type="text" class="form-control" id="datepicker1" style="display:inline;width:auto;" value="{{ dateDebut|date('Y-m-d') }}" />
                 à
-                <input type="text" class="form-control" id="datepicker2" style="display:inline;width:auto;" value="{{ dateFin }}" />
+                <input type="text" class="form-control" id="datepicker2" style="display:inline;width:auto;" value="{{ dateFin|date('Y-m-d') }}" />
 
             </div>
         </div>
