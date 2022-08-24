@@ -201,8 +201,9 @@ var options1 = {
     defaultDate: '{{ dateDebut|date('Y-m-d') }}',
     onSelect: function (a)
     {
-        var date = options1._formatDate($("#datepicker1").datepicker('getDate'));
-        var url = urlTemplate.replace('%DATE_DEBUT%',date);
+        var dateDebut = options1._formatDate($("#datepicker1").datepicker('getDate'));
+        var dateFin = options2._formatDate($("#datepicker2").datepicker('getDate'));
+        var url = urlTemplate.replace('%DATE_DEBUT%',dateDebut).replace('%DATE_FIN%',dateFin);;
         window.location.href = url;
     },
     _formatDate: function (date) {
@@ -240,8 +241,9 @@ var options2 = {
     defaultDate: '{{ dateFin|date('Y-m-d') }}',
     onSelect: function (a)
     {
-        var date = options2._formatDate($("#datepicker2").datepicker('getDate'));
-        var url = urlTemplate.replace('%DATE_FIN%',date);
+        var dateDebut = options1._formatDate($("#datepicker1").datepicker('getDate'));
+        var dateFin = options2._formatDate($("#datepicker2").datepicker('getDate'));
+        var url = urlTemplate.replace('%DATE_DEBUT%',dateDebut).replace('%DATE_FIN%',dateFin);;
         window.location.href = url;
     },
     _formatDate: function (date) {
