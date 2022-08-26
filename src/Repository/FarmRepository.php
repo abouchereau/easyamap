@@ -184,10 +184,18 @@ class FarmRepository extends EntityRepository
             $farms_id[] = $farm->getIdFarm();
         }
 
-        $sql = "select distinct c2.db, c2.id_farm
-        from amap_corresp.farm_corresp c2
-        left join amap_corresp.farm_corresp c1 on c1.farm_entity = c2.farm_entity
-        WHERE c1.id_farm IN(".implode(",",$farms_id).") and c1.db=:db";
+        $sql = "select distinct db, id_farm, is_cur_db from (
+                    select c2.db, c2.id_farm, 0 as is_cur_db
+                    from amap_corresp.farm_corresp c2
+                    left join amap_corresp.farm_corresp c1 on c1.id_farm_entity = c2.id_farm_entity
+                    WHERE c1.id_farm IN(" . implode(",", $farms_id) . ") 
+                    and c1.db=:db
+                    and c2.db<>:db
+                    union
+                    select '" . $db . "' as db, id_farm, 1 as is_cur_db
+                    from " . $db . ".farm
+                    WHERE id_farm IN(" . implode(",", $farms_id) . ")
+                    ) t ORDER BY db, id_farm";
         $r = $conn->executeQuery($sql, array('db' => $db));
         return $r->fetchAll(\PDO::FETCH_ASSOC);
     }
