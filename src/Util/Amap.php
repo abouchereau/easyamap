@@ -65,5 +65,9 @@ Merci de revenir dans quelques instants.<br /><img src='https://www.easyamap.fr/
         header('Location: '.$url);
         exit;
     }
+
+    static public function isEasyamapMainServer() {
+        return strpos($_SERVER['HTTP_HOST'], 'easyamap.fr')!==false;
+    }
 }
 

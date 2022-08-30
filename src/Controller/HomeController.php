@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Util\Amap;
 use Symfony\Component\HttpFoundation\Response;
 use App\Util\Cache;
 use App\Util\GitUtils;
@@ -44,7 +45,7 @@ class HomeController extends AmapBaseController
     protected function getMenuFarmer($user) {
         $list = array();
         $list[] = array(
-            $this->generateUrl('products_to_ship'),
+            $this->generateUrl(Amap::isEasyamapMainServer()?'products_to_ship_multi':'products_to_ship'),
             'circle-arrow-down',
             'Produits à livrer',
             'Liste des produits à livrer aux prochaines distributions.'
@@ -241,7 +242,7 @@ class HomeController extends AmapBaseController
             'Paramètres',
             'Définir les paramètres de l\'application et les dates de distribution.'
             );
-        if (strpos($_SERVER['HTTP_HOST'], "easyamap.fr") !== false) {
+        if (Amap::isEasyamapMainServer()) {
             $list[] = array(
                 $this->generateUrl('donnees'),
                 'hdd',
