@@ -208,7 +208,7 @@ class PurchaseController extends AmapBaseController
 
     public function getDeliveryNextDistributionMultiAmap($dateDebut = null, $dateFin=null)
     {
-        $this->denyAccessUnlessGranted('ROLE_FARMER');
+        $this->denyAccessUnlessGranted(['ROLE_FARMER','ROLE_ADHERENT']);
         if ($dateDebut == null) {
             $dateDebut = new \DateTime();
         }
