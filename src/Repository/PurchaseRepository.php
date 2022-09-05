@@ -281,7 +281,7 @@ UNION";
             }
         }
         $sql .= ") v
-ORDER BY v.DATE,  v.is_cur_db DESC, v.f_seq,  v.pr_seq, v.is_shift";
+ORDER BY v.is_cur_db DESC, v.f_seq, v.DATE, v.pr_seq, v.is_shift";
 
         $stmt = $conn->prepare($sql);
         $stmt->execute(['date_debut'=>$dateDebut->format('Y-m-d'),'date_fin'=>$dateFin->format('Y-m-d')]);
