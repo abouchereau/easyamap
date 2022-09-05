@@ -50,7 +50,7 @@
                     {% endif %}
                     <tr>
                         {% if urlTemplate != 'produits_a_recuperer/%DATE%/%NB%' %}
-                            <td>{{ adherent|raw|replace({'___':''})] }}</td>
+                            <td>{{ adherent|raw|replace({'___':''}) }}</td>
                         {% endif %}                        
                         {% for date in dates %}
                         <td>
