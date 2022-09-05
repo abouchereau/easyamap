@@ -45,7 +45,7 @@ class HomeController extends AmapBaseController
     protected function getMenuFarmer($user) {
         $list = array();
         $list[] = array(
-            $this->generateUrl(/*Amap::isEasyamapMainServer()*/false?'products_to_ship_multi':'products_to_ship'),
+            $this->generateUrl(Amap::isEasyamapMainServer()?'products_to_ship_multi':'products_to_ship'),
             'circle-arrow-down',
             'Produits à livrer',
             'Liste des produits à livrer aux prochaines distributions.'
