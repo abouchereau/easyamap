@@ -45,12 +45,12 @@
                 </tr>
                 {% for adherent, infos in list %}
                     {% if '___' in adherent and not autreAmap %}
-                        <tr><td colspan="{{ dates|length+1 }}"><b>Autres AMAPS</b></td></tr>
+                        <tr><td colspan="{{ dates|length+1 }}" class="text-center"><b>Autres AMAPS</b></td></tr>
                         {% set autreAmap = true %}
                     {% endif %}
                     <tr>
                         {% if urlTemplate != 'produits_a_recuperer/%DATE%/%NB%' %}
-                            <td>{{ adherent|raw|replace({'___':''}) }}</td>
+                            <td>{{ adherent|replace({'___':''})|raw }}</td>
                         {% endif %}                        
                         {% for date in dates %}
                         <td>

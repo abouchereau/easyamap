@@ -234,7 +234,7 @@ ORDER BY v.f_seq, v.DATE, v.pr_seq, v.is_shift";
             $farm = $farms[$i];
             $sql .= "
 SELECT
-concat((SELECT name FROM ".$farm['db'].".setting), '<br />', f.label".($farm['is_cur_db']=='1'?",'___'":"").") AS entity,
+concat((SELECT name FROM ".$farm['db'].".setting), '<br />', f.label".($farm['is_cur_db']=='0'?",'___'":"").") AS entity,
 d.date AS date,
 pr.fk_farm AS fk_farm, 
 sum(pu.quantity) AS nb, 
@@ -255,7 +255,7 @@ AND pr.fk_farm=".$farm['id_farm']."
  group by f.label, d.date, pr.fk_farm, pr.id_product, f.sequence, pr.sequence, d2.date
 UNION
 SELECT 
-concat((SELECT name FROM ".$farm['db'].".setting), '<br />', f.label".($farm['is_cur_db']=='1'?",'___'":"").") AS entity,
+concat((SELECT name FROM ".$farm['db'].".setting), '<br />', f.label".($farm['is_cur_db']=='0'?",'___'":"").") AS entity,
 d2.date AS date,
 pr.fk_farm AS fk_farm, 
 sum(pu.quantity) AS nb, 
