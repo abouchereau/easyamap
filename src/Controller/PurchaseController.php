@@ -251,6 +251,7 @@ class PurchaseController extends AmapBaseController
                 }
             }
         }
+        sort($datesRet);
         return $datesRet;
     }
   
