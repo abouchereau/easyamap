@@ -7,6 +7,7 @@
 {% block body %}
 {% set jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'] %}  
 {% set mois = ['','Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'] %}
+{% set autreAmap = false %}
 
     <div class="row no-print">
         <div class="col-md-12">
@@ -43,9 +44,13 @@
                     {% endfor %}
                 </tr>
                 {% for adherent, infos in list %}
+                    {% if '___' in adherent and !autreAmap %}
+                        <tr><td colspan="{{ dates|length+1 }}"><b>Autres AMAPS</b></td></tr>
+                        {% set autreAmap = true %}
+                    {% endif %}
                     <tr>
                         {% if urlTemplate != 'produits_a_recuperer/%DATE%/%NB%' %}
-                            <td>{{ adherent|raw }}</td>
+                            <td>{{ adherent|raw|replace({'___':''})] }}</td>
                         {% endif %}                        
                         {% for date in dates %}
                         <td>
@@ -81,14 +86,14 @@
                          <th class="bg-grey">{{ jours[date|date('w')] }} {{ date|date('d') }} {{ mois[date|date('n')] }} </th>
                          <td>
                             {% for adherent, infos in list %}
-                            {% if participation[adherent] is defined and participation[adherent][date|date('Y-m-d')] is defined %}
-                                {% for part in participation[adherent][date|date('Y-m-d')] %}
+                                {% if participation[adherent] is defined and participation[adherent][date|date('Y-m-d')] is defined %}
+                                    {% for part in participation[adherent][date|date('Y-m-d')] %}
                                         <div class="product">
                                             <span class="glyphicon glyphicon-time"></span> <b>{{ part }}</b>
                                         </div>
                                     {% endfor %}
                                 {% endif %}
-                            
+
                                 {% if infos[date|date('Y-m-d')] is defined %}
                                     {% for product in infos[date|date('Y-m-d')] %}
                                         <div class="product{% if product.date_shift is not null %} deleted{% endif %}">

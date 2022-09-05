@@ -234,7 +234,7 @@ ORDER BY v.f_seq, v.DATE, v.pr_seq, v.is_shift";
             $farm = $farms[$i];
             $sql .= "
 SELECT
-concat(".($farm['is_cur_db']=='1'?"'<b>', ":"")."(SELECT name FROM ".$farm['db'].".setting), '<br />', f.label".($farm['is_cur_db']=='1'?",'</b>'":"").") AS entity,
+concat((SELECT name FROM ".$farm['db'].".setting), '<br />', f.label".($farm['is_cur_db']=='1'?",'___'":"").") AS entity,
 d.date AS date,
 pr.fk_farm AS fk_farm, 
 sum(pu.quantity) AS nb, 
@@ -242,7 +242,8 @@ concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit,
 f.sequence as f_seq, 
 pr.sequence as pr_seq,
 d2.date AS date_shift,
-0 is_shift
+0 is_shift,
+".$farm['is_cur_db']." as is_cur_db
 from ".$farm['db'].".purchase pu 
 left join ".$farm['db'].".product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
 left join ".$farm['db'].".distribution d on d.id_distribution = pd.fk_distribution 
@@ -254,7 +255,7 @@ AND pr.fk_farm=".$farm['id_farm']."
  group by f.label, d.date, pr.fk_farm, pr.id_product, f.sequence, pr.sequence, d2.date
 UNION
 SELECT 
-concat(".($farm['is_cur_db']=='1'?"'<b>', ":"")."(SELECT name FROM ".$farm['db'].".setting), '<br />', f.label".($farm['is_cur_db']=='1'?",'</b>'":"").") AS entity,
+concat((SELECT name FROM ".$farm['db'].".setting), '<br />', f.label".($farm['is_cur_db']=='1'?",'___'":"").") AS entity,
 d2.date AS date,
 pr.fk_farm AS fk_farm, 
 sum(pu.quantity) AS nb, 
@@ -262,7 +263,8 @@ concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit,
 f.sequence as f_seq, 
 pr.sequence as pr_seq,
 d.date AS date_shift,
-1 is_shift
+1 is_shift,
+".$farm['is_cur_db']." as is_cur_db
 from ".$farm['db'].".purchase pu 
 left join ".$farm['db'].".product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
 left join ".$farm['db'].".distribution d on d.id_distribution = pd.fk_distribution 
@@ -279,7 +281,7 @@ UNION";
             }
         }
         $sql .= ") v
-ORDER BY v.f_seq, v.DATE, v.pr_seq, v.is_shift";
+ORDER BY v.is_cur_db DESC, v.f_seq, v.DATE, v.pr_seq, v.is_shift";
 
         $stmt = $conn->prepare($sql);
         $stmt->execute(['date_debut'=>$dateDebut->format('Y-m-d'),'date_fin'=>$dateFin->format('Y-m-d')]);
