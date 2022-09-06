@@ -375,6 +375,17 @@ products_to_ship_multi:
     dateDebut: null
     dateFin: null
 
+products_to_ship_total:
+  path: produits_a_livrer_total/{date}
+  controller: App\Controller\PurchaseController:getDeliveryNextDistributionTotal
+  defaults:
+    date: null
+
+product_corresp:
+  path: product_corresp
+  controller: App\Controller\PurchaseController:productCorresp
+  methods: POST
+
 payment_received:
     path: payment_received
     controller:  App\Controller\PaymentController:paymentReceived

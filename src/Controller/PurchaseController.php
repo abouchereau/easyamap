@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Util\Amap;
 use Symfony\Component\HttpFoundation\Request;
 use App\Util\Utils;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -240,6 +241,25 @@ class PurchaseController extends AmapBaseController
             'urlTemplate' => 'produits_a_livrer_multiamap/%DATE_DEBUT%/%DATE_FIN%',
             'direction' => "H"
         ));
+    }
+
+    public function getDeliveryNextDistributionTotal($date= null) {
+        if (!Amap::isEasyamapMainServer()) {
+            throw $this->createAccessDeniedException('Accès refusé');
+        }
+        $this->denyAccessUnlessGranted(['ROLE_FARMER','ROLE_ADHERENT']);
+
+        if ($date == null) {
+            $date = new \DateTime();
+        }
+        else {
+            $date = \DateTime::createFromFormat('Y-m-d', $date);
+        }
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);
+        $farmsMulti = $em->getRepository('App\Entity\Farm')->getFarmsMulti($farms, $em->getConnection()->getDatabase());
+        $productsMulti = $em->getRepository('App\Entity\Product')->getProductsMulti($farmsMulti);
     }
 
     private function retrieveDatesFromList($list) {

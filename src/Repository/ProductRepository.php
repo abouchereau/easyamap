@@ -141,4 +141,38 @@ class ProductRepository extends EntityRepository
         $r = $conn->query($sql);
         return $r->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    public function getProductsMulti($farmsMulti) {
+        $conn = $this->getEntityManager()->getConnection();
+        $nb_farms = count($farmsMulti);
+        for($i = 0; $i < $nb_farms; $i++) {
+        $sql = "select db, id_farm, farm_label, id_product, product_label from (";
+        foreach($farmsMulti as $farm) {
+            $sql .= "SELECT (SELECT name FROM ".$farm['db'].".setting) as db,
+            f.id_farm,
+            f.label as farm_label,
+            p.id_product,
+            concat(p.label,' ',p.unit) as product_label,
+            f.sequence fseq,
+            p.sequence pseq
+            from ".$farm['db'].".product p
+            left join farm f on f.id_farm = p.fk_farm
+            where p.is_active=1";
+            if ($i < $nb_farms-1) {
+                $sql .= "
+UNION";
+            }
+        }
+    }
+    $sql .= ") t
+    ORDER BY db, fseq, pseq";
+        $r = $conn->query($sql);
+        $tab = $r->fetchAll(\PDO::FETCH_ASSOC);
+        $out = [];
+        foreach($tab as $item) {
+           // $key =
+           // if (!isset($out[]))
+        }
+
+    }
 }
