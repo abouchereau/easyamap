@@ -548,6 +548,16 @@ class PaymentRepository extends EntityRepository
             if ($id_farm != null) 
                 $sql .= " and pr.fk_farm=".$id_farm;
             $sql .= " group by pu.id_purchase, di.date
+            union all
+            select null as id_purchase, p.received_at as date, p.received as price
+            from payment p
+            where 1=1";
+            if ($id_user != null)
+                $sql .= " and p.fk_user=".$id_user;
+        if ($id_farm != null)
+            $sql .= " and pr.fk_farm=".$id_farm;
+        $sql .= " and p.received_at between '".$year."-01-01' AND '".$year."-12-31'
+            and not exists (select fk_payment from purchase pu where pu.fk_payment = p.id_payment)
             ) pre_somme
             group by month(date)";
         $stmt = $conn->prepare($sql);
