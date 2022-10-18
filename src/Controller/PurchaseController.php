@@ -399,7 +399,6 @@ class PurchaseController extends AmapBaseController
   
   public function listDistributionAdherent($date = null, $nb = 4)
   {
-      $this->denyAccessUnlessGranted('ROLE_ADMIN');
       $em = $this->getDoctrine()->getManager();
       if ($date === null || !preg_match("/^\d{4}\-\d{2}-\d{2}$/",$date))
       {
@@ -427,7 +426,6 @@ class PurchaseController extends AmapBaseController
  
   public function listDistributionFarm($date = null, $nb = 4)
   {
-      $this->denyAccessUnlessGranted('ROLE_ADMIN');
       $em = $this->getDoctrine()->getManager();
       if ($date === null || !preg_match("/^\d{4}\-\d{2}-\d{2}$/",$date))
       {

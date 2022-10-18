@@ -98,8 +98,21 @@
             </table>
         </div>
     </div>
-                 
-              {# dupliquer la structure du tableau ici pour l'export Excel #}   
+
+    {%  if urlTemplate == 'produits_a_recuperer/%DATE%/%NB%' %}
+    <div class="row">
+        <div class="col-md-12">
+            <a href="{{ path('list_distribution_adherent') }}">Liste complète par adhérent</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <a href="{{ path('list_distribution_farm') }}">Liste complète par producteur</a>
+        </div>
+    </div>
+    {%  endif %}
+
+    {# dupliquer la structure du tableau ici pour l'export Excel #}
     <div style="display:none;"> 
         <table id="table-excel">            
             {% if direction == 'H' or list|length>1 %}
