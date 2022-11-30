@@ -17,7 +17,7 @@
 <script type="text/javascript" src="{{ asset('js/form.js') }}"></script>
 <script>
     $("#product_basePrice").keyup(()=>{
-        $(this).val($(this).val().replace(/[^0-9\.,]+/g, ''));
+        $("#product_basePrice").val($("#product_basePrice").val().replace(/[^0-9\.,]+/g, ''));
     });
 </script>
 {% endblock %}
