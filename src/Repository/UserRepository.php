@@ -26,7 +26,7 @@ class UserRepository extends ServiceEntityRepository
             $user = $this->createQueryBuilder('u')
             ->where('UPPER(u.username) =:username')
             ->andWhere('u.password = :password')
-            ->andWhere('u.active = 1')
+            ->andWhere('u.isActive = 1')
             ->setParameter('username', mb_strtoupper($username, 'UTF-8'))
             ->setParameter('password', $password)
             ->getQuery()
