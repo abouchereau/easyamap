@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 
@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  * Api controller.
  *
  */
-class ApiController extends Controller
+class ApiController extends AbstractController
 {
     public function getAllFarms() {
         $em = $this->getDoctrine()->getManager();

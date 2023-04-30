@@ -2,8 +2,7 @@
 
 namespace App\Controller;
 
-//use Sonata\AdminBundle\Controller\CRUDController as Controller;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -11,7 +10,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * Payment controller.
  *
  */
-class PaymentAdminController extends Controller
+class PaymentAdminController extends AbstractController
 {
     
         /**
