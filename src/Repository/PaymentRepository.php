@@ -523,7 +523,7 @@ class PaymentRepository extends EntityRepository
         $sql = "select month(date), round(sum(price),2) as somme 
             from (
             select fk_purchase, date, p.quantity*price as price
-            from purchase_ratio_price prp
+            from view_purchase_ratio_price prp
             left join purchase p on p.id_purchase = prp.fk_purchase
             where date between '".$year."-01-01' AND '".$year."-12-31'";
             if ($id_user != null) {

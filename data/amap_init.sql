@@ -260,22 +260,6 @@ CREATE TABLE `purchase` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
-DROP TABLE IF EXISTS `purchase_ratio_price`;
-CREATE TABLE `purchase_ratio_price` (
-  `fk_purchase` int(11) NOT NULL,
-  `date` date NOT NULL,
-  `fk_user` int(11) NOT NULL,
-  `fk_farm` int(11) NOT NULL,
-  `price` float NOT NULL,
-  UNIQUE KEY `fk_purchase_unique` (`fk_purchase`),
-  KEY `fk_user_index` (`fk_user`),
-  KEY `fk_farm_index` (`fk_farm`),
-  CONSTRAINT `stat_ibfk_1` FOREIGN KEY (`fk_purchase`) REFERENCES `purchase` (`id_purchase`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `stat_ibfk_2` FOREIGN KEY (`fk_user`) REFERENCES `user` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `stat_ibfk_3` FOREIGN KEY (`fk_farm`) REFERENCES `farm` (`id_farm`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
 DROP TABLE IF EXISTS `referent`;
 CREATE TABLE `referent` (
   `id_referent` int(11) NOT NULL AUTO_INCREMENT,
@@ -495,3 +479,33 @@ ON SCHEDULE EVERY 1 HOUR
 STARTS '2021-01-01 00:00:11'
 DO
 update contract set is_active = 0 where fill_date_end = CURDATE() and auto_end_hour = hour(now());
+
+
+CREATE OR REPLACE VIEW view_purchase_ratio_price AS
+select pu.id_purchase, d.date, pu.fk_user, pay.fk_farm, (pay.amount-ifnull(j1.somme,0))/j2.nb_product_prix_poids as prix_estime
+from purchase pu
+         left join payment pay on pu.fk_payment = pay.id_payment
+         join product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
+         join distribution d on d.id_distribution = pd.fk_distribution
+         join product pr on pr.id_product = pd.fk_product
+         left join (
+    select id_payment, fk_contract, fk_user, amount, round(sum(price),2) as somme from (
+           select pay.id_payment, pay.fk_contract, pu.fk_user, pay.amount, pu.quantity*pd.price as price
+           from purchase pu
+                    left join payment pay on pu.fk_payment = pay.id_payment
+                    left join product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
+                    join product pr on pr.id_product = pd.fk_product
+           where pr.ratio is null
+       ) tt group by id_payment
+) j1 on j1.id_payment = pay.id_payment and j1.fk_contract = pu.fk_contract
+         left join (
+    select pay.id_payment, pay.fk_contract, pay.fk_user, pay.amount, sum(pu.quantity) as nb_product_prix_poids
+    from payment pay
+             join purchase pu on pu.fk_payment = pay.id_payment
+             join product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
+             join product pr on pr.id_product = pd.fk_product
+    where pr.ratio is not null
+    group by pay.id_payment
+) j2 on j2.id_payment = pay.id_payment and j2.fk_contract = pu.fk_contract
+where pr.ratio is not null
+  and pay.fk_farm is not null;
