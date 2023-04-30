@@ -1,5 +1,5 @@
 CREATE OR REPLACE VIEW view_purchase_ratio_price AS
-select pu.id_purchase, d.date, pu.fk_user, pay.fk_farm, (pay.amount-ifnull(j1.somme,0))/j2.nb_product_prix_poids as prix_estime
+select pu.id_purchase as fk_purchase, d.date, pu.fk_user, pay.fk_farm, (pay.amount-ifnull(j1.somme,0))/j2.nb_product_prix_poids as price
 from purchase pu
          left join payment pay on pu.fk_payment = pay.id_payment
          join product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
