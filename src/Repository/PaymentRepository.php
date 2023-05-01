@@ -576,7 +576,7 @@ class PaymentRepository extends EntityRepository
         return array('graph' => $out, 'total' => $total);
     }
     
-    public function majStat($id_payment) {
+   /* public function majStat($id_payment) {
         $conn = $this->getEntityManager()->getConnection();
         try {
             $sql = "delete from purchase_ratio_price
@@ -625,7 +625,7 @@ class PaymentRepository extends EntityRepository
             return false;
         }
         return true;
-    }
+    }*/
     
     public function getAllYears() 
     {

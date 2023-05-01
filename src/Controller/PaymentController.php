@@ -215,7 +215,7 @@ class PaymentController extends AmapBaseController
         $payment->setAmount($amount);
         $em->persist($payment);
         $em->flush();
-        $em->getRepository('App\Entity\Payment')->majStat($id_payment);
+        //$em->getRepository('App\Entity\Payment')->majStat($id_payment);
         return new Response('ok');
      }
      
@@ -232,15 +232,15 @@ class PaymentController extends AmapBaseController
         } else {
             $em->getConnection()->beginTransaction();
             $description = $em->getRepository('App\Entity\Payment')->manageReceived($id_payment, $amount, $split_index, $split);        
-            $v = $em->getRepository('App\Entity\Payment')->majStat($id_payment);
-            if ($v && gettype($description) == "array") {
+//            $v = $em->getRepository('App\Entity\Payment')->majStat($id_payment);
+            if (gettype($description) == "array") {
                 $em->getConnection()->commit();
-                return new Response(json_encode($description));
             }
             else {
                 $em->getConnection()->rollback();
-                return new Response(json_encode($description));
-            }           
+            }
+
+            return new Response(json_encode($description));
         } 
      }
      
