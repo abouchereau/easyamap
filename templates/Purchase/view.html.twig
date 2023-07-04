@@ -118,7 +118,12 @@
                 <div class="payment">Total</div>
                 <div class="payment_right">{% if payments[product.fkFarm.idFarm].amount == 0 %}
                     Le total sera calculé en fonction du poids à la livraison.{% else %}
+
+                    {% if contract.discount is not empty %}
+                        <span style="text-decoration: line-through;">{{ (payments[product.fkFarm.idFarm].amount/(100-contract.discount)|number_format(2,',',' ')~' €' }}</span>
+                    {%  endif %}
                     {{ payments[product.fkFarm.idFarm].amount|number_format(2,',',' ')~' €'}}
+
                     {% endif %}
                 </div>
                     <div class="payment not-first">Paiement reçu</div><div class="payment_right not-first">{% if payments[product.fkFarm.idFarm].received==0 %}non{% else %}oui{% endif %}</div>
