@@ -120,7 +120,7 @@
                     Le total sera calculé en fonction du poids à la livraison.{% else %}
 
                     {% if contract.discount is not empty %}
-                        <span style="text-decoration: line-through;">{{ (payments[product.fkFarm.idFarm].amount/(100-contract.discount))|number_format(2,',',' ')~' €' }}</span>
+                        <span style="text-decoration: line-through;">{{ ((payments[product.fkFarm.idFarm].amount/(100-contract.discount))*100)|number_format(2,',',' ')~' €' }}</span>
                     {%  endif %}
                     {{ payments[product.fkFarm.idFarm].amount|number_format(2,',',' ')~' €'}}
 
