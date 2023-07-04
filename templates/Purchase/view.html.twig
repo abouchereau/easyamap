@@ -23,8 +23,15 @@
             {{ contract.description|nl2br }}
         </p>
         {% endif %}
-        
-        {% if contract.countPurchaseSince is not null %}
+       {% if contract.discount is not empty %}
+           <p class="bg-danger text-center">
+               <span class="glyphicon glyphicon-certificate"></span><br />
+               Remise : {{ contract.discount }} %
+           </p>
+       {% endif %}
+
+
+       {% if contract.countPurchaseSince is not null %}
  
       <table class="table table-bordered">
           <tr><th colspan=2" class="bg-grey text-center">Quantités déjà commandées depuis le {{ contract.countPurchaseSince|full_date_fr }}</th></tr>

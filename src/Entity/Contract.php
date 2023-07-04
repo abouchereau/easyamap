@@ -95,8 +95,14 @@ class Contract
      * @ORM\Column(name="count_purchase_since", type="date", nullable=true)
      */
     private $countPurchaseSince;
-    
-    
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="discount", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $discount;
+
      public function __construct() {
          $this->products = new ArrayCollection();
      }
@@ -295,6 +301,24 @@ class Contract
         $this->products->add($product);
         return $this;
     }
+
+    /**
+     * @return float
+     */
+    public function getDiscount()
+    {
+        return $this->discount;
+    }
+
+    /**
+     * @param float $discount
+     */
+    public function setDiscount(float $discount)
+    {
+        $this->discount = $discount;
+    }
+
+
     
     public function __toString()
     {

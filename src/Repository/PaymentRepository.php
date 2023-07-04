@@ -132,7 +132,12 @@ class PaymentRepository extends EntityRepository
        */
 
             
-        $all = array();       
+        $all = array();
+
+        $discountFactor = 1;
+        if ($contract->getDiscount() != null) {
+            $discountFactor = 1-($contract->getDiscount()/100);
+        }
         
         foreach ($tab as $line) {
             if ($farms_received === false || !in_array($line['id_farm'],$farms_received)) {
@@ -197,7 +202,7 @@ class PaymentRepository extends EntityRepository
 //                $this->addPayment(0,$user, $farm,$contract, $each['payment_types'],$each['split_payments'],$farm->getCheckPayableTo(),$each['chosen_payment']);
 //            }
             if ($each['total_amount']>0 || $each['has_ratio_products']) {
-                $id_payment = $this->addPayment($each['total_amount'],$user, $farms[$id_farm],$contract, $each['payment_types'],$each['split_payments'],$farms[$id_farm]->getCheckPayableTo(),$each['chosen_payment']);
+                $id_payment = $this->addPayment(round($each['total_amount']*$discountFactor,2),$user, $farms[$id_farm],$contract, $each['payment_types'],$each['split_payments'],$farms[$id_farm]->getCheckPayableTo(),$each['chosen_payment']);
                 $payment_farm[$id_farm] = $id_payment;
             }     
         }

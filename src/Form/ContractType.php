@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -75,6 +76,7 @@ class ContractType extends AbstractType
               'format' =>'yyyy-MM-dd',
               'label' => '(optionnel) Compter les produits déjà commandés depuis le (année-mois-jour)', 
               'required' => false))
+            ->add('discount',MoneyType::class,array('label' => 'Remise en % (ex : 5)','required' => false,'currency' =>'','scale' => 2))
             ->add('products',EntityType::class,array(
               'label' => 'Produits',
               'class' => Product::class, 
