@@ -158,7 +158,7 @@ class PaymentRepository extends EntityRepository
                     'amount'=>$line['amount']*$discountFactor,
                     'has_ratio'=>$line['has_ratio']
                     );                
-                $all[$line['id_farm']]['total_amount'] += $line['amount'];                
+                $all[$line['id_farm']]['total_amount'] += $line['amount']*$discountFactor;
                 $all[$line['id_farm']]['has_ratio_products'] = $all[$line['id_farm']]['has_ratio_products'] || $line['has_ratio'];
             }
         }
