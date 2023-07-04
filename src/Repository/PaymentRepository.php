@@ -155,7 +155,7 @@ class PaymentRepository extends EntityRepository
                 }
                 $all[$line['id_farm']]['distri_amount'][] = array(
                     'date'=>$line['date'],
-                    'amount'=>$line['amount'],
+                    'amount'=>$line['amount']*$discountFactor,
                     'has_ratio'=>$line['has_ratio']
                     );                
                 $all[$line['id_farm']]['total_amount'] += $line['amount'];                
@@ -202,7 +202,7 @@ class PaymentRepository extends EntityRepository
 //                $this->addPayment(0,$user, $farm,$contract, $each['payment_types'],$each['split_payments'],$farm->getCheckPayableTo(),$each['chosen_payment']);
 //            }
             if ($each['total_amount']>0 || $each['has_ratio_products']) {
-                $id_payment = $this->addPayment(round($each['total_amount']*$discountFactor,2),$user, $farms[$id_farm],$contract, $each['payment_types'],$each['split_payments'],$farms[$id_farm]->getCheckPayableTo(),$each['chosen_payment']);
+                $id_payment = $this->addPayment(round($each['total_amount'],2),$user, $farms[$id_farm],$contract, $each['payment_types'],$each['split_payments'],$farms[$id_farm]->getCheckPayableTo(),$each['chosen_payment']);
                 $payment_farm[$id_farm] = $id_payment;
             }     
         }
