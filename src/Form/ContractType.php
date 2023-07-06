@@ -76,7 +76,7 @@ class ContractType extends AbstractType
               'format' =>'yyyy-MM-dd',
               'label' => '(optionnel) Compter les produits déjà commandés depuis le (année-mois-jour)', 
               'required' => false))
-            ->add('discount',MoneyType::class,array('label' => 'Remise en % (ex : 5)','required' => false,'currency' =>'','scale' => 2))
+            ->add('discount',NumberType::class,array('label' => 'Remise en % (ex : 5)','required' => false,'scale'=>1))
             ->add('products',EntityType::class,array(
               'label' => 'Produits',
               'class' => Product::class, 

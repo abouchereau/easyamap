@@ -104,6 +104,6 @@ Ce logiciel est mis à disposition selon les termes de la [Licence Creative Comm
 ![Creative Commons Logo](https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png)
 
 ## Auteur
-* Anthony BOUCHEREAU, 2015-2020
+* Anthony BOUCHEREAU, 2015-2023
 
 
