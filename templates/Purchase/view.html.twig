@@ -24,7 +24,8 @@
         </p>
         {% endif %}
        {% if contract.discount is not empty %}
-           <p class="text-center text-danger">
+           <p class="text-center text-danger bg-info">
+           <span class="glyphicon glyphicon-certificate"></span><br />
             REMISE<br />
             <span style="font-size:200%">{{ contract.discount }} %</span>
            </p>
