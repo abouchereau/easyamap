@@ -1,0 +1,9 @@
+<div class="row">
+    <div class="col-md-12">
+        <ul class="nav nav-tabs nav-justified">
+            <li role="presentation"{% if app.request.attributes.get('_route') == 'setting_edit' %} class="active"{% endif %}><a href="{{ path('setting_edit') }}">Paramètres globaux</a></li>
+            <li role="presentation"{% if app.request.attributes.get('_route') == 'distribution' %} class="active"{% endif %}><a href="{{ path('distribution') }}">Dates des distributions</a></li>
+            <li role="presentation"{% if app.request.attributes.get('_route') == 'task' %} class="active"{% endif %}><a href="{{ path('task') }}">Tâches distribution</a></li>
+        </ul>
+    </div>
+</div>

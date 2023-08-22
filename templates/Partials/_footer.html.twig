@@ -1,0 +1,19 @@
+<footer class="no-print">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+            <p class="logo pull-left">
+                {% if setting.link is not empty %}<a href="{{ setting.link }}" target="_blank" title="Site web">{% endif %}
+                         <img src="{{ setting.logoSmallUrl }}" alt="" style="height:90px;" />
+                {% if setting.link is not empty %}</a>{% endif %}
+            </p>
+            <p class="logo pull-right">   
+                {% if setting.logoSecondary is not empty %}                
+                    <img src="{{ setting.logoSecondary }}" alt="" />
+                {% endif %}
+            </p>
+            <p class="credits text-muted text-center"><small><a href="{{ portail }}">easyamap</a> <a style="font-size:80%;" href="{{ portail }}/historique">{{ version }}</a> - {{ setting.name }}</small><br /><small class="mobile-hide">&copy; 2015-2020 Anthony Bouchereau - {{ mail_support }} - <a href="https://cdn1.easyamap.fr/docs/CGU-easyamap.pdf" target="_blank">CGU</a></small></p>
+            </div>
+        </div>
+    </div>
+</footer>

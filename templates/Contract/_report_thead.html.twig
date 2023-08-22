@@ -1,0 +1,10 @@
+<h4>Contrat "{{ contract.label }}"</h4>
+{% if farm is not null %}
+    <p>{{ farm.label }} ({{farm.productType}})</p>
+    <p>Référent{% if farm.referents|length > 1 %}s{% endif %} : 
+        {% for referent in farm.referents %}
+            {{ referent.firstname}} {{ referent.lastname}} (<a href="mailto:{{ referent.email }}">{{ referent.email }}</a>)
+            {% if not loop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+{% endif %}

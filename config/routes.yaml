@@ -1,5 +1,568 @@
-controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
-    type: attribute
+#------------------Pages
+home:
+    path:  /
+    controller: App\Controller\HomeController::index
+    
+maintenance:
+    path:  /maintenance
+    controller: App\Controller\HomeController::maintenance
+    
+login:
+    path:   /login
+    controller:  App\Controller\SecurityController::login
+login_check:
+    path:   /login_check
+logout:
+    path:   /logout
+    
+# ---CRUD
+contract_index:
+    path: /contract
+    controller: App\Controller\ContractController::index
+     
+contract_farmer:
+    path: /contract/farmer
+    controller: App\Controller\ContractController::indexFarmer
+    
+contract_new:   
+    path: /contract/new/{id}
+    controller: App\Controller\ContractController::new
+    defaults:
+        id: null
+    
+contract_create:
+    path: /contract/create
+    controller: App\Controller\ContractController::create
+    methods: POST
+
+
+contract_edit:
+    path: /contract/{id}/edit
+    controller: App\Controller\ContractController::edit
+    
+contract_update:
+    path: /contract/{id}/update
+    controller: App\Controller\ContractController::update
+    methods: POST|PUT
+
+contract_delete:
+    path: /contract/{id}/delete
+    controller: App\Controller\ContractController::delete
+
+farm:
+    path: /farm
+    controller: App\Controller\FarmController::index
+
+farm_show:
+    path: /farm/{id}/show
+    controller: App\Controller\FarmController::show
+
+farm_new:
+    path: /farm/new
+    controller: App\Controller\FarmController::new
+
+farm_create:
+    path: /farm/create
+    controller: App\Controller\FarmController::create
+    methods: POST|PUT
+
+farm_edit:
+    path: /farm/{id}/edit
+    controller: App\Controller\FarmController::edit
+
+farm_update:
+    path: farm/{id}/update
+    controller: App\Controller\FarmController::update
+    methods: POST|PUT
+    
+farm_delete:
+    path: /farm/{id}/delete
+    controller: App\Controller\FarmController::delete
+
+farm_activate:
+    path: /path/{id}/activate/{active}
+    controller: App\Controller\FarmController::activate
+
+    
+paiements_adherent:
+    path: /paiements_adherent/{page}/{contract}/{farm}/{received}
+    controller: App\Controller\PaymentController::indexAdherent
+    defaults:
+        page: 1
+        contract: 0
+        farm: 0
+        received: 0
+        
+paiements_referent:
+    path: /paiements_referent/{page}/{contract}/{farm}/{received}/{adherent}
+    controller: App\Controller\PaymentController::indexReferent
+    defaults:
+        page: 1
+        contract: 0
+        farm: 0
+        received: 0
+        adherent: 0
+        
+        
+payment_new:
+    path: /payment/new
+    controller: App\Controller\PaymentController::new
+
+payment_create:
+    path: /payment/create
+    controller: App\Controller\PaymentController::create
+    methods: POST
+    
+product:
+    path: /product
+    controller: App\Controller\ProductController::index
+
+product_show:
+    path: /product/{id}/show
+    controller: App\Controller\ProductController::show
+
+product_new:
+    path: /product/new/{id}
+    controller: App\Controller\ProductController::new
+    defaults:
+        id: null
+
+product_create:
+    path: /product/create',
+    controller: App\Controller\ProductController::create
+    methods: POST
+
+product_edit:
+    path: /product/{id}/edit
+    controller: App\Controller\ProductController::edit
+
+product_update:
+    path: /product/{id}/update
+    controller: App\Controller\ProductController::update
+    methods: POST|PUT
+
+product_delete:
+    path: /product/{id}/delete
+    controller: App\Controller\ProductController::delete
+
+product_activate:
+    path: /product/{id}/activate/{active}
+    controller: App\Controller\ProductController::activate
+
+referent:
+    path: /referent
+    controller: App\Controller\ReferentController::index
+
+referent_show:
+    path: /referent/{id}/show
+    controller: App\Controller\ReferentController::show
+
+referent_new:
+    path: /referent/new
+    controller: App\Controller\ReferentController::new
+
+referent_create:
+    path: /referent/create',
+    controller: App\Controller\ReferentController::create
+    methods: POST
+
+referent_edit:
+    path: /referent/{id}/edit
+    controller: App\Controller\ReferentController::edit
+
+referent_update:
+    path: /referent/{id}/update
+    controller: App\Controller\ReferentController::update
+    methods: POST|PUT
+
+referent_delete:
+    path: /referent/{id}/delete
+    controller: App\Controller\ReferentController::delete
+
+    
+task:
+    path: /task
+    controller: App\Controller\TaskController::index
+
+task_new:
+    path: /task/new
+    controller: App\Controller\TaskController::new
+
+task_create:
+    path: /task/create',
+    controller: App\Controller\TaskController::create
+    methods: POST
+
+task_edit:
+    path: /task/{id}/edit
+    controller: App\Controller\TaskController::edit
+
+task_update:
+    path: /task/{id}/update
+    controller: App\Controller\TaskController::update
+    methods: POST|PUT
+
+task_delete:
+    path: /task/{id}/delete
+    controller: App\Controller\TaskController::delete
+
+    
+user:
+    path: /user
+    controller: App\Controller\UserController::index
+
+user_show:
+    path: /user/{id}/show
+    controller: App\Controller\UserController::show
+
+user_new:
+    path: /user/new
+    controller: App\Controller\UserController::new
+
+user_create:
+    path: /user/create',
+    controller: App\Controller\UserController::create
+    methods: POST
+
+user_edit:
+    path: /user/{id}/edit
+    controller: App\Controller\UserController::edit
+
+user_update:
+    path: /user/{id}/update
+    controller: App\Controller\UserController::update
+    methods: POST|PUT
+
+user_delete:
+    path: /user/{id}/delete
+    controller: App\Controller\UserController::delete
+
+user_activate:
+    path: /user/{id}/activate/{active}
+    controller: App\Controller\UserController::activate
+
+donnees_personnelles:
+    path: /donnees_personnelles
+    controller: App\Controller\UserController::displayCurrentUser
+
+distribution:
+    path:   /parametres/distribution
+    controller: App\Controller\DistributionController::index
+    
+distribution_toggle_date:
+    path:   /distribution/toggle/{date}
+    controller: App\Controller\DistributionController::toggleDate
+    
+distribution_move_date:
+    path:   /distribution/move/{date_from}/{date_to}
+    controller: App\Controller\DistributionController::moveDate
+    
+distribution_show_products:
+    path:   /distribution/show_products/{date}
+    controller: App\Controller\DistributionController::showProducts
+    
+distribution_add_batch:
+    path:   /distribution/add_batch
+    controller: App\Controller\DistributionController::addBatch
+    
+    
+#-------------produits par distribution
+product_distribution:
+    path:   /product_distribution/{page}
+    controller: App\Controller\ProductDistributionController::index
+    defaults:
+        page: 1
+    
+product_distribution_save:
+    path:   /product_distribution_save
+    controller: App\Controller\ProductDistributionController::save
+
+distributions_between:
+    path:   distributions_between/{dateStart}/{dateEnd}
+    controller: App\Controller\DistributionController::getBetween
+    
+save_prodis:
+    path: /save-prodis
+    controller: App\Controller\ProductDistributionController::saveProdis
+    
+#-----contract
+contract_activate:
+    path: contract_activate/{id_contract}/{bool}
+    controller: App\Controller\ContractController::activate
+    
+contract_purchasers:
+    path: contract_purchasers/{id_contract}
+    controller: App\Controller\ContractController::purchasers
+    
+contract_calendar:
+    path: contract_calendar/{id_contract}
+    controller: App\Controller\ContractController::calendar
+    
+contract_report:
+    path: contract_report/{id_contract}/{id_farm}
+    controller: App\Controller\ContractController::report
+    defaults:
+        id_farm: null
+        type: report
+    
+contract_report_redirect:
+    path: contract_report_redirect/{id_payment}
+    controller: App\Controller\ContractController::reportRedirect
+    
+contract_shipping:
+    path: contract_shipping/{id_contract}/{id_farm}
+    controller: App\Controller\ContractController::report
+    defaults:
+        id_farm: null
+        type: shipping
+
+contract_ventilation:
+    path: contract_ventilation/{id_contract}/{id_farm}
+    controller: App\Controller\ContractController::report
+    defaults:
+        id_farm: null
+        type: ventilation
+    
+contract_payment:
+    path: contract_payment/{id_contract}/{id_farm}
+    controller: App\Controller\ContractController::report
+    defaults:
+        id_farm: null
+        type: payment
+    
+#--commandes
+contrat_list:
+    path: liste_contrats
+    controller: App\Controller\PurchaseController::index
+    defaults:
+        isArchive: false
+
+contrat_list_archives:
+    path: liste_contrats_archives
+    controller: App\Controller\PurchaseController::index
+    defaults:
+        isArchive: true
+    
+contrat_view:
+    path: contrat/{id_contract}/{id_user}
+    controller: App\Controller\PurchaseController::view
+    defaults:
+        id_user: null
+    
+   
+contrat_save:
+    path: contrat_save/{id_contract}
+    controller: App\Controller\PurchaseController::save
+    
+products_next_distribution:
+    path: produits_a_recuperer/{date}/{nb}
+    controller: App\Controller\PurchaseController::getProductsNextDistribution
+    defaults:
+        date: null
+        nb: 4
+    
+products_to_ship:
+    path: produits_a_livrer/{date}/{nb}
+    controller: App\Controller\PurchaseController::getDeliveryNextDistribution
+    defaults:
+        date: null
+        nb: 4
+
+products_to_ship_multi:
+  path: produits_a_livrer_multiamap/{dateDebut}/{dateFin}
+  controller: App\Controller\PurchaseController::getDeliveryNextDistributionMultiAmap
+  defaults:
+    dateDebut: null
+    dateFin: null
+
+products_to_ship_total:
+  path: produits_a_livrer_total/{date}
+  controller: App\Controller\PurchaseController::getDeliveryNextDistributionTotal
+  defaults:
+    date: null
+
+product_corresp:
+  path: product_corresp
+  controller: App\Controller\PurchaseController::productCorresp
+  methods: POST
+
+payment_received:
+    path: payment_received
+    controller:  App\Controller\PaymentController::paymentReceived
+    
+payment_description:
+    path: payment_description
+    controller:  App\Controller\PaymentController::paymentDescription
+    
+payment_amount:
+    path: payment_amount
+    controller:  App\Controller\PaymentController::paymentAmount
+    
+payment_history:
+    path: historique_paiements
+    controller:  App\Controller\PaymentController::paymentHistory
+    
+payment_history_adherent:
+    path: historique_paiements_adherent
+    controller:  App\Controller\PaymentController::paymentHistoryAdherent 
+    
+payment_history_farmer:
+    path: historique_paiements_producteur
+    controller:  App\Controller\PaymentController::paymentHistoryFarmer
+    
+#payment_new:
+#    path: payment_new/{id_user}/{id_farm}
+#    controller:  App\Controller\PaymentController::new
+#    defaults:
+#        id_user: null
+#        id_farm: null
+    
+#payment_create:
+#    path: payment_create
+#    controller:  App\Controller\PaymentController::create
+#    
+#
+informations_adherent:
+    path: informations_adherent
+    controller: App\Controller\UserController::userEdit
+    
+#produits à récupérer
+list_distribution_adherent:
+    path: liste_distribution_adherent/{date}/{nb}
+    controller:  App\Controller\PurchaseController::listDistributionAdherent
+    defaults:
+        date: null
+        nb: 4
+    
+#produits à livrer 
+list_distribution_farm:
+    path: liste_distribution_producteur/{date}/{nb}
+    controller:  App\Controller\PurchaseController::listDistributionFarm
+    defaults:
+        date: null
+        nb: 4
+    
+stats_finances:
+    path: statistiques_finances
+    controller: App\Controller\PaymentController::stats
+    
+stats_activite:
+    path: statistiques_activite
+    controller: App\Controller\PaymentController::statsActivite
+    
+ajaxStats:
+    path: ajaxStats/{year}/{id_user}/{id_farm}
+    controller: App\Controller\PaymentController::ajaxStats
+    
+tableau_livraisons:
+    path: tableau_livraisons/{date}
+    controller: App\Controller\ProductDistributionController::tableauLivraisons
+    defaults:
+        date: null
+    
+rapport:
+    path: rapport
+    controller: App\Controller\PurchaseController::rapport
+#changement ordre
+
+product_change_order:
+    path: ajaxProductChangeOrder/{id_from}/{id_before}/{id_after}
+    controller: App\Controller\ProductController::ajaxProductChangeOrder
+    
+farm_change_order:
+    path: ajaxFarmChangeOrder/{id_from}/{id_before}/{id_after}
+    controller: App\Controller\FarmController::ajaxFarmChangeOrder
+    
+#parametres
+parameters:
+    path:   parametres
+    controller: App\Controller\ParametersController::index
+    
+setting_edit:
+    path:   parametres/setting/edit
+    controller: App\Controller\ParametersController::editSetting
+
+setting_update:
+    path:   parametres/setting/update
+    controller: App\Controller\ParametersController::updateSetting 
+    
+participation:
+    path:  inscriptionDistribution
+    controller: App\Controller\ParticipationController::index
+    defaults:
+        admin: false 
+    
+participation_admin:
+    path:  inscriptionDistributionAdmin
+    controller: App\Controller\ParticipationController::index
+    defaults:
+        admin: true
+    
+participation_add:
+    path: participation_add/{id_distribution}/{id_task}/{id_user}
+    controller: App\Controller\ParticipationController::add
+    defaults:
+        id_user: null
+    
+participation_remove:
+    path: participation_remove/{id_participation}/{admin}
+    controller: App\Controller\ParticipationController::remove
+    defaults:
+        admin: false
+    
+
+show_history:
+    path: show_history
+    controller: App\Controller\HomeController::showHistory
+    
+rapport_distribution:
+    path: rapport_distribution/{page}
+    controller: App\Controller\DistributionController::list
+    defaults:
+        page: 1
+    
+rapport_distribution_show:
+    path: rapport_distribution/show/{id}
+    controller: App\Controller\DistributionController::showRapport
+    defaults:
+        isEdit: false
+    
+rapport_distribution_edit:
+    path: rapport_distribution/edit/{id}
+    controller: App\Controller\DistributionController::showRapport
+    defaults:
+        isEdit: true
+        
+rapport_distribution_save:
+    path: rapport_distribution/save/{id}
+    controller: App\Controller\DistributionController::saveRapport
+    methods: POST|PUT
+    
+shift:
+    path: report_produit
+    controller: App\Controller\ProductDistributionController::shiftProduct
+    defaults:
+        page: 1
+        
+shift_save:
+    path: shift_save
+    controller: App\Controller\ProductDistributionController::shiftSave
+    methods: POST
+
+donnees:
+    path: donnees
+    controller: App\Controller\HomeController::donnees
+
+download_backup:
+    path: download_backup/{file}
+    controller: App\Controller\HomeController::downloadBackup
+
+api_farms:
+    path: api/farms
+    controller: App\Controller\ApiController::getAllFarms
+    methods: GET
+
+api_products:
+    path: api/products
+    controller: App\Controller\ApiController::getAllProducts
+    methods: GET

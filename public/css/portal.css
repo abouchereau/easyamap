@@ -1,0 +1,35 @@
+.easyamap {
+    font-family:Boogaloo,cursive;
+    color:#000;
+}
+
+.easyamap span {
+    color:#4DB748;
+}
+
+.easyamap-large {    
+    text-shadow:1px 1px 0 #CCC,2px 2px 0 #CCC,3px 3px 0 #CCC,4px 4px 0 #CCC,5px 5px 0 #CCC;
+    font-size:100px;
+}
+
+.easyamap-medium {    
+    text-shadow:1px 1px 0 #CCC,2px 2px 0 #CCC,3px 3px 0 #CCC;
+    font-size:70px;
+}
+
+.easyamap-small {
+    text-shadow:1px 1px 0 #CCC,2px 2px 0 #CCC;
+    font-size:150%;
+}
+
+#portal .row {
+    margin-top:40px;
+}
+
+#portal h3 {
+    border-bottom:1px solid #DDD;
+}
+#map {
+    width:925px;
+    height:500px;
+}

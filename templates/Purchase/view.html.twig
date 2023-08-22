@@ -1,0 +1,239 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Contrat : {{ contract.label }}{% endblock %}
+
+{% block body %}
+
+{% set mois = ['','Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'] %}
+{% set jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'] %}  
+
+{% if contract.isActive or user_list is not null %}{# mode référent #}  
+    
+<div class="row">
+  <div class="col-md-3">
+    <div class="text-left">
+      <button class="btn btn-primary btn-lg" disabled="disabled"><span class="glyphicon glyphicon-floppy-disk"></span> Enregistrer tout</button>
+    </div>
+  </div>
+   <div class="col-md-6"> 
+       {% if user_list is not null %}
+           {% include 'Purchase/_user_list.html.twig' with {'user_list':user_list} %}         
+       {% elseif contract.description is not empty %}
+       <p class="bg-info text-center">
+            <span class="glyphicon glyphicon-info-sign"></span><br />
+            {{ contract.description|nl2br }}
+        </p>
+        {% endif %}
+        
+        {% if contract.countPurchaseSince is not null %}
+ 
+      <table class="table table-bordered">
+          <tr><th colspan=2" class="bg-grey text-center">Quantités déjà commandées depuis le {{ contract.countPurchaseSince|full_date_fr }}</th></tr>
+          {% for pr in purchaseSince %}
+              <tr><td style="width:50%">{{ pr.label }} <small>{{ pr.unit }}</small></td><td class="text-center"><b>{{ pr.quantity }}</b></td></tr>
+           {% endfor %}
+      </table>
+
+{% endif %}
+    </div>
+      
+   <div class="col-md-3">
+       {% if contract.fillDateEnd is not empty %}
+            <div class="pull-right text-right">
+                <p class="small">A remplir au plus tard le :</p>
+                <h4><span class="label label-warning" style="font-weight:bold;border-radius:100px;">{{ contract.fillDateEnd|full_date_fr }} {%  if contract.autoEndHour %}à {{ contract.autoEndHour }}h{% endif %}</span></h4>
+            </div>
+    {% endif %}
+   </div>
+   
+</div>
+
+
+{% endif %}
+
+{% if nb_per_farm|length > 1 %}
+<div class="row top-buffer">
+    <div class="col-md-12">
+        <ul class="nav nav-tabs" role="tablist" id="amap-tabs">
+            {% set last_id_farm = 0 %}
+            {% for product in products %}
+                {% if product.fkFarm.idFarm != last_id_farm %}
+                    {% set last_id_farm = product.fkFarm.idFarm %}
+                    <li role="presentation" class="{% if (current_farm is null and loop.first) or (current_farm == product.fkFarm.idFarm) %}active{% endif %}"><a href="#farm{{ product.fkFarm.idFarm }}" aria-controls="farm{{ product.fkFarm.idFarm }}" role="tab" data-toggle="tab">{{ product.fkFarm.productType }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}    
+
+
+
+<div class="row top-buffer" id="purchase">
+  <div class="col-md-12">
+      <div class="tab-content">
+      {% set last_id_farm = 0 %}
+      {% for product in products %}
+        {% if product.fkFarm.idFarm != last_id_farm %}
+        {% set last_id_farm = product.fkFarm.idFarm %}
+        {% set iterate_by_farm = 0 %}
+        {% set enable = true %}
+        {% if not contract.isActive %}            
+          {% set enable = false %}
+        {% endif %}
+        {% if user_list is not null %}
+           {% set enable = true %}
+        {% endif %}
+        {% if payments[product.fkFarm.idFarm] is defined and payments[product.fkFarm.idFarm].received %}
+          {% set enable = false %}
+        {% endif %}
+
+          
+          
+          
+          
+        
+        <div role="tabpanel" class="tab-pane fade{% if (current_farm is null and loop.first) or (current_farm == product.fkFarm.idFarm) %} in active{% endif %}" id="farm{{ product.fkFarm.idFarm }}">
+          <table class="table table-bordered table-condensed" style="margin:0 auto 70px auto;{% if not product.fkFarm.isActive %}display:none;{% endif %}">
+          <tr>
+            <td class="success text-center" colspan="3"><b>{{ product.fkFarm }}</b><br />({{ product.fkFarm.productType }})<br /><small>Référent{% if product.fkFarm.getReferents()|length > 1 %}s{% endif %} : 
+                    {% for referent in product.fkFarm.getReferents() %}
+                            {{ referent }} (<a href="mailto:{{ referent.email }}">{{ referent.email }}</a>{%  if referent.tel1 is defined %} - {{ referent.tel1 }}{% endif %}{%  if referent.tel2 is defined %} - {{ referent.tel2 }}{% endif %}){% if not loop.last %}, {% endif %}
+                    {% endfor %}</small></td>
+            <td colspan="{{ distributions|length }}" class="success text-center" style="border-left:none;"><small>{{ product.fkFarm.description|nl2br }}{% if product.fkFarm.link != ''%}<br /><a href="{{ product.fkFarm.link }}" target="_blank">{{ product.fkFarm.link }}</a>{% endif %}</small></td>
+            
+            </tr>
+          
+          {% if payments[product.fkFarm.idFarm] is defined %}
+            {# if payments[product.fkFarm.idFarm].received>0 %}                
+                {% set farm_payment_received = farm_payment_received|merge([product.fkFarm.label ~ ' (' ~ product.fkFarm.productType ~ ')']) %}
+            {% endif #}
+            <tr><td colspan="{{ distributions|length+3 }}" class="text-left info payment-summary">
+                <div class="payment">Total</div>
+                <div class="payment_right">{% if payments[product.fkFarm.idFarm].amount == 0 %}
+                    Le total sera calculé en fonction du poids à la livraison.{% else %}
+                    {{ payments[product.fkFarm.idFarm].amount|number_format(2,',',' ')~' €'}}
+                    {% endif %}
+                </div>
+                    <div class="payment not-first">Paiement reçu</div><div class="payment_right not-first">{% if payments[product.fkFarm.idFarm].received==0 %}non{% else %}oui{% endif %}</div>
+                    <div class="payment not-first">Règlement</div><div class="payment_right not-first"> {% include 'Partials/_descriptionPayment.html.twig' with {'description': payments[product.fkFarm.idFarm].description, 'short':false } %}</div>
+                    {% if user_list is not null and not enable %}
+                        <div class="text-danger">Ce contrat ne peut pas être édité car le paiement a déjà été reçu.<br />
+                            Si vous souhaitez l'éditer, il faut d'abord remettre la montant du paiement reçu à 0,00 € (dans "Réception des paiements")
+                        </div>
+                    {% endif %}
+            </td></tr>
+        {% endif %}
+          
+         {% include 'Purchase/_tr_dates.html.twig' with {'extra_col':true} %}  
+         {% endif %}
+
+        <tr{% if not product.isActive %} style="display:none;"{% endif %}>
+          
+          <td class="warning check-horizontal product"{% if product.description is not empty %} data-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title="{{ product.description|nl2br }}"{% endif %}>             
+              <div class="pull-left">
+                  {% if product.description is not empty %}<span class="glyphicon glyphicon-info-sign"></span>{% endif %}
+                  {% if not product.isCertified %}<span data-toggle="tooltip" data-placement="bottom" title="Non Certifié Bio" class="label label-warning" style="border-radius:10px;">N.C.</span>{% endif %}
+              </div>
+              {{ product.label }} <small>{{ product.unit }}</small>
+            
+          </td>  
+          {# le prix n'est pas fcorcément = au base_price s'il a changé. On calcule le prix à afficher pour la ligne #}
+          
+          {% set min_price = 1000000 %}
+          {% set max_price = -1 %}
+          {% for id_distribution, date in distributions %}
+            {% set id = product.idProduct~'-'~id_distribution %}
+            {% if available[id] is defined %}
+              {% set min_price = min(min_price, available[id].price) %}
+              {% set max_price = max(max_price, available[id].price) %}
+            {% endif %}
+          {% endfor %}
+          
+          {% set priceStr = '' %}
+          {% if min_price == max_price %}
+            {% set priceStr = min_price|number_format(2,',',' ')~' €' %}
+          {% elseif min_price != 1000000 and max_price != -1 %}
+            {% set priceStr = min_price|number_format(2,',',' ')~'<br />'~max_price|number_format(2,',',' ')~'€' %}
+          {% else %}
+            {% set priceStr = product.basePrice|number_format(2,',',' ')~' €' %}
+          {% endif %}          
+          
+          <td>
+              {% if product.ratio %}                
+                  <span class="glyphicon glyphicon-scale text-muted" style="font-size:130%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Prix au poids"></span><br/>
+              {% endif %}
+              <small style="white-space: nowrap;">{{ priceStr|raw }}{% if product.ratio %}/kg{% endif %}</small> 
+              </td>    
+          <td class="incrementor">
+              <a href="#" class="plus" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="+1 sur toute la ligne"><span class="glyphicon glyphicon-plus"></span></a>
+              <a href="#" class="minus" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="-1 sur toute la ligne"><span class="glyphicon glyphicon-minus"></span></a>
+          </td>
+          {% set last_month = -1 %}
+          {% for id_distribution, date in distributions %}
+            {% set new_month = false %}
+            {% if date|date("n") != last_month %}
+               {% set last_month = date|date("n") %}
+               {% set new_month = true %}
+            {% endif %}
+            {% set id = product.idProduct~'-'~id_distribution %}
+            <td class="bg-grey{% if new_month and loop.index0 > 0 %} delimit-left{% endif %}">   
+              {% if available[id] is defined %}
+              <input type="number" {% if not enable %}disabled="disabled" {% endif %}{#
+                      #}class="spinner bold{#
+                      #}{% if purchase[available[id].id_product_distribution] is defined and purchase[available[id].id_product_distribution] != 0 %} bg-danger{% endif %}{#
+                      #}{% if product.isSubscription and user_list is null%} subscription{% endif %}{#
+                      #}" min="0"{#
+                      #} max="{% if available[id].max_per_user is not null %}{{ available[id].max_per_user }}{% else %}999{% endif %}" {#
+                      #} name="{{ available[id].id_product_distribution }}" {# data-toggle="tooltip" data-placement="bottom" data-html="true" title="{{ jours[date|date("w")]~' '~date|date("d")~' '~mois[date|date("n")]~'<br />'~product.label~' '~product.unit~'<br />'~available[id].price|number_format(2,',',' ')~' €' }}" #}{#
+                      #} value="{% if purchase[available[id].id_product_distribution] is defined and purchase[available[id].id_product_distribution] != 0 %}{{ purchase[available[id].id_product_distribution] }}{% endif %}"  />              
+              {% endif %}
+              {% if remaining[id] is defined %}
+                  <br /><small class="nobr"><b>{{ remaining[id].remaining }}</b> restant{% if remaining[id].remaining > 1 %}s{% endif %}</small>
+              {% endif %}
+              {% if available[id] is defined and available[id].max_per_user is not null %}
+                  <br /><small class="nobr"><b>{{ available[id].max_per_user }}</b> max/pers.</small>
+              {% endif %}
+            </td>
+          {% endfor %}
+
+        </tr>
+      {% set iterate_by_farm = iterate_by_farm+1 %}
+      {% if iterate_by_farm == nb_per_farm[last_id_farm] %}       
+        
+        </table>  
+        </div>
+      {% endif %}
+      {% endfor %}
+      </div>
+  </div>  
+</div>
+{# if contract.isActive %}
+<div class="row" style="margin-bottom:50px;">
+  <div class="col-md-12">
+    <div class="text-left">
+       <button class="btn btn-primary btn-lg" disabled="disabled"><span class="glyphicon glyphicon-floppy-disk"></span> Enregistrer tout</button>
+    </div>
+  </div>
+</div>
+
+{% endif #}
+
+<form action="{{ path('contrat_save', {'id_contract': contract.idContract}) }}" method="POST" id="json_form"> 
+    <input type="hidden" id="json" name="json" value='' />
+    {% if user_list is not null %}
+        <input type="hidden" name="id_user" value="{{ user.idUser }}" />
+    {% endif %}
+    <input type="hidden" id="current_farm" name="current_farm" value='' />
+ </form>
+
+{% include 'Purchase/_modals.html.twig' %}  
+
+{# if farm_payment_received|length>0 and user_list is not null %}
+    {% include 'Purchase/_modal_payment_received.html.twig' with {'farm_payment_received':farm_payment_received} %}  
+{% endif #}
+
+{% endblock %}
+
+{% block footer_js %}
+<script type="text/javascript" src="{{ asset('js/purchase.js') }}"></script>
+{% endblock %}

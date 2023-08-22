@@ -1,0 +1,117 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Disponibilité des produits{% endblock %}
+{% block header_css %}<!--[if gt IE 8]>--><link href="{{  asset('css/checkbox.css') }}" rel="stylesheet" /><!--<![endif]-->{% endblock %}
+    
+{% block body %}
+    
+    
+<div class="row">
+  <div class="col-md-1">
+    {#% if page>1 %#}
+      <a href="{{ path('product_distribution', {page: page-1}) }}" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-left"></span></a>
+    {#% endif %#}
+  </div>
+  
+  <div class="col-md-1 col-md-offset-10">
+    <a href="{{ path('product_distribution', {page: page+1}) }}" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-right"></span></a>
+  </div>
+  
+</div>
+
+
+<div class="row" id="product-distribution">
+
+  <div class="col-md-12">
+    {% if distributions|length == 0 %}
+  
+      Pas de distribution disponible.
+
+    {% else %}
+      {% set last_id_farm = 0 %}
+      {% for product in products %}
+        {% if product.fkFarm.idFarm != last_id_farm %}
+        {% set last_id_farm = product.fkFarm.idFarm %}
+        {% set iterate_by_farm = 0 %}
+          <table class="table table-bordered table-condensed" {% if not product.fkFarm.isActive %} style="display:none;"{% endif %}>
+          <tr>
+            <th colspan="{{ distributions|length+1 }}" class="success text-center">{{ product.fkFarm }}</th>
+          </tr>
+          
+         {% include 'ProductDistribution/_tr_dates.html.twig' %}  
+         {% endif %}
+
+        <tr{% if not product.isActive %} style="display:none;"{% endif %}>
+          <td class="warning check-horizontal"><span data-toggle="tooltip" data-placement="left" title="Cocher / décocher toute la ligne">{{ product.label ~ ' ' ~ product.unit }}</span></td>
+          {% set last_month = -1 %}
+          {% for id_distribution, date in distributions %}
+            {% set new_month = false %}
+            {% if date|date("n") != last_month %}
+               {% set last_month = date|date("n") %}
+               {% set new_month = true %}
+            {% endif %}
+            {% set id = product.idProduct~'-'~id_distribution %}
+            <td{% if new_month and loop.index0 > 0 %} class="delimit-left"{% endif %}>{#
+              #}<input type="checkbox" id="{{ id }}" {% if product_distribution[id] is defined %} data-id_product_distribution="{{ product_distribution[id].id_product_distribution }}" checked="checked"{% if product_distribution[id].nb_purchase > 0 %} disabled="disabled" data-toggle="tooltip" data-placement="left" title="{{ product_distribution[id].nb_purchase }} commande{% if product_distribution[id]>1 %}s{% endif %}"{% endif %}{% endif %}/>{#
+              #}<label for="{{ id }}"><span></span></label>{#
+              #}{% if product_distribution[id] is defined %}{#
+                  #}<br />{#
+                  #}<button type="button" class="btn btn-success btn-prodis" data-id="{{ id }}" data-prodis='{{ product_distribution[id]|json_encode(constant('JSON_NUMERIC_CHECK'))|raw }}' data-toggle="tooltip" data-placement="bottom" title="Modifier prix / quantité limite">{#
+                  #}<span class="nobr">{{ product_distribution[id].price|number_format(2,',',' ')~' €' }}</span>{#
+                  #}{% if product_distribution[id].max_quantity is not null %}{#
+                  #}<br /><span class="nobr">max : {{ product_distribution[id].max_quantity }}</span>{#
+                  #}{% endif %}{#
+                  #}{% if product_distribution[id].max_per_user is not null %}{#
+                  #}<br /><span class="nobr">max/pers : {{ product_distribution[id].max_per_user }}</span>{#
+                  #}{% endif %}{#
+                  #}</button>{#                 
+                    #}{% if product_distribution[id].date_shift is not null %}{#
+                     #}<br /><span class="label label-warning">⮀ {{ product_distribution[id].date_shift|date_small }}</span>{#
+                   #}{% endif %}{#
+              #}{% endif %}{#                   
+
+                  #}{% if product_distribution_shift[id] is defined %}{#
+                    #}<span class="label label-success">⮀ {{ product_distribution_shift[id].date_init|date_small }}</span>{#
+                 #}{% endif %}{#
+            #}</td>
+          {% endfor %}
+        </tr>
+      {% set iterate_by_farm = iterate_by_farm+1 %}
+      {% if iterate_by_farm == nb_per_farm[last_id_farm] %}
+        <tr><th colspan="{{ distributions|length+1 }}" class="text-center"><button class="save-button btn btn-primary" disabled="disabled"><span class="glyphicon glyphicon-floppy-disk"></span> Enregistrer</button></th></tr>
+        </table>
+        
+      {% endif %}
+      {% endfor %}
+    {% endif %}
+  </div>
+  <div class="col-md-1">
+    <a href="{{ path('product_distribution', {page: page+1}) }}" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-right"></span></a>
+  </div>
+  
+  
+</div>
+
+    
+<form action="{{ path('product_distribution_save') }}" method="POST" id="hidden-form">
+<input type="hidden" name="existing" id="existing" value='' />
+<input type="hidden" name="new_ones" id="new_ones" value='' />
+<input type="hidden" name="page" id="page" value='' />
+</form>
+    
+    
+    
+{% include 'ProductDistribution/_modals.html.twig' %}  
+
+{% endblock %}
+
+{% block footer_js %}
+<script type="text/javascript">
+var root = '{{ url('home') }}';
+var page = {{ page }};
+var products = { {% for product in products %}
+"{{ product.idProduct }}":"{{ product.label ~' '~product.unit }}"{% if not loop.last %},{% endif %}
+{% endfor %} };
+var distributions = {{ distributions|json_encode()|raw }};
+</script>
+<script type="text/javascript" src="{{ asset('js/product_distribution.js') }}"></script>
+{% endblock %}

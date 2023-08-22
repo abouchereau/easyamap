@@ -1,0 +1,123 @@
+{% extends 'layout.html.twig' %}
+{% block header_css %}{% endblock %}
+{% block header_title %}TEST{% endblock %}
+{% block body %}
+    <script type="text/javascript" src="http://oss.sheetjs.com/js-xlsx/xlsx.core.min.js"></script>
+<script type="text/javascript" src="http://sheetjs.com/demos/Blob.js"></script>
+<script type="text/javascript" src="http://sheetjs.com/demos/FileSaver.js"></script>
+    <script>
+        
+
+var url = "{{  asset('docs/Classeur1.xlsx') }}";
+var oReq = new XMLHttpRequest();
+oReq.open("GET", url, true);
+oReq.responseType = "arraybuffer";
+
+oReq.onload = function(e) {
+  var arraybuffer = oReq.response;
+
+  var data = new Uint8Array(arraybuffer);
+  var arr = new Array();
+  for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+  var bstr = arr.join("");
+
+
+  var workbook = XLSX.read(bstr, {type:"binary"});
+console.log(workbook);
+var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
+//saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), "fzefezf.xlsx");
+}
+
+oReq.send();  
+        
+        
+        
+        
+        
+function datenum(v, date1904) {
+	if(date1904) v+=1462;
+	var epoch = Date.parse(v);
+	return (epoch - new Date(Date.UTC(1899, 11, 30))) / (24 * 60 * 60 * 1000);
+}
+ 
+function sheet_from_array_of_arrays(data, opts) {
+	var ws = {};
+	var range = {s: {c:10000000, r:10000000}, e: {c:0, r:0 }};
+	for(var R = 0; R != data.length; ++R) {
+		for(var C = 0; C != data[R].length; ++C) {
+			if(range.s.r > R) range.s.r = R;
+			if(range.s.c > C) range.s.c = C;
+			if(range.e.r < R) range.e.r = R;
+			if(range.e.c < C) range.e.c = C;
+			var cell = {v: data[R][C] };
+			if(cell.v == null) continue;
+			var cell_ref = XLSX.utils.encode_cell({c:C,r:R});
+			
+			if(typeof cell.v === 'number') cell.t = 'n';
+			else if(typeof cell.v === 'boolean') cell.t = 'b';
+			else if(cell.v instanceof Date) {
+				cell.t = 'n'; cell.z = XLSX.SSF._table[14];
+				cell.v = datenum(cell.v);
+			}
+			else cell.t = 's';
+			
+			ws[cell_ref] = cell;
+		}
+	}
+	if(range.s.c < 10000000) ws['!ref'] = XLSX.utils.encode_range(range);
+	return ws;
+}
+ 
+
+var data = [[1,2,3],[true, false, null, "sheetjs"],["foo","bar",new Date("2014-02-19T14:30Z"), "0.3"], ["baz", null, "qux"]]
+
+
+
+var ws = {
+    A1:{t:"n",v:1.26},
+    A2:{t:"n",v:1.28, w:"1.28 €"},
+    B1:{t:"n",v:1.26},
+    B2:{t:"s",v:"a",
+        s:{ patternType: 'solid',
+            fgColor: { theme: 8, tint: 0.3999755851924192, rgb: '9ED2E0' },
+            bgColor: { indexed: 64 } } }
+};
+var range = {s: {c:0, r:0}, e: {c:1, r:1 }};
+ws['!ref'] = XLSX.utils.encode_range(range);
+XLSX.utils.format_cell(ws.A2); // '$1.00'
+
+var ws_name = "SheetJS";
+ 
+ 
+ 
+function Workbook() {
+	if(!(this instanceof Workbook)) return new Workbook();
+	this.SheetNames = [];
+	this.Sheets = {};
+}
+ 
+var wb = new Workbook()/*, ws = sheet_from_array_of_arrays(data)*/;
+ console.log(wb);
+
+wb.SheetNames.push(ws_name);
+wb.Sheets[ws_name] = ws;
+var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
+
+function s2ab(s) {
+	var buf = new ArrayBuffer(s.length);
+	var view = new Uint8Array(buf);
+	for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+	return buf;
+}
+
+function save() {
+    saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), "test.xlsx");
+}
+
+</script>
+<button onclick="save();">Save</button>
+{% endblock %}
+{% block footer_js %}
+
+
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'layout.html.twig' %}
+{% block header_css %}{% endblock %}
+{% block header_title %}Menu{% endblock %}
+{% block body %}
+
+{% if menu.farmer is defined %}
+<div class="row">
+  <div class="col-md-12">
+    <h4 class="page-header">Producteur</h4>
+  </div>
+</div>
+
+<div class="row">  
+{% for bloc in menu.farmer %}
+  <div class="col-md-3">    
+    <div class="panel panel-info" onclick="window.location.href='{{ bloc[0] }}';">
+      <div class="panel-heading"><h3 class="panel-title"><span class="glyphicon glyphicon-{{ bloc[1] }}"></span> {{ bloc[2] }}</h3></div>
+      <div class="panel-body text-muted"><small>{{ bloc[3]|raw }}</small></div>
+    </div>
+  </div>
+{% endfor %}  
+</div>
+
+{% endif %}    
+    
+    
+{% if menu.adherent is defined %}
+<div class="row">
+  <div class="col-md-12">
+    <h4 class="page-header">Adhérent</h4>
+  </div>
+</div>
+
+<div class="row">  
+{% for bloc in menu.adherent %}
+  <div class="col-md-3">    
+    <div class="panel panel-success" onclick="window.location.href='{{ bloc[0] }}';">
+      <div class="panel-heading"><h3 class="panel-title"><span class="glyphicon glyphicon-{{ bloc[1] }}"></span> {{ bloc[2] }}</h3></div>
+      <div class="panel-body text-muted"><small>{{ bloc[3]|raw }}</small></div>
+    </div>
+  </div>
+{% endfor %}  
+</div>
+
+{% endif %}
+
+{% if menu.referent is defined %}
+<div class="row">
+  <div class="col-md-12">
+    <h4 class="page-header">Référent</h4>
+  </div>
+</div>
+<div class="row">  
+{% for bloc in menu.referent %}
+  <div class="col-md-3">    
+    <div class="panel panel-warning" onclick="window.location.href='{{ bloc[0] }}';">
+      <div class="panel-heading"><h3 class="panel-title"><span class="glyphicon glyphicon-{{ bloc[1] }}"></span> {{ bloc[2] }}</h3></div>
+      <div class="panel-body text-muted"><small>{{ bloc[3] }}</small></div>
+    </div>
+  </div>
+{% endfor %}  
+</div>
+{% endif %}
+
+{% if menu.admin is defined  %}
+<div class="row">
+  <div class="col-md-12">
+    <h4 class="page-header">Administrateur</h4>
+  </div>
+</div>
+<div class="row">  
+{% for bloc in menu.admin %}
+  <div class="col-md-3">    
+    <div class="panel panel-primary" onclick="window.location.href='{{ bloc[0] }}';">
+      <div class="panel-heading"><h3 class="panel-title"><span class="glyphicon glyphicon-{{ bloc[1] }}"></span> {{ bloc[2] }}</h3></div>
+      <div class="panel-body text-muted"><small>{{ bloc[3] }}</small></div>
+    </div>
+  </div>
+{% endfor %}  
+</div>
+{% endif %}
+
+
+{% endblock %}

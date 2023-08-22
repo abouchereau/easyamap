@@ -1,0 +1,21 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Maintenance{% endblock %}
+
+
+{% block body %}
+<div class="row">  
+    <div class="col-md-2"></div>
+    <div class="col-md-4 text-center">
+      <p>         
+        <img src="{{ asset('images/logo_' ~ app.environment ~ '.png') }}" />
+      </p>
+    </div>
+    <div class="col-md-4">
+        <p class="text-center">
+            <img src="{{ asset('images/travaux.png') }}" />
+        </p>
+        <h4 class="text-center">Le site est actuellement en maintenance.</h4><h5 class="text-center">Merci de revenir dans quelques instants.</h5>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+{% endblock %}

@@ -7,6 +7,9 @@ doctrine:
         #server_version: '15'
 
         profiling_collect_backtrace: '%kernel.debug%'
+        charset: utf8mb4
+        default_table_options:
+            collate: utf8mb4_unicode_ci
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true

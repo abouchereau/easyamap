@@ -1,0 +1,50 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Mes données personnelles{% endblock %}
+{% block body %}
+
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <table class="table table-striped">
+                <tr>
+                    <th class="text-right">Email</th><td>{{ user.email }}</td>
+                </tr>
+                <tr>
+                    <th class="text-right">Identifiant de connexion</th><td>{{ user.username }}</td>
+                </tr>
+                <tr>
+                    <th class="text-right">Prénom</th><td>{{ user.firstname }}</td>
+                </tr>
+                <tr>
+                    <th class="text-right">Nom</th><td>{{ user.lastname }}</td>
+                </tr>
+                <tr>
+                    <th class="text-right">Adhérent ?</th><td>{% if user.isAdherent %}<i class="glyphicon glyphicon-ok text-success"></i>{% else %}<i class="glyphicon glyphicon-remove text-danger"></i>{%  endif %}</td>
+                </tr>
+                <tr>
+                    <th class="text-right">Administrateur ?</th><td>{% if user.isAdmin %}<i class="glyphicon glyphicon-ok text-success"></i>{% else %}<i class="glyphicon glyphicon-remove text-danger"></i>{%  endif %}</td>
+                </tr>
+                <tr>
+                    <th class="text-right">Date création</th><td>{%  if user.createdAt is not null %}{{ user.createdAt|full_date_fr }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th class="text-right">Téléphone 1</th><td>{{ user.tel1 }}</td>
+                </tr>
+                <tr>
+                    <th class="text-right">Téléphone 2</th><td>{{ user.tel2 }}</td>
+                </tr>
+                <tr>
+                    <th class="text-right">Adresse</th><td>{{ user.address }}</td>
+                </tr>
+                <tr>
+                    <th class="text-right">Code Postal</th><td>{{ user.zipcode }}</td>
+                </tr>
+                <tr>
+                    <th class="text-right">Ville</th><td>{{ user.town }}</td>
+                </tr>
+            </table>
+            <br />
+            <button class="btn btn-primary" onclick="alert('Fonctionnalité absente pour le moment')">Modifier</button>
+        </div>
+    </div>
+
+{% endblock %}

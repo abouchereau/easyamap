@@ -1,0 +1,186 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Liste distribution par {{ group_by=='farm'?'producteur':'adhérent' }}{% endblock %}
+{% block header_css %}
+<link href="{{  asset('jquery-ui/jquery-ui.min.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+{% set jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'] %}  
+{% set mois = ['','Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'] %}
+
+    <div class="row no-print">
+        <div class="col-md-12">
+            <div class="pull-left mobile-hide">
+                {% if list|length == 1 %}
+                    <a data-toggle="tooltip" data-placement="bottom" title="Inverser le sens du tableau" class="btn btn-warning no-print" href="?direction={% if direction == 'H' %}V{%else %}H{% endif %}"><span class="glyphicon glyphicon-retweet"></span></a> 
+                {% endif %}
+              <button class="btn btn-default no-print" onclick="window.print();"><span class="glyphicon glyphicon-print"></span> Imprimer</button>
+              <a download="distributions-{{ dates[0]|date('Y-m-d') }}-{{ nb }}.xls" class="btn btn-success no-print" onclick="exportExcel(this);" data-toggle="tooltip" data-placement="bottom" title="Export Excel"><span class="glyphicon glyphicon-floppy-disk"></span> Excel</a>
+
+            </div>
+            <div class="pull-right text-center distri-right">            
+                {{ render(controller('App\\Controller\\DistributionController:distripicker', {'urlTemplate':urlTemplate,'date':dates[0]|date('Y-m-d'),'nb':nb })) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="{% if direction == 'H' or list|length>1 %}col-md-12{% else %}col-md-8 col-md-offset-2{% endif %}">
+            <table class="table table-bordered" id="table-summary">
+                {% if direction == 'H' or list|length>1 %}
+                    <tr>
+                        {% if urlTemplate != 'produits_a_recuperer/%DATE%/%NB%' %}
+                            <td></td>
+                        {% endif %}
+                    {% for date in dates %}
+                        <th class="bg-grey">{{ jours[date|date('w')] }} {{ date|date('d') }} {{ mois[date|date('n')] }} </th>
+                    {% endfor %}
+                </tr>
+                {% for adherent, infos in list %}
+                    <tr>
+                        {% if urlTemplate != 'produits_a_recuperer/%DATE%/%NB%' %}
+                            <td>{{ adherent|raw }}</td>
+                        {% endif %}                        
+                        {% for date in dates %}
+                        <td>
+                            {% if participation[adherent] is defined and participation[adherent][date|date('Y-m-d')] is defined %}
+                                {% for part in participation[adherent][date|date('Y-m-d')] %}
+                                    <div class="product">
+                                        <span class="glyphicon glyphicon-time"></span> <b>{{ part }}</b>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                            
+                            {% if infos[date|date('Y-m-d')] is defined %}
+                                {% for product in infos[date|date('Y-m-d')] %}
+                                    {% if product.is_shift == 0 %}
+                                        <div class="product">
+                                            {% if product.date_shift is not null %}<del>{% endif %}<div class="product-quantity">{{ product.nb }}</div> {{ product.produit }} {% if product.date_shift is not null %}</del><br />&nbsp; &nbsp; &nbsp; <span class="label label-warning">⮀ {{ product.date_shift|date_small }}</span>{% endif %}
+                                        </div>
+                                    {% endif %}
+                                    {% if product.is_shift == 1 %}
+                                        <div class="product">
+                                            <div class="product-quantity">{{ product.nb }}</div> {{ product.produit }}<br />&nbsp; &nbsp; &nbsp; <span class="label label-success">⮀ {{ product.date_shift|date_small }}</span>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </td>    
+                        {% endfor %}
+                    </tr>
+                 {% endfor %}
+            {% else %} 
+                 {% for date in dates %}
+                     <tr>
+                         <th class="bg-grey">{{ jours[date|date('w')] }} {{ date|date('d') }} {{ mois[date|date('n')] }} </th>
+                         <td>
+                            {% for adherent, infos in list %}
+                            {% if participation[adherent] is defined and participation[adherent][date|date('Y-m-d')] is defined %}
+                                {% for part in participation[adherent][date|date('Y-m-d')] %}
+                                        <div class="product">
+                                            <span class="glyphicon glyphicon-time"></span> <b>{{ part }}</b>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            
+                                {% if infos[date|date('Y-m-d')] is defined %}
+                                    {% for product in infos[date|date('Y-m-d')] %}
+                                        <div class="product{% if product.date_shift is not null %} deleted{% endif %}">
+                                            <div class="product-quantity">{{ product.nb }}</div> {{ product.produit }}
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </td>   
+                     </tr>
+                 {% endfor %}                     
+                 {% endif %}
+            </table>
+        </div>
+    </div>
+
+    {%  if urlTemplate == 'produits_a_recuperer/%DATE%/%NB%' %}
+    <div class="row">
+        <div class="col-md-12">
+            <a href="{{ path('list_distribution_adherent') }}">Liste complète par adhérent</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <a href="{{ path('list_distribution_farm') }}">Liste complète par producteur</a>
+        </div>
+    </div>
+    {%  endif %}
+
+    {# dupliquer la structure du tableau ici pour l'export Excel #}
+    <div style="display:none;"> 
+        <table id="table-excel">            
+            {% if direction == 'H' or list|length>1 %}
+            <tr>
+                <th colspan="1"></th>
+                {% for date in dates %}
+                    <th>{{ jours[date|date('w')] }} {{ date|date('d') }} {{ mois[date|date('n')] }}</th>
+                {% endfor %}
+            </tr>
+            {% for adherent, infos in list %}
+                <tr><td>{{ adherent|raw }}</td>
+                    {% for date in dates %}
+                    <td>{% if infos[date|date('Y-m-d')] is defined %}{#
+                            #}{% for product in infos[date|date('Y-m-d')] %}{{ product.nb }} {{ product.produit }}<br>{% endfor %}{#
+                        #}{% endif %}</td>    
+                    {% endfor %}
+                </tr>
+             {% endfor %}
+             {% else %}
+                 {% for date in dates %}
+                     <tr>
+                         <th>{{ jours[date|date('w')] }} {{ date|date('d') }} {{ mois[date|date('n')] }} </th>
+                         <td>
+                            {% for adherent, infos in list %}
+                                {% if infos[date|date('Y-m-d')] is defined %}
+                                    {% for product in infos[date|date('Y-m-d')] %}
+                                        {{ product.nb }} {{ product.produit }}<br />
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </td>   
+                     </tr>
+                 {% endfor %}                     
+             {% endif %}
+        </table>
+     </div>
+{% endblock %}
+
+
+{% block footer_js %}
+<script type="text/javascript" src="{{ asset('jquery-ui/jquery-ui.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/excellentexcel.js') }}"></script>
+<script type="text/javascript">
+function exportExcel(elt) {
+    if (/msie/.test(navigator.userAgent.toLowerCase()) || /trident/.test(navigator.userAgent.toLowerCase())) {
+        $('#msie').modal('show');
+    } 
+    else {
+        return ExcellentExport.excel(elt, 'table-excel', 'Contrats AMAP');
+    }
+}
+$(document).ready(function() {
+   mobileCheck();
+});
+
+function mobileCheck() {
+     var url = window.location.href.split('/');
+    if ($( window ).width() < 768 && url[url.length-1] == "produits_a_recuperer") {
+        $("#nb").val(1);//on ne laisse que la 1e colonne et on met le select à 1
+        $("#table-summary tr td, #table-summary tr th").hide();
+        $("#table-summary tr").each(function () {
+            $(this).find('td').eq(0).show();
+            $(this).find('th').eq(0).show();
+        });
+
+    }
+}
+
+
+</script>
+{% endblock %}

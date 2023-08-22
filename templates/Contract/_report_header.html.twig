@@ -1,0 +1,53 @@
+<div class="col-md-2 text-center">
+    <a class="btn btn-primary no-print" href="{% if user.hasRole('ROLE_FARMER') %}{{ url('contract_farmer') }}{% else %}{{ url('contract_index') }}{% endif %}"><span class="glyphicon glyphicon-backward"></span> Retour</a>
+</div>
+<div class="col-md-4 text-center">
+    <button class="btn{% if type == "report" %} btn-warning{% endif %} no-print" onclick="selectType('report');" data-toggle="tooltip" data-placement="bottom" title="Compte-Rendu"><span class="glyphicon glyphicon-blackboard"></span> C.R.</button>
+    <button class="btn{% if type == "shipping" %} btn-warning{% endif %} no-print" onclick="selectType('shipping');" data-toggle="tooltip" data-placement="bottom" title="Livraisons"><span class="glyphicon glyphicon-blackboard"></span> Livr.</button>
+    <button class="btn{% if type == "ventilation" %} btn-warning{% endif %} no-print" onclick="selectType('ventilation');" data-toggle="tooltip" data-placement="bottom" title="Ventilation"><span class="glyphicon glyphicon-blackboard"></span> Ventil.</button>
+    <button class="btn{% if type == "payment" %} btn-warning{% endif %} no-print" onclick="selectType('payment');" data-toggle="tooltip" data-placement="bottom" title="Ventilation"><span class="glyphicon glyphicon-blackboard"></span> Chèques</button>
+</div>
+<div class="col-md-3 text-center">
+    <select class="form-control" onchange="selectFarm(this.value)" id="farm-select"  data-toggle="tooltip" data-placement="bottom" title="Filtrer par producteur">
+        {% if user.isAdmin and contract_farms|length > 1 %}
+            <option value="0"{% if farm is null %} selected="selected"{% endif %}>Tous producteurs</option>
+        {% endif %}
+        {% for each_farm in farms %}
+            {% if contract_farms[each_farm.idFarm] is defined %}
+                <option value="{{ each_farm.idFarm }}"{% if farm is not null and each_farm.idFarm == farm.idFarm %} selected="selected"{% endif %}>{{ each_farm.label }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+</div>
+<div class="col-md-3 text-center">
+     <!--<button class="btn btn-success no-print" onclick="$('#excel').modal('show');" data-toggle="tooltip" data-placement="bottom" title="Export Excel"><span class="glyphicon glyphicon-floppy-disk"></span> Excel</button>-->
+     <a download="{{ contract.label|slugify }}-{{ type|type_fr|slugify }}.xls" class="btn btn-success no-print" onclick="exportExcel(this);" data-toggle="tooltip" data-placement="bottom" title="Export Excel"><span class="glyphicon glyphicon-floppy-disk"></span> Excel</a>
+    <button class="btn btn-default no-print" onclick="window.print();"  data-toggle="tooltip" data-placement="bottom" title="Imprimer"><span class="glyphicon glyphicon-print"></span> Imprimer</button>
+    
+</div>
+<script type="text/javascript">
+    var root = '{{ url('home') }}';
+    function selectFarm(id_farm) {
+        var url = root+'contract_{{ type }}/{{ contract.idContract }}';
+        if (id_farm != 0) {
+            url += '/'+id_farm;
+        }
+        window.location.href = url;
+    }
+function selectType(type) {
+         var url = root+'contract_'+type+'/{{ contract.idContract }}';
+         var id_farm = $("#farm-select").val();
+        if (id_farm != 0) {
+            url += '/'+id_farm;
+        }
+        window.location.href = url;
+}    
+function exportExcel(elt) {
+    if (/msie/.test(navigator.userAgent.toLowerCase()) || /trident/.test(navigator.userAgent.toLowerCase())) {
+        $('#msie').modal('show');
+    } 
+    else {
+        return ExcellentExport.excel(elt, 'excel-table', 'Contrats AMAP');
+    }
+}
+</script>

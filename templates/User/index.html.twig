@@ -1,0 +1,94 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Liste des adhérents{% endblock %}
+{% block header_css %}<link href="{{ asset('datatables/datatables.min.css') }}" rel="stylesheet" />{% endblock %}
+{% block body %}
+
+<div class="row">
+  <div class="col-md-12">
+      <div class="pull-right">
+          <a download="adherents.xls" class="btn btn-success no-print" onclick="exportExcel(this);" data-toggle="tooltip" data-placement="bottom" title="Export Excel"><span class="glyphicon glyphicon-floppy-disk"></span> Excel</a>
+      </div>
+    <a href="{{ path('user_new') }}" class="btn btn-success"><span class="glyphicon glyphicon-user"></span> Ajouter un adhérent</a>
+    <br />
+    <br />
+    <table id="excel-table" class="table table-hover table-bordered sorttable">
+        <thead>
+            <tr>
+                <th class="success">Nom</th>
+                <th class="success">Email</th>
+                {% if withAddress %}
+                <th class="success">Tel1</th>
+                <th class="success">Tel2</th>
+                <th class="success">Adresse</th>                
+                <th class="success">C.P.</th>                
+                <th class="success">Ville</th>                
+                {% endif %}
+                <th class="success">Référent</th>
+                <th class="success">Admin</th>                
+                <th class="success">Date adhésion</th>   
+                <th class="success">Dern. connexion</th>                
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr onclick="window.location.href='{{ path('user_edit', { 'id': entity.idUser }) }}';"{% if not entity.isActive %} class="text-muted"{% endif %}>
+                <td>{{ entity }}</td>
+                <td><small>{{ entity.email }}</small></td>
+                {% if withAddress %}
+                <td><small>{{ entity.tel1 }}</small></td>
+                <td><small>{{ entity.tel2 }}</small></td>
+                <td><small>{{ entity.address }}</small></td>
+                <td><small>{{ entity.zipcode }}</small></td>
+                <td><small>{{ entity.town }}</small></td>
+                {% endif %}
+                <td>
+                 {#
+                  {% if entity.farms|length > 0 %}
+                    {% for farm in entity.farms %}
+                        <span class="almost-invisible">a</span>
+                    {% endfor %}
+                    {% for farm in entity.farms %}
+                        <span class="glyphicon glyphicon-grain text-success" style="font-size:18px;" data-toggle="tooltip" data-placement="bottom" title="{{ farm }}"></span>
+                    {% endfor %}
+                  {% endif %}
+                  #}
+                  {% for farm in entity.farms %}
+                      {{ farm.productType }}
+                      {% if not loop.last %}, {%endif %}                      
+                  {% endfor %}
+                </td>
+                <td>{% if entity.isAdmin %}<span class="almost-invisible">1</span><span class="glyphicon glyphicon-star text-success" style="font-size:18px;"></span>{% endif %}</td>
+                <td>{% if entity.createdAt is not empty %}{{ entity.createdAt|date("Y-m-d") }}{% endif %}</td>
+                <td>{% if entity.lastConnection is not empty %}{{ entity.lastConnection|date("Y-m-d") }}{% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    </div>
+
+</div> 
+
+{% include 'Contract/_modal.html.twig' %}  
+{% endblock %}
+
+{% block footer_js_before %}
+<script type="text/javascript" src="{{ asset('datatables/datatables.min.js') }}"></script>
+{% endblock %}
+
+{% block footer_js %}
+<script type="text/javascript" src="{{ asset('js/form.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/init-datatables.js') }}"></script>
+<script type="text/javascript">
+function exportExcel(elt) {
+    if (/msie/.test(navigator.userAgent.toLowerCase()) || /trident/.test(navigator.userAgent.toLowerCase())) {
+        $('#msie').modal('show');
+    } 
+    else {
+        dataTable.page.len(-1).draw();
+        return ExcellentExport.excel(elt, 'excel-table', 'Liste des adhérents',true);
+    }
+}
+</script>
+<script type="text/javascript" src="{{ asset('js/excellentexcel.js') }}"></script>
+{% endblock %}

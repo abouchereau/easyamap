@@ -1,0 +1,33 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Edition producteur{% endblock %}
+
+{% block body %}
+<div class="row">
+   <div class="col-md-4">   
+    {% if user.isAdmin %}
+    <a href="{{ path('farm') }}" class="btn btn-primary"><span class="glyphicon glyphicon-list"></span> Liste</a>
+    {% endif %}
+   </div>
+   <div class="col-md-4">
+     {% form_theme form 'Form/fields.html.twig' %}
+     {{ form(form) }}    
+    </div>
+    <div class="col-md-4 text-right">  
+      {% if user.isAdmin %}
+        {% if entity.isActive %}
+          <a href="{{ path('farm_activate', {'id':entity.idFarm, 'active': 0 } ) }}" class="btn btn-warning btn-xs"><span class="glyphicon glyphicon-remove-circle"></span> Désactiver</a>
+        {% else %}
+          <a href="{{ path('farm_activate', {'id':entity.idFarm, 'active': 1 } ) }}" class="btn btn-warning btn-xs"><span class="glyphicon glyphicon-ok-circle"></span> Activer</a>
+        {% endif %}
+        <br />
+        <br />
+        {% if can_be_deleted %}
+           <a onclick="if(confirm('Voulez-vous vraiment supprimer le producteur ?')){window.location.href=this.href;};return false;" href="{{ path('farm_delete', { 'id': entity.idFarm }) }}" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash"></span> Supprimer</a>
+        {% endif %}
+       {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% block footer_js %}
+<script type="text/javascript" src="{{ asset('js/form.js') }}"></script>
+{% endblock %}

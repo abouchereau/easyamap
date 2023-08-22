@@ -1,0 +1,156 @@
+{% extends 'layout.html.twig' %}
+{% block header_css %}{% endblock %}
+{% block header_title %}Historique{% endblock %}
+{% block body %}
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+
+ <h3>v1.3.2</h3>
+      <h5>4 octobre 2021</h5>
+      <ul>
+          <li>Ouverture / fermeture automatique des contrats</li>
+          <li>API farms / products</li>
+          <li>Reporting : filtre par adhérent</li>
+      </ul>
+
+<h3>v1.3.0</h3>
+<h5>28 Décembre 2019</h5>
+<ul>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/108" target="_blank">#108</a>: Migration Symfony 4.4 / PHP 7.3  </li>
+ </ul>  
+<h3>v1.2.5</h3>
+<h5>12 Avril 2019</h5>
+<ul>
+    <li>ano <a href="https://bitbucket.org/antogit/contrats-amap/issues/107" target="_blank">#107</a>: Erreur réception des paiements </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/106" target="_blank">#106</a>: Ajouter les informations de permanence dans la liste de distribution </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/105" target="_blank">#105</a>: Identifier les jours de distribution où l'adhérent a déjà commandé </li>
+    <li>ano <a href="https://bitbucket.org/antogit/contrats-amap/issues/104" target="_blank">#104</a>: Filtre reçu et 0 </li>
+</ul>
+<h3>v1.2.4</h3>
+<h5>6 Novembre 2018</h5>
+<ul>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/103" target="_blank">#103</a>: Recherche Contrat </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/102" target="_blank">#102</a>: Statistiques : prise en compte des produits au poids </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/101" target="_blank">#101</a>: Nombre de produits commandés depuis le </li>
+    <li>ano <a href="https://bitbucket.org/antogit/contrats-amap/issues/100" target="_blank">#100</a>: paiement reçu = 0 => mettre en vert </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/99" target="_blank">#99</a>: Statistiques par produit </li>
+</ul>
+<h3>v1.2.3</h3>
+<h5>25 Octobre 2017</h5>
+<ul>
+    <li>ano <a href="https://bitbucket.org/antogit/contrats-amap/issues/83" target="_blank">#83</a>: Incompatibilité entre option Lissage des paiements et commande avec prix au poids </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/80" target="_blank">#80</a>: Lier un achat à un contrat </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/85" target="_blank">#85</a>: Statistique globale utilisateur </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/84" target="_blank">#84</a>: Identifier les contrats sur lesquels l'utilisateur a répondu </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/86" target="_blank">#86</a>: Produits à récupérer / livrer : ajouter des options à la page </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/79" target="_blank">#79</a>: Autocomplétion sur les listes de sélection </li>
+</ul>
+<h3>v1.2.2</h3>
+<h5>24 Avril 2017</h5>
+<ul>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/72" target="_blank">#72</a>: Export des adhérents : ajouter le nom du producteur dans la colonne référent </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/76" target="_blank">#76</a>: Logo "AB" en bas à droite : pouvoir le modifier </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/67" target="_blank">#67</a>: Compte producteur sans les droits adhérents bug </li>
+    <li>ano <a href="https://bitbucket.org/antogit/contrats-amap/issues/68" target="_blank">#68</a>: Accent dans le nom d'un adhérent bug </li>
+    <li>ano <a href="https://bitbucket.org/antogit/contrats-amap/issues/69" target="_blank">#69</a>: Enlever bouton "ajouter producteur" pour les référents </li>
+    <li>ano <a href="https://bitbucket.org/antogit/contrats-amap/issues/71" target="_blank">#71</a>: Pas de date limite => pas de bouton enregistrer </li>
+    <li>ano <a href="https://bitbucket.org/antogit/contrats-amap/issues/74" target="_blank">#74</a>: Commande : un zéro s'affiche quand on clique dans un input </li>
+    <li>ano <a href="https://bitbucket.org/antogit/contrats-amap/issues/78" target="_blank">#78</a>: Bug page Vue par année </li>
+</ul>
+<h3>v1.2.1</h3>
+<h5>18 Janvier 2017</h5>
+<ul>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/65" target="_blank">#65</a>: Statistiques en fonction des commandes et non des paiements </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/64" target="_blank">#64</a>: Tableau des livraisons </li>
+</ul>
+<h3>v1.2.0</h3>
+<h5>12 Novembre 2016</h5>
+<ul>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/7" target="_blank">#7</a>: Accès producteur </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/58" target="_blank">#58</a>: Produit avec abonnement ex :oeufs </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/59" target="_blank">#59</a>: Historique des paiements </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/60" target="_blank">#60</a>: Produits non certifiés bio </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/53" target="_blank">#53</a>: Administrateur - paramètres de l'application </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/50" target="_blank">#50</a>: Coordonnées adhérent </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/55" target="_blank">#55</a>: Export Excel Adhérents </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/52" target="_blank">#52</a>: Inscriptions aux distributions </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/57" target="_blank">#57</a>: Description produits </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/44" target="_blank">#44</a>: Bloquer le contrat quand le paiement est reçu </li>
+</ul>
+<h3>v1.1.0</h3>
+<h5>16 Mai 2016</h5>
+<ul>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/48" target="_blank">#48</a>: Lissage des paiements </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/26" target="_blank">#26</a>: Admin : pouvoir modifier la commande d'un adhérent </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/47" target="_blank">#47</a>: Dissocier paiements au poids / prix fixe </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/39" target="_blank">#39</a>: Contrat : incrémenter / décrémenter une ligne entière </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/41" target="_blank">#41</a>: Paiement en n chèques = n paiements </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/8" target="_blank">#8</a>: Onglets contrat adhérent entre les différents producteurs </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/45" target="_blank">#45</a>: Alerte quand contrat sans produit disponible </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/43" target="_blank">#43</a>: Améliorer visibilité mobile </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/44" target="_blank">#44</a>: Bloquer le contrat quand le paiement est reçu </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/40" target="_blank">#40</a>: Paiement : accepter chèque tous les mois, 2 mois, 3 mois, 4mois, 6 mois, 1 an, toutes les distributions </li>
+</ul>
+<h3>v1.0.5</h3>
+<h5>27 Janvier 2016</h5>
+<ul>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/36" target="_blank">#36</a>: Ordre d'affichage des produits </li>
+</ul>
+<h3>v1.0.4</h3>
+<h5>15 Janvier 2016</h5>
+<ul>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/27" target="_blank">#27</a>: Pagination / recherche </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/34" target="_blank">#34</a>: Réception des paiements : trier les contrats du plus récent au plus ancien </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/31" target="_blank">#31</a>: Liste contrats : ajouter date de début / date de fin </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/30" target="_blank">#30</a>: Description paiements : ajouter le mois </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/32" target="_blank">#32</a>: Compte-rendus : ajouter nom référents bug </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/29" target="_blank">#29</a>: Compte-rendu référent : tous les produits sont visibles </li>
+</ul>
+<h3>v1.0.3</h3>
+<h5>9 Janvier 2016</h5>
+<ul>
+    <li>ano <a href="https://bitbucket.org/antogit/contrats-amap/issues/28" target="_blank">#28</a> : Edition Contrat : les dates disparaissent </li>
+</ul>
+<h3>v1.0.2</h3>
+<h5>24 Décembre 2015</h5>
+<ul>bug <a href="https://bitbucket.org/antogit/contrats-amap/issues/25" target="_blank">#25</a>: Compte-rendus - Problème accès </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/18" target="_blank">#18</a>: Tableau de livraison : ajouter en-tête </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/17" target="_blank">#17</a>: Compte-rendu : date de distribution </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/21" target="_blank">#21</a>: Supprimer contrat vide </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/24" target="_blank">#24</a>: Dupliquer contrat </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/23" target="_blank">#23</a>: Contrat fini : empêcher les modifications </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/19" target="_blank">#19</a>: Ventilation : trier par ordre alphabétique </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/20" target="_blank">#20</a>: Authentification : modifier message d'erreur </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/22" target="_blank">#22</a>: BDD : supprimer date dans la table purchase </li>
+</ul>
+<h3>v1.0.1</h3>
+<h5>13 Décembre 2015</h5>
+<ul>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/4" target="_blank">#4</a>: Pouvoir ajouter un paiement sans produit affecté </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/3" target="_blank">#3</a>: Bandeau : afficher le nom de l'adhérent logué </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/2" target="_blank">#2</a>: Page contrats : différencier contrats En cours / Archives / à venir (non visible) </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/1" target="_blank">#1</a>: Contrats : ajouter date limite de saisie </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/5" target="_blank">#5</a>: Liste des produits : export excel </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/6" target="_blank">#6</a>: Afficher numero version / logs version bug </li>
+    <li>ano <a href="https://bitbucket.org/antogit/contrats-amap/issues/12" target="_blank">#12</a>: Noms vides quand l'unité du produit est nulle. </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/15" target="_blank">#15</a>: Page contrats : ajouter nb produits, nb distribution </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/14" target="_blank">#14</a>: Historique des paiements : libellé "A payer" / "Trop payé" </li>
+    <li>evo <a href="https://bitbucket.org/antogit/contrats-amap/issues/13" target="_blank">#13</a>: Liste des produits : jusqu'à 5 distributions </li>
+</ul>
+<h3>v1.0.0</h3>
+<h5>8 Décembre 2015</h5>
+<ul>08/12/2015 </li>
+</ul>
+<br />
+<br />
+<br />
+<br />
+<p>
+ <a href="https://bitbucket.org/antogit/contrats-amap/issues" target="_blank">Suivi évolutions / bugs</a>
+</p>
+      
+      
+  </div>
+</div>
+
+{% endblock %}

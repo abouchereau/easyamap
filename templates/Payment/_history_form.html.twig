@@ -1,0 +1,43 @@
+<div class="row" id="history-form">       
+    <div class="box box-primary bg-success">
+        <div class="box-body">
+            <h4 class="text-center">Recherche</h4>
+            <form action="" method="GET" id="historyform" name="historyform">
+            {% if role != 'farmer' %}
+            <div class="form-group">
+                <label>Producteur</label>
+                <br />
+                <select class="form-control" onchange="this.form.submit();" name="farm">
+                    <option value=""{% if farm is null %} selected="selected"{% endif %}></option>
+                    {% for each in farms %}
+                        <option value="{{ each.idFarm }}"{% if farm is not null and each.idFarm == farm.idFarm %} selected="selected"{% endif %}>{{ each }}</option>
+                    {% endfor %}
+                </select> 
+            </div>
+            {% endif %}
+            {% if role != 'adherent' %}
+            <div class="form-group">
+                <label>Adhérent</label>
+                <br />
+                <select class="form-control" onchange="this.form.submit();" name="user">
+                    <option value=""{% if user is null %} selected="selected"{% endif %}></option>
+                    {% for each in users %}
+                        <option value="{{ each.idUser }}"{% if user is not null and each.idUser == user.idUser %} selected="selected"{% endif %}>{{ each }}</option>
+                    {% endfor %}
+                </select> 
+            </div>
+            {% endif %}
+            <div class="form-group">
+                <label>Année</label>
+                <br />
+                <select class="form-control" onchange="this.form.submit();" name="year">
+                    {% for each in years %}
+                        <option value="{{ each }}"{% if each == year %} selected="selected"{% endif %}>{{ each }}</option>
+                        {% endfor %}
+                </select> 
+            </div>
+            </form>
+            <div style="clear:both;"></div>
+        </div>
+    </div>
+</div>

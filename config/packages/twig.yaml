@@ -1,5 +1,10 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
+    globals:
+        app_title: Easyamap
+        mail_support: anthony@easyamap.fr
+        version: 1.4.0
+        portail: https://www.easyamap.fr
 
 when@test:
     twig:
