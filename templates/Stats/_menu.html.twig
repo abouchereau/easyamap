@@ -1,9 +1,0 @@
-<div class="row">
-    <div class="col-md-8 col-md-offset-2">
-        <ul class="nav nav-tabs nav-justified">
-            <li role="presentation"{% if app.request.attributes.get('_route') == 'stats_finances' %} class="active"{% endif %}><a href="{{ path('stats_finances') }}">Finances</a></li>
-            <li role="presentation"{% if app.request.attributes.get('_route') == 'stats_activite' %} class="active"{% endif %}><a href="{{ path('stats_activite') }}">Activité adhérents</a></li>            
-        </ul>
-    </div>
-</div>        <br />
-        <br />

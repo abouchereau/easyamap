@@ -1,3 +1,0 @@
-ALTER TABLE `user` ADD COLUMN `username` VARCHAR(255) NULL DEFAULT NULL AFTER `email`;
-UPDATE user SET username = lastname;
-ALTER TABLE `user` ADD COLUMN `roles` VARCHAR(255) NULL DEFAULT NULL AFTER `password`;

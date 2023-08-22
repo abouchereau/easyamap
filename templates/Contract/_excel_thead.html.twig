@@ -1,9 +1,0 @@
-Contrat "{{ contract.label }}"
-{% if farm is not null %}
-    <br>{{ farm.label }} ({{farm.productType}})
-    <br>Référent{% if farm.referents|length > 1 %}s{% endif %} : 
-        {% for referent in farm.referents %}
-            {{ referent.firstname}} {{ referent.lastname}} ({{ referent.email }})
-            {% if not loop.last %}, {% endif %}
-        {% endfor %}
-{% endif %}
