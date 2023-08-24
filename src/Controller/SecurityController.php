@@ -6,13 +6,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-
+use Doctrine\Persistence\ManagerRegistry;
 class SecurityController extends AbstractController
 {
     /**
      * @Route("/login", name="app_login")
      */
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils, ManagerRegistry $doctrine): Response
     {
         // if ($this->getUser()) {
         //     return $this->redirectToRoute('target_path');
@@ -23,7 +23,7 @@ class SecurityController extends AbstractController
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
         
-        $em = $this->getDoctrine()->getManager();     
+        $em = $doctrine->getManager();
         $setting = $em->getRepository('App\Entity\Setting')->getFromCache($_SERVER['APP_ENV']);        
         $em->getRepository('App\Entity\Setting')->updateManifest($_SERVER['APP_ENV'],false);//on update le fichier que s'il n'existe pas
 

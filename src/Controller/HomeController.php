@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Util\Amap;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Response;
 use App\Util\Cache;
 use App\Util\GitUtils;
@@ -278,16 +279,16 @@ class HomeController extends AmapBaseController
         return $this->render('Home/show_history.html.twig');
     }
     
-    public function footer() {
-        $em = $this->getDoctrine()->getManager();     
+    public function footer(ManagerRegistry $doctrine) {
+        $em = $doctrine->getManager();
         $setting = $em->getRepository('App\Entity\Setting')->getFromCache($_SERVER['APP_ENV']);
         return $this->render('Partials/_footer.html.twig', array(
             'setting' => $setting
                 ));;
     }
     
-    public function town() {
-        $em = $this->getDoctrine()->getManager();  
+    public function town(ManagerRegistry $doctrine) {
+        $em = $doctrine->getManager();
         $setting = $em->getRepository("App\Entity\Setting")->getFromCache($_SERVER['APP_ENV']);      
         return $this->render('Partials/_town.html.twig', array(
             'setting' => $setting
