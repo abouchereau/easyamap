@@ -15,7 +15,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @UniqueEntity(fields="username", message="L'identifiant de connexion est déjà utilisé par un autre adhérent. Merci de bien vouloir en choisir un différent.")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User implements UserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use IsActiveDefaultTrueTrait;
     use CreatedAtTrait;
@@ -210,6 +210,11 @@ class User implements UserInterface
         $this->username = $username;
 
         return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->username;
     }
 
     /**

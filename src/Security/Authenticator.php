@@ -18,7 +18,7 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-class Authenticator extends AbstractFormLoginAuthenticator
+class Authenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
@@ -34,11 +34,11 @@ class Authenticator extends AbstractFormLoginAuthenticator
         $this->csrfTokenManager = $csrfTokenManager;
     }
 
-    public function supports(Request $request)
+ /*   public function supports(Request $request)
     {
         return 'app_login' === $request->attributes->get('_route')
             && $request->isMethod('POST');
-    }
+    }*/
 
     public function getCredentials(Request $request)
     {
@@ -79,6 +79,8 @@ class Authenticator extends AbstractFormLoginAuthenticator
 
     public function checkCredentials($credentials, UserInterface $user)
     {
+
+        die("eee");
 //        $testUser = $this->entityManager->getRepository(User::class)->findOneBy([
 //            'username' => $credentials['username'],
  //           'password' => $credentials['password']
@@ -92,7 +94,7 @@ class Authenticator extends AbstractFormLoginAuthenticator
        // return $this->entityManager->getRepository(User::class)->tryAuthenticate($credentials['username'],$credentials['password']);
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): Response
     {
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
@@ -101,8 +103,21 @@ class Authenticator extends AbstractFormLoginAuthenticator
         return new RedirectResponse($this->urlGenerator->generate('home'));
     }
 
-    protected function getLoginUrl()
+    public function onAuthenticationFailure(Request $request, TokenInterface $token, $providerKey): Response
     {
+        die("aaa");
+    }
+
+    protected function getLoginUrl(Request $request): string
+    {
+        die("bbb");
         return $this->urlGenerator->generate('app_login');
+    }
+
+    public function authenticate(Request $request)
+    {
+
+        die("ccc");
+        // TODO: Implement authenticate() method.
     }
 }
