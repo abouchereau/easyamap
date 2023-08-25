@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Doctrine\ORM\Mapping\JoinColumn;
@@ -243,7 +244,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @see UserInterface
      */
 
-    public function getRoles()
+    public function getRoles(): array
     {
         $session = new Session();
         $roles = array(); 
@@ -296,7 +297,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *
      * @return string 
      */
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }

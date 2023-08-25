@@ -47,13 +47,13 @@
       </p>
     </div>
     <div class="col-md-4">
-      <form method="post" class="form-signin">
+      <form method="post" class="form-signin" action="{{ path('login') }}">
 
         <p style="margin-top:30px;">
               <label for="inputUsername" class="sr-only">Nom</label>
-                <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" placeholder="Nom" required autofocus>
+                <input type="text" value="{{ last_username }}" name="_username" id="inputUsername" class="form-control" placeholder="Nom" required autofocus>
                 <label for="inputPassword" class="sr-only">Mot de passe</label>
-                <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Mot de passe" required>  
+                <input type="password" name="_password" id="inputPassword" class="form-control" placeholder="Mot de passe" required>
             
             
      <!--     <label for="user"  class="sr-only">Adresse email</label>
