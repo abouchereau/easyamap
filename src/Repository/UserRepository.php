@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Session\Session;
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -25,6 +25,7 @@ class UserRepository extends ServiceEntityRepository
       try {    
             $user = $this->createQueryBuilder('u')
             ->where('UPPER(u.username) =:username')
+                //TODO OR email
             ->andWhere('u.password = :password')
             ->andWhere('u.isActive = 1')
             ->setParameter('username', mb_strtoupper($username, 'UTF-8'))

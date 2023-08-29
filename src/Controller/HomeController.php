@@ -11,8 +11,9 @@ use App\Entity\User;
 
 class HomeController extends AmapBaseController
 {
-    public function index()
+    public function index(): Response
     {
+        die("INDEX");
         $user = $this->getUser();      //null si non authentifié  
         $menu = $this->getMenu($user);
 

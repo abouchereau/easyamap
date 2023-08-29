@@ -7,11 +7,12 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Request;
 
 
-class AmapBaseController extends AbstractController
+class AmapBaseController extends AbstractController implements TokenAuthenticatedController
 {    
   
     public function preExecute(Request $request) {        
         //déblocage de l'isoloir sur les contrats
+        die("preExecute");
 
         $previous_url = $request->headers->get('referer');
         $user = $this->get('security.token_storage')->getToken()->getUser();        
