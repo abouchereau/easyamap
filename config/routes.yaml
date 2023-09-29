@@ -7,11 +7,11 @@ maintenance:
     path:  /maintenance
     controller: App\Controller\HomeController::maintenance
     
-login:
-    path:   /login
-    controller:  App\Controller\SecurityController::login
-login_check:
-    path:   /login_check
+#login:
+#    path:   /login
+#    controller:  App\Controller\SecurityController::login
+#login_check:
+#    path:   /check_login
 logout:
     path:   /logout
     

@@ -1,6 +1,6 @@
 <?php
 // from http://www.tribulations.eu/articles/preexecute-dans-les-controller-symfony2.html
-namespace  App\Listener; 
+/*namespace  App\Listener;
 use Symfony\Component\HttpKernel\HttpKernelInterface; 
 use Symfony\Component\HttpKernel\Event\ControllerEvent; 
 
@@ -27,3 +27,4 @@ class ControllerListener  {
     }
 }
 
+*/

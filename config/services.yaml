@@ -9,8 +9,7 @@ parameters:
         client2: pass2
 
 services:
-    App\EventListener\ExceptionListener:
-        tags: [ kernel.event_listener ]
+
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -27,3 +26,7 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+#    App\EventListener\MyListener:
+#        tags:
+#            - { name: kernel.event_listener, event: kernel.request }
+#            - { name: kernel.event_subscriber }
