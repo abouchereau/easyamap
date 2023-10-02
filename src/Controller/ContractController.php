@@ -45,7 +45,7 @@ class ContractController extends AmapBaseController
         $em = $this->getDoctrine()->getManager();
         $user = $this->get('security.token_storage')->getToken()->getUser();
         
-        $entities = $em->getRepository('App\Entity\Contract')->findAllOrderByIdDesc($user);
+        $entities = $em->getRepository('App\Entity\Contract')->findAllOrderByIdDesc($user, true);
         
         return $this->render('Contract/indexFarmer.html.twig', array(
             'entities' => $entities,            

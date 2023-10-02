@@ -7,7 +7,7 @@ use App\Entity\User;
 
 class ContractRepository extends EntityRepository 
 {
-    public function findAllOrderByIdDesc($user)
+    public function findAllOrderByIdDesc($user,$farmer=false)
     {
         //test branch
         $params = [];
@@ -27,7 +27,14 @@ class ContractRepository extends EntityRepository
                 from contract c 
                 left join distribution d on d.date between c.period_start and c.period_end 
                 left join contract_product cp on cp.fk_contract = c.id_contract ";
-        if ($user->hasRole(User::ROLE_ADMIN)) {
+        if ($farmer) {
+            $sql .= " left join product p on p.id_product = cp.fk_product
+                left join farm f on f.id_farm = p.fk_farm                
+                left join user u on u.id_user = c.fk_user
+                where f.fk_user=:id_user";
+            $params['id_user'] = $user->getIdUser();
+        }
+        elseif ($user->hasRole(User::ROLE_ADMIN)) {
             $sql .= " left join user u on u.id_user = c.fk_user";
         }
         elseif ($user->hasRole(User::ROLE_REFERENT)) {
@@ -36,12 +43,6 @@ class ContractRepository extends EntityRepository
                 left join referent r on r.fk_farm = f.id_farm
                 left join user u on u.id_user = c.fk_user
                 where r.fk_user=:id_user";
-            $params['id_user'] = $user->getIdUser();
-        } elseif ($user->hasRole(User::ROLE_FARMER)) {
-            $sql .= " left join product p on p.id_product = cp.fk_product
-                left join farm f on f.id_farm = p.fk_farm                
-                left join user u on u.id_user = c.fk_user
-                where f.fk_user=:id_user";
             $params['id_user'] = $user->getIdUser();
         }
         $sql .= " group by c.id_contract
