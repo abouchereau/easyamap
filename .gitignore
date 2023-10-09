@@ -20,3 +20,7 @@
 
 /config/url2env.php
 /config/packages/local/doctrine.yaml
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###

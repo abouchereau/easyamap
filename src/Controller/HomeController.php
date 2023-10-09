@@ -45,7 +45,7 @@ class HomeController extends AmapBaseController
     protected function getMenuFarmer($user) {
         $list = array();
         $list[] = array(
-            $this->generateUrl(Amap::isEasyamapMainServer()?'products_to_ship_multi':'products_to_ship'),
+            $this->generateUrl(Amap::isEasyamapMainServer()?'products_to_ship_multi':'products_to_ship',['role'=>'farmer','date'=>'0', 'nb'=>4]),
             'circle-arrow-down',
             'Produits à livrer',
             'Liste des produits à livrer aux prochaines distributions.'
@@ -56,7 +56,7 @@ class HomeController extends AmapBaseController
             'Contrats',
             'Comptes-rendus des contrats');
         $list[] = array(
-             $this->generateUrl('rapport'),
+             $this->generateUrl('rapport',['role'=>'farmer']),
              'stats',
              'Rapports',
              'Statistiques par produit'
@@ -127,7 +127,7 @@ class HomeController extends AmapBaseController
         if (!$user->hasRole(User::ROLE_ADMIN))
         {
         $list[] = array(
-            $this->generateUrl('products_to_ship'),
+            $this->generateUrl('products_to_ship',['role'=>'referent','date'=>'0', 'nb'=>4]),
             'circle-arrow-down',
             'Produits à livrer',
             'Liste des produits à livrer aux prochaines distributions.'
@@ -173,7 +173,7 @@ class HomeController extends AmapBaseController
              'Tableau des livraisons par distribution'
              );
          $list[] = array(
-             $this->generateUrl('rapport'),
+             $this->generateUrl('rapport',['role'=>'referent']),
              'stats',
              'Rapports',
              'Statistiques par produit'

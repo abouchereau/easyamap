@@ -362,18 +362,20 @@ products_next_distribution:
         nb: 4
     
 products_to_ship:
-    path: produits_a_livrer/{date}/{nb}
+    path: produits_a_livrer/{date}/{nb}/{role}
     controller: App\Controller\PurchaseController:getDeliveryNextDistribution
     defaults:
         date: null
         nb: 4
+        role: null
 
 products_to_ship_multi:
-  path: produits_a_livrer_multiamap/{dateDebut}/{dateFin}
+  path: produits_a_livrer_multiamap/{dateDebut}/{dateFin}/{role}
   controller: App\Controller\PurchaseController:getDeliveryNextDistributionMultiAmap
   defaults:
     dateDebut: null
     dateFin: null
+    role: null
 
 products_to_ship_total:
   path: produits_a_livrer_total/{date}
@@ -461,7 +463,7 @@ tableau_livraisons:
         date: null
     
 rapport:
-    path: rapport
+    path: rapport/{role}
     controller: App\Controller\PurchaseController:rapport
 #changement ordre
 

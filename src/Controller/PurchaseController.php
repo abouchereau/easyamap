@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Util\Amap;
 use Symfony\Component\HttpFoundation\Request;
 use App\Util\Utils;
@@ -170,10 +171,13 @@ class PurchaseController extends AmapBaseController
         ));
   }
   
-  public function getDeliveryNextDistribution($date = null, $nb = 4)
+  public function getDeliveryNextDistribution($date = null, $nb = 4, $role=null)
   {
       $em = $this->getDoctrine()->getManager();
-      
+      if ($role != null) {
+          $session = new Session();
+          $session->set('role', 'ROLE_' . strtoupper($role));
+      }
       if ($date === null || !preg_match("/^\d{4}\-\d{2}-\d{2}$/",$date))
       {
           $date = $em->getRepository('App\Entity\Distribution')->findNextDate();
@@ -207,9 +211,13 @@ class PurchaseController extends AmapBaseController
         ));
   }
 
-    public function getDeliveryNextDistributionMultiAmap($dateDebut = null, $dateFin=null)
+    public function getDeliveryNextDistributionMultiAmap($dateDebut = null, $dateFin=null, $role=null)
     {
         $this->denyAccessUnlessGranted(['ROLE_FARMER','ROLE_ADHERENT']);
+        if ($role != null) {
+            $session = new Session();
+            $session->set('role', 'ROLE_' . strtoupper($role));
+        }
         if ($dateDebut == null) {
             $dateDebut = new \DateTime();
         }
@@ -459,9 +467,14 @@ class PurchaseController extends AmapBaseController
       return $nb;
   }
   
-  public function rapport()
+  public function rapport($role=null)
   {
-      $this->denyAccessUnlessGranted(array('ROLE_REFERENT', 'ROLE_FARMER'));
+      $this->denyAccessUnlessGranted([User::ROLE_FARMER, User::ROLE_REFERENT]);
+        if ($role != null) {
+            $session = new Session();
+            $session->set('role','ROLE_'.strtoupper($role));
+        }
+
       $id_farm = isset($_GET['id_farm']) ? $_GET['id_farm'] : null;
       $date_debut = isset($_GET['date_debut']) ? $_GET['date_debut'] : null;
       $date_fin = isset($_GET['date_fin']) ? $_GET['date_fin'] : null;
@@ -492,7 +505,6 @@ class PurchaseController extends AmapBaseController
       else {
           $date_fin = \DateTime::createFromFormat('Y-m-d', $date_fin);
       }
-      
       $quantities = $em->getRepository('App\Entity\Purchase')->getQuantities($farm->getIdFarm(), $date_debut, $date_fin, $id_user);
       $products = $em->getRepository('App\Entity\Product')->findForFarm($farm, $hide_empty_products?$quantities['product_list']:[]);
       $user_list = $em->getRepository('App\Entity\User')->findAllOrderByLastname();

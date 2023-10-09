@@ -4,23 +4,28 @@ namespace App\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use App\Entity\User;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class FarmRepository extends EntityRepository 
 {
     public function findAllOrderByLabel($user)
     {
-       $qb = $this->createQueryBuilder('f');
-       
-       if($user->hasRole(User::ROLE_REFERENT) && !$user->hasRole(User::ROLE_ADMIN))
-       {
+        $session = new Session();
+        $role = User::ROLE_REFERENT;
+        if ($session->has('role')) {
+            $role = $session->get('role');
+        }
+        $qb = $this->createQueryBuilder('f');
+        if ($role == User::ROLE_FARMER && !$user->hasRole(User::ROLE_ADMIN)) {
+            $qb->where('f.fkUser = :user')
+                ->setParameter('user', $user);
+        }
+        elseif($role == User::ROLE_REFERENT && !$user->hasRole(User::ROLE_ADMIN)) {
             $qb->leftJoin('App\Entity\Referent','r','WITH','r.fkFarm = f.idFarm')
             ->where('r.fkUser = :user')
             ->setParameter('user', $user);
-       }
-       elseif ($user->hasRole(User::ROLE_FARMER) && !$user->hasRole(User::ROLE_ADMIN)) {
-           $qb->where('f.fkUser = :user')
-              ->setParameter('user', $user);
-        }       
+        }
+
         $qb->addOrderBy('f.isActive', 'DESC')
          ->addOrderBy('f.sequence');
          return $qb->getQuery()->getResult();
