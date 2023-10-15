@@ -370,23 +370,23 @@ products_to_ship:
         role: null
 
 products_to_ship_multi:
-  path: produits_a_livrer_multiamap/{dateDebut}/{dateFin}/{role}
-  controller: App\Controller\PurchaseController:getDeliveryNextDistributionMultiAmap
-  defaults:
-    dateDebut: null
-    dateFin: null
-    role: null
+    path: produits_a_livrer_multiamap/{dateDebut}/{dateFin}/{role}
+    controller: App\Controller\PurchaseController:getDeliveryNextDistributionMultiAmap
+    defaults:
+        dateDebut: null
+        dateFin: null
+        role: null
 
 products_to_ship_total:
-  path: produits_a_livrer_total/{date}
-  controller: App\Controller\PurchaseController:getDeliveryNextDistributionTotal
-  defaults:
-    date: null
+    path: produits_a_livrer_total/{date}
+    controller: App\Controller\PurchaseController:getDeliveryNextDistributionTotal
+    defaults:
+        date: null
 
 product_corresp:
-  path: product_corresp
-  controller: App\Controller\PurchaseController:productCorresp
-  methods: POST
+    path: product_corresp
+    controller: App\Controller\PurchaseController:productCorresp
+    methods: POST
 
 payment_received:
     path: payment_received

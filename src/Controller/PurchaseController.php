@@ -218,14 +218,14 @@ class PurchaseController extends AmapBaseController
             $session = new Session();
             $session->set('role', 'ROLE_' . strtoupper($role));
         }
-        if ($dateDebut == null) {
+        if ($dateDebut == null || !preg_match("/^\d{4}\-\d{2}-\d{2}$/", $dateDebut)) {
             $dateDebut = new \DateTime();
         }
         else {
             $dateDebut = \DateTime::createFromFormat('Y-m-d', $dateDebut);
         }
 
-        if ($dateFin == null) {
+        if ($dateFin == null || !preg_match("/^\d{4}\-\d{2}-\d{2}$/", $dateFin)) {
             $dateFin = clone $dateDebut;
             $interval = new \DateInterval('P7D');
             $dateFin->add($interval);
