@@ -546,7 +546,7 @@ class PurchaseController extends AmapBaseController
         $data = $em->getRepository('App\Entity\Purchase')->getProductsToShipMulti2($dateDebut, $dateFin, $farmsMulti);
 
 
-        return $this->render('Purchase/rapportJardinVerger.html.twig', array(
+        return $this->render('Purchase/rapportJardinsVergers.html.twig', array(
             'amaps' => $data['amaps'],
             'produits' => $data['produits'],
             'quantities' => $data['quantities'],
