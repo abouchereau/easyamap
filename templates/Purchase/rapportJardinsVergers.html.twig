@@ -23,7 +23,7 @@
                     <tr>
                         <th>{{amap}}</th>
                         {% for j,produit in produits %}
-                           <td>{% if quantities[i] is defined and quantities[i][j] is defined %}{{quantities[i][j]}{% endif%}</td>
+                           <td>{% if quantities[i] is defined and quantities[i][j] is defined %}{{ quantities[i][j] }{% endif %}</td>
                         {% endfor %}
                      </tr>
                  {% endfor %}
