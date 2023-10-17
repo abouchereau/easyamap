@@ -30,7 +30,7 @@
                  <tr>
                   <th>TOTAL</th>
                  {% for j,produit in produits %}
-                     <td class="text-center"><b>{% if total[j] is defined %}{{ total[j] }}{% endif %}</b></td>
+                     <td class="text-center bg-warning"><b>{% if total[j] is defined %}{{ total[j] }}{% endif %}</b></td>
                  {% endfor %}
             </tbody>
        </table>
