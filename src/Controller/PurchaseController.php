@@ -551,6 +551,7 @@ class PurchaseController extends AmapBaseController
             'produits' => $data['produits'],
             'quantities' => $data['quantities'],
             'total' => $data['total'],
+            'dateDebut' => $dateDebut
         ));
     }
 
