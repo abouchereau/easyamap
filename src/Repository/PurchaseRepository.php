@@ -289,6 +289,91 @@ ORDER BY v.is_cur_db DESC, v.f_seq, v.DATE, v.pr_seq, v.is_shift";
         return $this->fetchGroupTwoLevels($tab);
     }
 
+
+
+    public function getProductsToShipMulti2($dateDebut, $dateFin, $farms)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "SELECT * FROM (";
+        $nb_farms = count($farms);
+        for($i = 0; $i < $nb_farms; $i++) {
+            $farm = $farms[$i];
+            $sql .= "
+SELECT
+(SELECT name FROM ".$farm['db'].".setting) AS amap,
+sum(pu.quantity) AS nb, 
+concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit,
+pr.sequence as pr_seq
+from ".$farm['db'].".purchase pu 
+left join ".$farm['db'].".product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
+left join ".$farm['db'].".distribution d on d.id_distribution = pd.fk_distribution 
+left join ".$farm['db'].".product pr on pr.id_product = pd.fk_product 
+left join ".$farm['db'].".farm f on f.id_farm = pr.fk_farm
+left join ".$farm['db'].".distribution d2 ON d2.id_distribution = pd.fk_distribution_shift 
+WHERE d.date >= :date_debut AND d.date <= :date_fin 
+AND pr.fk_farm=".$farm['id_farm']."
+ group by f.label, d.date, pr.fk_farm, pr.id_product, f.sequence, pr.sequence, d2.date
+UNION
+SELECT 
+(SELECT name FROM ".$farm['db'].".setting) AS amap,
+sum(pu.quantity) AS nb, 
+concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit, 
+pr.sequence as pr_seq
+from ".$farm['db'].".purchase pu 
+left join ".$farm['db'].".product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
+left join ".$farm['db'].".distribution d on d.id_distribution = pd.fk_distribution 
+left join ".$farm['db'].".product pr on pr.id_product = pd.fk_product 
+left join ".$farm['db'].".farm f on f.id_farm = pr.fk_farm
+left join ".$farm['db'].".distribution d2 ON d2.id_distribution = pd.fk_distribution_shift 
+WHERE pu.fk_product_distribution IS NOT NULL
+AND d2.date >= :date_debut AND d2.date <= :date_fin 
+AND pr.fk_farm=".$farm['id_farm']."
+group by f.label, d.date, pr.fk_farm, pr.id_product, f.sequence, pr.sequence, d2.date";
+            if ($i < $nb_farms-1) {
+                $sql .= "
+UNION";
+            }
+        }
+        $sql .= ") v
+ORDER BY v.pr_seq";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['date_debut'=>$dateDebut->format('Y-m-d'),'date_fin'=>$dateFin->format('Y-m-d')]);
+        $tab = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $produits = [];
+        $amaps = [];
+        foreach($tab as $item) {
+            if (!in_array($item['amap'], $amaps)) {
+                $amaps[] = $item['amap'];
+            }
+            if (!in_array($item['produit'], $produits)) {
+                $produits[] = $item['produit'];
+            }
+        }
+        $amapsKeys = array_flip($amaps);
+        $produitsKeys = array_flip($produits);
+
+        $quantities = [];
+
+        foreach($tab as $item) {
+            $amapKey = $amapsKeys[$item['amap']];
+            $produitKey = $produitsKeys[$item['produit']];
+
+            if(!isset($quantities[$amapKey])) {
+                $quantities[$amapKey] = [];
+            }
+            if(!isset($quantities[$amapKey][$produitKey])) {
+                $quantities[$amapKey][$produitKey] = 0;
+            }
+            $quantities[$amapKey][$produitKey] += $item['nb'];
+        }
+        return [
+            'amaps' => $amaps,
+            'produits' => $produits,
+            'quantities' => $quantities,
+        ];
+    }
+
     public function getProductsToRecover($dates, $id_user=null)
     {
         $conn = $this->getEntityManager()->getConnection();

@@ -521,4 +521,36 @@ class PurchaseController extends AmapBaseController
             'hide_empty_products' => $hide_empty_products
         ));
   }
+
+    public function rapportJardinVerger($dateDebut = null)
+    {
+        $session = new Session();
+        $session->set('role','ROLE_FARMER');
+        $this->denyAccessUnlessGranted(['ROLE_FARMER','ROLE_ADHERENT']);
+        if ($dateDebut == null || !preg_match("/^\d{4}\-\d{2}-\d{2}$/", $dateDebut)) {
+            $dateDebut = new \DateTime();
+            $dateDebut->setTimestamp(strtotime('last monday'));
+        }
+        else {
+            $dateDebut = \DateTime::createFromFormat('Y-m-d', $dateDebut);
+        }
+
+        $dateFin = clone $dateDebut;
+        $interval = new \DateInterval('P7D');
+        $dateFin->add($interval);
+
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($user);
+        $farmsMulti = $em->getRepository('App\Entity\Farm')->getFarmsMulti($farms, $em->getConnection()->getDatabase());
+        $data = $em->getRepository('App\Entity\Purchase')->getProductsToShipMulti2($dateDebut, $dateFin, $farmsMulti);
+
+
+        return $this->render('Purchase/rapportJardinVerger.html.twig', array(
+            'amaps' => $data['amaps'],
+            'produits' => $data['produits'],
+            'quantities' => $data['quantities'],
+        ));
+    }
+
 }

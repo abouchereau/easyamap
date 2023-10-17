@@ -1,0 +1,40 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Livraisons Jardins Vergers{% endblock %}
+{% block header_css %}
+{% endblock %}
+{% block body %}
+
+
+<div class="row">
+
+    <div class="col-md-12">
+       <table class="table table-bordered table-striped table-condensed">
+            <thead>
+                <tr>
+                    <th></th>
+                    {% for produit in produits %}
+                        <th>{{produit}}</th>
+                    {% endfor %}
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for i, amap in amaps %}
+                    <tr>
+                        <th>{{amap}}</th>
+                        {% for j,produit in produits %}
+                           <td>{% if quantities[i] is defined and quantities[i][j] is defined %}{{quantities[i][j]}{% endif%}</td>
+                        {% endfor %}
+                     </tr>
+                 {% endfor %}
+            </tbody>
+       </table>
+    </div>
+</div>
+
+
+
+{% endblock %}
+{% block footer_js %}
+
+{% endblock %}

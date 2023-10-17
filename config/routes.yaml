@@ -568,3 +568,9 @@ api_products:
     path: api/products
     controller: App\Controller\ApiController:getAllProducts
     methods: GET
+
+rapport_jardins_vergers:
+    path: rapport_jardins_vergers/{dateDebut}
+    controller: App\Controller\PurchaseController:rapportJardinVerger
+    defaults:
+        dateDebut: null
