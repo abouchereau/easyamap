@@ -13,7 +13,7 @@
                 <tr>
                     <th></th>
                     {% for produit in produits %}
-                        <th>{{produit}}</th>
+                        <td class="bg-grey">{{produit}}</td>
                     {% endfor %}
 
                 </tr>
@@ -21,11 +21,16 @@
             <tbody>
                 {% for i, amap in amaps %}
                     <tr>
-                        <th>{{amap}}</th>
+                        <td class="bg-success">{{amap}}</td>
                         {% for j,produit in produits %}
-                           <td>{% if quantities[i] is defined and quantities[i][j] is defined %}{{ quantities[i][j] }}{% endif %}</td>
+                           <td class="text-center"><b>{% if quantities[i] is defined and quantities[i][j] is defined %}{{ quantities[i][j] }}{% endif %}</b></td>
                         {% endfor %}
                      </tr>
+                 {% endfor %}
+                 <tr>
+                  <th>TOTAL</th>
+                 {% for j,produit in produits %}
+                     <td class="text-center"><b>{% if total[j] is defined %}{{ total[j] }}{% endif %}</b></td>
                  {% endfor %}
             </tbody>
        </table>

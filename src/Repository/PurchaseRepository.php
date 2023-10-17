@@ -354,6 +354,7 @@ ORDER BY v.pr_seq";
         $produitsKeys = array_flip($produits);
 
         $quantities = [];
+        $totalParProduits = [];
 
         foreach($tab as $item) {
             $amapKey = $amapsKeys[$item['amap']];
@@ -366,11 +367,19 @@ ORDER BY v.pr_seq";
                 $quantities[$amapKey][$produitKey] = 0;
             }
             $quantities[$amapKey][$produitKey] += $item['nb'];
+
+            if (!isset($totalParProduits[$produitKey])) {
+                $totalParProduits[$produitKey] = 0;
+            }
+
+            $totalParProduits[$produitKey] += $item['nb'];
+
         }
         return [
             'amaps' => $amaps,
             'produits' => $produits,
             'quantities' => $quantities,
+            'total' => $totalParProduits
         ];
     }
 
