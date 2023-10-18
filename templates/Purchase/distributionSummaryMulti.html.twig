@@ -19,7 +19,7 @@
                 {%  if dates|length > 0 %}
               <a download="distributions-{{ dates[0]|date('Y-m-d') }}.xls" class="btn btn-success no-print" onclick="exportExcel(this);" data-toggle="tooltip" data-placement="bottom" title="Export Excel"><span class="glyphicon glyphicon-floppy-disk"></span> Excel</a>
                     {%  endif %}
-                <a  class="btn btn-warning no-print" href="{{ path('tableauLivraisonParProduit') }}">Vue par produit <span class="badge">bêta</span></a>
+                <a  class="btn btn-warning no-print" href="{{ path('tableau_livraison_par_produit') }}">Vue par produit <span class="badge">bêta</span></a>
             </div>
             <div class="pull-right text-center distri-right">
                 De
