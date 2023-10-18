@@ -522,7 +522,7 @@ class PurchaseController extends AmapBaseController
         ));
   }
 
-    public function rapportJardinVerger($dateDebut = null)
+    public function tableauLivraisonParProduit($dateDebut = null)
     {
         $session = new Session();
         $session->set('role','ROLE_FARMER');
@@ -546,7 +546,7 @@ class PurchaseController extends AmapBaseController
         $data = $em->getRepository('App\Entity\Purchase')->getProductsToShipMulti2($dateDebut, $dateFin, $farmsMulti);
 
 
-        return $this->render('Purchase/rapportJardinsVergers.html.twig', array(
+        return $this->render('Purchase/tableauLivraisonParProduit.html.twig', array(
             'amaps' => $data['amaps'],
             'produits' => $data['produits'],
             'quantities' => $data['quantities'],

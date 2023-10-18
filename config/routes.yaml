@@ -569,8 +569,8 @@ api_products:
     controller: App\Controller\ApiController:getAllProducts
     methods: GET
 
-rapport_jardins_vergers:
-    path: rapport_jardins_vergers/{dateDebut}
-    controller: App\Controller\PurchaseController:rapportJardinVerger
+tableau_livraison_par_produit:
+    path: tableau_livraison_par_produit/{dateDebut}
+    controller: App\Controller\PurchaseController:tableauLivraisonParProduit
     defaults:
         dateDebut: null
