@@ -85,6 +85,7 @@
 {% endblock %}
 {% block footer_js %}
 <script type="text/javascript" src="{{ asset('js/excellentexcel.js') }}"></script>
+<script type="text/javascript">
 function exportExcel(elt) {
     if (/msie/.test(navigator.userAgent.toLowerCase()) || /trident/.test(navigator.userAgent.toLowerCase())) {
         $('#msie').modal('show');
