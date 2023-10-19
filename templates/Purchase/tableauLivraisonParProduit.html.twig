@@ -4,11 +4,17 @@
 {% endblock %}
 {% block body %}
 
-
+ <div class="row no-print">
+    <div class="col-md-12">
+        <div class="pull-left mobile-hide">
+          <button class="btn btn-default no-print" onclick="window.print();"><span class="glyphicon glyphicon-print"></span> Imprimer</button>
+            <a download="distributions-{{ dateDebut|date('d/m/Y') }}.xls" class="btn btn-success no-print" onclick="exportExcel(this);" data-toggle="tooltip" data-placement="bottom" title="Export Excel"><span class="glyphicon glyphicon-floppy-disk"></span> Excel</a>
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-12">
-        <h2>Tableau Distribution par produit (bêta)</h2>
-        <h3>Semaine du {{ dateDebut|full_date_fr }}</h3>
+        <h3>Semaine du {{ dateDebut|date('d/m/Y') }}</h3>
     </div>
 </div>
 <div class="row">
@@ -44,8 +50,48 @@
 </div>
 
 
+  {# dupliquer la structure du tableau ici pour l'export Excel #}
+    <div style="display:none;">
+        <table id="table-excel">
+            <thead>
+                          <tr>
+                              <th></th>
+                              {% for produit in produits %}
+                                  <td>{{produit}}</td>
+                              {% endfor %}
+
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {% for i, amap in amaps %}
+                              <tr>
+                                  <td>{{amap}}</td>
+                                  {% for j,produit in produits %}
+                                     <td><b>{% if quantities[i] is defined and quantities[i][j] is defined %}{{ quantities[i][j] }}{% endif %}</b></td>
+                                  {% endfor %}
+                               </tr>
+                           {% endfor %}
+                           <tr>
+                            <th>TOTAL</th>
+                           {% for j,produit in produits %}
+                               <td>{% if total[j] is defined %}{{ total[j] }}{% endif %}</td>
+                           {% endfor %}
+                      </tbody>
+        </table>
+     </div>
+
+
 
 {% endblock %}
 {% block footer_js %}
-
+<script type="text/javascript" src="{{ asset('js/excellentexcel.js') }}"></script>
+function exportExcel(elt) {
+    if (/msie/.test(navigator.userAgent.toLowerCase()) || /trident/.test(navigator.userAgent.toLowerCase())) {
+        $('#msie').modal('show');
+    }
+    else {
+        return ExcellentExport.excel(elt, 'table-excel', 'Contrats AMAP');
+    }
+}
+</script>
 {% endblock %}
