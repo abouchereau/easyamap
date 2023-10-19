@@ -12,7 +12,7 @@
     {#% endif %#}
   </div>
   
-  <div class="col-md-1 col-md-offset-10">
+  <div class="col-md-1 col-md-offset-10 text-right">
     <a href="{{ path('shift', {page: page+1}) }}" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-right"></span></a>
   </div>
   
@@ -73,12 +73,22 @@
       {% endfor %}
     {% endif %}
   </div>
-  <div class="col-md-1">
-    <a href="{{ path('product_distribution', {page: page+1}) }}" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-right"></span></a>
-  </div>
-  
-  
+
+
 </div>
+
+<div class="row">
+    <div class="col-md-1">
+      {#% if page>1 %#}
+        <a href="{{ path('shift', {page: page-1}) }}" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-left"></span></a>
+      {#% endif %#}
+    </div>
+
+    <div class="col-md-1 col-md-offset-10 text-right">
+      <a href="{{ path('shift', {page: page+1}) }}" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-right"></span></a>
+    </div>
+
+  </div>
 
     
 <form action="{{ path('shift_save') }}" method="POST" id="hidden-form">

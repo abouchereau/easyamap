@@ -541,7 +541,7 @@ rapport_distribution_save:
     methods: POST|PUT
     
 shift:
-    path: report_produit
+    path: report_produit/{page}
     controller: App\Controller\ProductDistributionController:shiftProduct
     defaults:
         page: 1
