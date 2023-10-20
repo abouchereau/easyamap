@@ -14,7 +14,7 @@
             <a download="distributions-{{ dateDebut|date('d/m/Y') }}.xls" class="btn btn-success no-print" onclick="exportExcel(this);" data-toggle="tooltip" data-placement="bottom" title="Export Excel"><span class="glyphicon glyphicon-floppy-disk"></span> Excel</a>
         </div>
          <div class="pull-right text-center distri-right">
-                <input type="text" class="form-control" id="datepicker1" style="display:inline;width:auto;" value="{{ dateDebut|dateDebut('Y-m-d') }}" />
+                <input type="text" class="form-control" id="datepicker1" style="display:inline;width:auto;" value="{{ dateDebut|date('Y-m-d') }}" />
             </div>
     </div>
 </div>
