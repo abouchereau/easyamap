@@ -570,7 +570,7 @@ api_products:
     methods: GET
 
 tableau_livraison_par_produit:
-    path: tableau_livraison_par_produit/{dateDebut}
+    path: tableau_livraison_par_produit/{dateDebutStr}
     controller: App\Controller\PurchaseController:tableauLivraisonParProduit
     defaults:
-        dateDebut: null
+        dateDebutStr: null

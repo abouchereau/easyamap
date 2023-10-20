@@ -522,17 +522,20 @@ class PurchaseController extends AmapBaseController
         ));
   }
 
-    public function tableauLivraisonParProduit($dateDebut = null)
+    public function tableauLivraisonParProduit($dateDebutStr = null)
     {
         $session = new Session();
         $session->set('role','ROLE_FARMER');
         $this->denyAccessUnlessGranted(['ROLE_FARMER','ROLE_ADHERENT']);
-        if ($dateDebut == null || !preg_match("/^\d{4}\-\d{2}-\d{2}$/", $dateDebut)) {
-            $dateDebut = new \DateTime();
+        $dateDebut = new \DateTime();
+        if ($dateDebut == null || !preg_match("/^\d{4}\-\d{2}-\d{2}$/", $dateDebutStr)) {
             $dateDebut->setTimestamp(strtotime('last monday'));
         }
         else {
-            $dateDebut = \DateTime::createFromFormat('Y-m-d', $dateDebut);
+            //lundi précédent
+            $delta = date("w",strtotime($dateDebutStr)) - 1;
+            if ($delta <0) $delta = 6;
+            $dateDebut->setTimestamp(mktime(0,0,0,date('m'), date('d')-$delta, date('Y') ));
         }
 
         $dateFin = clone $dateDebut;
@@ -551,7 +554,8 @@ class PurchaseController extends AmapBaseController
             'produits' => $data['produits'],
             'quantities' => $data['quantities'],
             'total' => $data['total'],
-            'dateDebut' => $dateDebut
+            'dateDebut' => $dateDebut,
+            'dateFin' => $dateFin
         ));
     }
 
