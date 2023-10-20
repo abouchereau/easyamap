@@ -533,9 +533,10 @@ class PurchaseController extends AmapBaseController
         }
         else {
             //lundi précédent
-            $delta = date("w",strtotime($dateDebutStr)) - 1;
-            if ($delta <0) $delta = 6;
-            $dateDebut->setTimestamp(mktime(0,0,0,date('m'), date('d')-$delta, date('Y') ));
+            $dateDebut = \DateTime::createFromFormat('Y-m-d', $dateDebutStr);
+            $delta = ($dateDebut->format('w') + 6) % 7;
+            $interval = new \DateInterval('P'.$delta.'D');
+            $dateDebut->sub($interval);
         }
 
         $dateFin = clone $dateDebut;
