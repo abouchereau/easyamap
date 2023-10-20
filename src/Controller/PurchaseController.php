@@ -535,13 +535,11 @@ class PurchaseController extends AmapBaseController
             //lundi précédent
             $dateDebut = \DateTime::createFromFormat('Y-m-d', $dateDebutStr);
             $delta = ($dateDebut->format('w') + 6) % 7;
-            $interval = new \DateInterval('P'.$delta.'D');
-            $dateDebut->sub($interval);
+            $dateDebut->sub(new \DateInterval('P'.$delta.'D'));
         }
 
         $dateFin = clone $dateDebut;
-        $interval = new \DateInterval('P7D');
-        $dateFin->add($interval);
+        $dateFin->add(new \DateInterval('P7D'));
 
         $em = $this->getDoctrine()->getManager();
         $user = $this->get('security.token_storage')->getToken()->getUser();
@@ -550,13 +548,16 @@ class PurchaseController extends AmapBaseController
         $data = $em->getRepository('App\Entity\Purchase')->getProductsToShipMulti2($dateDebut, $dateFin, $farmsMulti);
 
 
+        $dateFin->sub(new \DateInterval('P1D'));//pour l'affichage
+
         return $this->render('Purchase/tableauLivraisonParProduit.html.twig', array(
             'amaps' => $data['amaps'],
             'produits' => $data['produits'],
             'quantities' => $data['quantities'],
             'total' => $data['total'],
             'dateDebut' => $dateDebut,
-            'dateFin' => $dateFin
+            'dateFin' => $dateFin,
+            'urlTemplate' => 'tableau_livraison_par_produit/%DATE%',
         ));
     }
 
