@@ -528,7 +528,7 @@ class PurchaseController extends AmapBaseController
         $session->set('role','ROLE_FARMER');
         $this->denyAccessUnlessGranted(['ROLE_FARMER','ROLE_ADHERENT']);
         $dateDebut = new \DateTime();
-        if ($dateDebut == null || !preg_match("/^\d{4}\-\d{2}-\d{2}$/", $dateDebutStr)) {
+        if ($dateDebutStr == null || !preg_match("/^\d{4}\-\d{2}-\d{2}$/", $dateDebutStr)) {
             $dateDebut->setTimestamp(strtotime('last monday'));
         }
         else {
