@@ -14,7 +14,7 @@
             <a download="distributions-{{ dateDebut|date('d/m/Y') }}.xls" class="btn btn-success no-print" onclick="exportExcel(this);" data-toggle="tooltip" data-placement="bottom" title="Export Excel"><span class="glyphicon glyphicon-floppy-disk"></span> Excel</a>
         </div>
          <div class="pull-right text-center distri-right">
-                {{ render(controller('App\\Controller\\DistributionController:distripicker', {'urlTemplate':urlTemplate,'date':dateDebut|date('Y-m-d') })) }}
+                <input type="text" class="form-control" id="datepicker1" style="display:inline;width:auto;" value="{{ dateDebut|dateDebut('Y-m-d') }}" />
             </div>
     </div>
 </div>
@@ -101,5 +101,55 @@ function exportExcel(elt) {
         return ExcellentExport.excel(elt, 'table-excel', 'Contrats AMAP');
     }
 }
+
+
+var urlTemplate = "{{ path('home') ~ urlTemplate }}";
+var mois = ['Janvier','Février','Mars','Avril','Mai','Juin',
+'Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+var jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+var options1 = {
+    monthNames: mois,
+    monthNamesShort: ['Jan','Fév','Mar','Avr','Mai','Jun',
+    'Jul','Aoû','Sep','Oct','Nov','Déc'],
+    dayNames: jours,
+    dayNamesShort: ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],
+    dayNamesMin: ['Di','Lu','Ma','Me','Je','Ve','Sa'],
+    dateFormat: 'yy-mm-dd',
+    firstDay: 1,
+    prevText: '', prevStatus: 'Voir le mois précédent',
+    prevJumpText: '&#x3c;&#x3c;', prevJumpStatus: 'Voir l\'année précédent',
+    nextText: '', nextStatus: 'Voir le mois suivant',
+    nextJumpText: '&#x3e;&#x3e;', nextJumpStatus: 'Voir l\'année suivant',
+    currentText: 'Courant', currentStatus: 'Voir le mois courant',
+    todayText: 'Aujourd\'hui', todayStatus: 'Voir aujourd\'hui',
+    clearText: 'Effacer', clearStatus: 'Effacer la date sélectionnée',
+    closeText: 'Fermer', closeStatus: 'Fermer sans modifier',
+    yearStatus: 'Voir une autre année', monthStatus: 'Voir un autre mois',
+    weekText: 'Sm', weekStatus: 'Semaine de l\'année',
+    dayStatus: '\'Choisir\' le DD d MM',
+    defaultStatus: 'Choisir la date',
+    isRTL: false,
+    defaultDate: '{{ dateDebut|date('Y-m-d') }}',
+    onSelect: function (a)
+    {
+        var dateDebut = options1._formatDate($("#datepicker1").datepicker('getDate'));
+        var url = urlTemplate.replace('%DATE%',dateDebut);
+        window.location.href = url;
+    },
+    _formatDate: function (date) {
+        return date.getFullYear()+'-'+options1._twoDigits(date.getMonth()+1)+'-'+options1._twoDigits(date.getDate());
+    },
+    _twoDigits: function (num) {
+        if (num<10)
+        num = "0"+num;
+        return num;
+    }
+};
+
+window.onload = function()
+{
+    $("#datepicker1").datepicker(options1);
+};
+
 </script>
 {% endblock %}
