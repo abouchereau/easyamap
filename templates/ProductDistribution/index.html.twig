@@ -27,12 +27,31 @@
       Pas de distribution disponible.
 
     {% else %}
+
+    <ul class="nav nav-tabs" role="tablist" id="amap-tabs">
+     {% set last_id_farm = 0 %}
+     {% set is_first = true %}
+      {% for product in products %}
+        {% if product.fkFarm.idFarm != last_id_farm %}
+            {% set last_id_farm = product.fkFarm.idFarm %}
+            {% if product.fkFarm.isActive %}
+                <li{% if is_first %} class="active"{% endif %}><a class="custom-tab" data-tab="{{ product.fkFarm.idFarm }}" href="#">{{ product.fkFarm }}</a></li>
+
+                {% set is_first = false %}
+                {% endif %}
+        {% endif %}
+        {% endfor %}
+    </ul>
+
+
       {% set last_id_farm = 0 %}
+      {% set is_first = true %}
       {% for product in products %}
         {% if product.fkFarm.idFarm != last_id_farm %}
         {% set last_id_farm = product.fkFarm.idFarm %}
         {% set iterate_by_farm = 0 %}
-          <table class="table table-bordered table-condensed" {% if not product.fkFarm.isActive %} style="display:none;"{% endif %}>
+          <table id="tab-{{ product.fkFarm.idFarm }}" class="table table-bordered table-condensed" {% if not product.fkFarm.isActive or not is_first %} style="display:none;"{% endif %}>
+          {% set is_first = false %}
           <tr>
             <th colspan="{{ distributions|length+1 }}" class="success text-center">{{ product.fkFarm }}</th>
           </tr>
@@ -112,6 +131,41 @@ var products = { {% for product in products %}
 "{{ product.idProduct }}":"{{ product.label ~' '~product.unit }}"{% if not loop.last %},{% endif %}
 {% endfor %} };
 var distributions = {{ distributions|json_encode()|raw }};
+document.addEventListener("DOMContentLoaded", () => {
+
+    document.querySelectorAll('.custom-tab').forEach(e=>{
+        e.addEventListener("click",e=> {
+            let id = e.target.getAttribute("data-tab");
+            displayTable(id);
+            activeTab(id);
+            window.sessionStorage.setItem("dispo-farm", id);
+            return false;
+        });
+    });
+
+    if (window.sessionStorage.getItem("dispo-farm") != null) {
+            let id = window.sessionStorage.getItem("dispo-farm");
+            displayTable(id);
+            activeTab(id);
+    }
+});
+
+function displayTable(id) {
+    document.querySelectorAll('.table').forEach(e=>{
+        e.style.display = e.id == "tab-"+id  ? "table" : "none";
+    });
+}
+function activeTab(id) {
+    document.querySelectorAll('.custom-tab').forEach(e=>{
+    console.log(id, e.getAttribute("data-tab"));
+        if (e.getAttribute("data-tab")==id) {
+            e.parentNode.classList.add('active');
+        }
+        else {
+            e.parentNode.classList.remove('active');
+        }
+    });
+}
 </script>
 <script type="text/javascript" src="{{ asset('js/product_distribution.js') }}"></script>
 {% endblock %}
