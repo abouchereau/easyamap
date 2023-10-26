@@ -157,7 +157,6 @@ function displayTable(id) {
 }
 function activeTab(id) {
     document.querySelectorAll('.custom-tab').forEach(e=>{
-    console.log(id, e.getAttribute("data-tab"));
         if (e.getAttribute("data-tab")==id) {
             e.parentNode.classList.add('active');
         }
