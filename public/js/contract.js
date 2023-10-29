@@ -49,7 +49,7 @@ $(document).ready(function () {
   let html = '<ul class="nav nav-tabs" role="tablist" id="amap-tabs">';
   let first = true;
   for(let farm in products) {
-      beforeLines[products[farm]["first"]] = '<div class="tab" id="tab-'+products[farm]["tab"]+'" '+(first?'':' style="display:none;"')+'><div class="page-header">'+farm+'</div>';
+      beforeLines[products[farm]["first"]] = '<div class="tab" id="tab-'+products[farm]["tab"]+'" '+(first?'':' style="display:none;"')+'><div class="page-header"><a href="#" data-toggle="tooltip" data-placement="bottom" title="Tout cocher / décocher" class="farm-header btn btn-primary">'+farm+'</a></div>';
       afterLines[products[farm]["last"]] = '</div>';
       html += '<li'+(first?' class="active"':'')+'><a class="custom-tab" data-tab="'+products[farm]["tab"]+'" href="#">'+farm+'</a></li>';
       first = false;
@@ -83,14 +83,14 @@ $(document).ready(function () {
     },500);
 
   
-  $('.page-header').click(function () {
-    var farm1 = $(this).html();
+  $('.farm-header').click((e)=> {
+    e.preventDefault();
+    var farm1 = e.currentTarget.innerHTML;//$(this).html();
     var all_checked = true;
     
     $('.entity .custom-checkbox').each(function () {
-      var farm2 = $(this).find('.farm-checkbox').html(); 
-      if (farm1 == farm2 && !$(this).find('input[type=checkbox]').prop('checked'))
-      {
+      var farm2 = $(this).find('.farm-checkbox').html();
+      if (farm1 == farm2 && !$(this).find('input[type=checkbox]').prop('checked')) {
         all_checked = false;
         return false;
       }      
@@ -98,15 +98,13 @@ $(document).ready(function () {
     
     $('.entity .custom-checkbox').each(function () {
       var farm2 = $(this).find('.farm-checkbox').html(); 
-      if (farm1 == farm2)
-      {
+      if (farm1 == farm2) {
         $(this).find('input[type=checkbox]').prop('checked', !all_checked);        
       }      
     });
-    
   });
   
-  $('.entity label:first-child').after('<br /><button class="btn btn-xs btn-info" onclick="checkAll();return false;">Tout cocher / décocher</a>');
+  //$('.entity label:first-child').after('<br /><button class="btn btn-xs btn-info" onclick="checkAll();return false;">Tout cocher / décocher</a>');
   
   $("#contract_periodStart, #contract_periodEnd").datepicker(options1);
   $("#contract_fillDateEnd, #contract_fillDateStart, #contract_countPurchaseSince, #contract_dateTest").datepicker(options2);
@@ -180,12 +178,12 @@ function initTabs() {
 
     document.querySelectorAll('.custom-tab').forEach(e=>{
         e.addEventListener("click",e=> {
-
+            e.preventDefault();
+            e.stopPropagation();
             let id = e.target.getAttribute("data-tab");
             displayTable(id);
             activeTab(id);
             window.sessionStorage.setItem("dispo-farm", id);
-            e.stopPropagation();
             return false;
         });
     });

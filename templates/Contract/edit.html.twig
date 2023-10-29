@@ -25,15 +25,15 @@
 {% endif %}
 
 <div class="row">
-   <div class="col-md-3">   
+   <div class="col-md-2">
     <a href="{{ path('contract_index') }}" class="btn btn-primary"><span class="glyphicon glyphicon-list"></span> Liste</a>
    </div>
-   <div class="col-md-6">
+   <div class="col-md-8">
      {% form_theme form 'Form/fields.html.twig' %}
      {{ form(form) }}   
        <br /><br /><br />
     </div>
-    <div class="col-md-3 text-right">
+    <div class="col-md-2 text-right">
       {% if can_be_deleted %}
         <a onclick="if(confirm('Voulez-vous vraiment supprimer le contrat ?')){window.location.href=this.href;};return false;" href="{{ path('contract_delete', { 'id': entity.idContract }) }}" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash"></span> Supprimer</a>
       {% endif %}
