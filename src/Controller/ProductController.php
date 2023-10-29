@@ -31,8 +31,18 @@ class ProductController extends AmapBaseController
         elseif ($user->isReferent())//référent : on voit les produits des fermes pour lesqueslles on est référent
           $entities = $em->getRepository('App\Entity\Product')->findAllForReferent($user);
 
+        $farms = [];
+        foreach ($entities as $entity) {
+            $farmName = $entity->getFkFarm()->getLabel();
+            if (!in_array($farmName, $farms)) {
+                $farms[] = $farmName;
+            }
+        }
+        sort($farms);
+
         return $this->render('Product/index.html.twig', array(
             'entities' => $entities,
+            'farms' => $farms
         ));
     }
     /**

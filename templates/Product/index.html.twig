@@ -4,13 +4,25 @@
 {% block body %}
 
 <div class="row">
-  <div class="col-md-10 col-md-offset-1">
-          <div class="pull-right">
-          <a download="produits.xls" class="btn btn-success no-print" onclick="exportExcel(this);" data-toggle="tooltip" data-placement="bottom" title="Export Excel"><span class="glyphicon glyphicon-floppy-disk"></span> Excel</a>
-      </div>
+  <div class="col-md-4 col-md-offset-1">
     <a href="{{ path('product_new') }}" class="btn btn-success"><span class="glyphicon glyphicon-apple"></span> Ajouter un produit</a>
-    <br />
-    <br />
+   </div>
+   <div class="col-md-3">
+    <select class="form-control" id="farm-choose">
+        <option value="">Tous producteurs</option>
+        {% for farm in farms %}
+            <option value="{{ farm }}">{{ farm }}</option>
+        {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3 text-right">
+   <a download="produits.xls" class="btn btn-success no-print" onclick="exportExcel(this);" data-toggle="tooltip" data-placement="bottom" title="Export Excel"><span class="glyphicon glyphicon-floppy-disk"></span> Excel</a>
+    </div>
+
+</div>
+<br />
+<div class="row">
+  <div class="col-md-10 col-md-offset-1">
     <table id="excel-table" class="table table-bordered sorttable">
         <thead>
             <tr class="success">
@@ -86,6 +98,13 @@ function exportExcel(elt) {
         return ExcellentExport.excel(elt, 'excel-table', 'Liste des produits',true);
     }
 }
+$(document).ready(()=>{
+
+    document.getElementById('farm-choose').addEventListener('change',e=>{
+        let text = e.target.options[e.target.selectedIndex].value;
+        dataTable.column( 3 ).search(text).draw();
+    });
+});
 </script>
 <script type="text/javascript" src="{{ asset('js/excellentexcel.js') }}"></script>
 {% endblock %}
