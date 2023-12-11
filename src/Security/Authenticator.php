@@ -6,6 +6,7 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
@@ -71,6 +72,8 @@ class Authenticator extends AbstractFormLoginAuthenticator
             throw new CustomUserMessageAuthenticationException('Le nom d\'utilisateur ou le mot de passe est incorrect');
         }
         else {
+            $session = new Session();
+            $session->remove('role');
             $this->entityManager->getRepository(User::class)->loadRoles($user);
         }
 

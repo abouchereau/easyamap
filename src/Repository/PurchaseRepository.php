@@ -558,7 +558,7 @@ SELECT
             pu.quantity,
             round((pu.quantity*prp.price),2) as price
             from purchase pu
-            join purchase_ratio_price prp on prp.fk_purchase = pu.id_purchase
+            join view_purchase_ratio_price prp on prp.fk_purchase = pu.id_purchase
             left join user u on u.id_user = pu.fk_user
             left join product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
             left join product pr on pr.id_product = pd.fk_product and pr.ratio is not null
