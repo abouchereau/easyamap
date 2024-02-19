@@ -224,7 +224,7 @@ class PaymentRepository extends EntityRepository
     private function addPayment($amount,$user,$farm,$contract, $payment_types,$split_payments,$checkPayableTo,$chosen_payment) {
         $em = $this->getEntityManager();
         $payment = new Payment();
-        $payment->setAmount($amount);
+        $payment->setAmount(round($amount,2));
         $payment->setFkUser($user);
         $payment->setFkFarm($farm);
         $payment->setFkContract($contract);        
