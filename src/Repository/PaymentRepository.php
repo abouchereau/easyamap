@@ -311,6 +311,9 @@ class PaymentRepository extends EntityRepository
             $tab = $this->dispatchEquitable($tab);
         }
         $tab = array_values($tab);
+        foreach($tab as $i => $item) {
+            $tab[$i][1] = round($item[1],2);
+        }
         return $tab;
     }
     
