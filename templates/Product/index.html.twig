@@ -10,8 +10,8 @@
    <div class="col-md-3">
     <select class="form-control" id="farm-choose">
         <option value="">Tous producteurs</option>
-        {% for farm in farms %}
-            <option value="{{ farm }}">{{ farm }}</option>
+        {% for id, farm in farms %}
+            <option value="{{ id }}"{% if id == filterFarm %} selected{% endif %}>{{ farm }}</option>
         {% endfor %}
     </select>
   </div>
@@ -101,8 +101,12 @@ function exportExcel(elt) {
 $(document).ready(()=>{
 
     document.getElementById('farm-choose').addEventListener('change',e=>{
-        let text = e.target.options[e.target.selectedIndex].value;
-        dataTable.column( 3 ).search(text).draw();
+        const url = window.location.href.split('?')[0];
+        if (e.target.value != "") {
+            window.location.href = url+"?farm="+e.target.value;
+        } else {
+            window.location.href = url;
+        }
     });
 });
 </script>

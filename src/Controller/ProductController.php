@@ -26,23 +26,39 @@ class ProductController extends AmapBaseController
         $em = $this->getDoctrine()->getManager();
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
-        if ($user->getIsAdmin())//admin : on voit tous les produits
-          $entities = $em->getRepository('App\Entity\Product')->findAllOrderByFarm();
-        elseif ($user->isReferent())//référent : on voit les produits des fermes pour lesqueslles on est référent
-          $entities = $em->getRepository('App\Entity\Product')->findAllForReferent($user);
+        $filterFarm = -1;
+        if (isset($_GET['farm'])) {
+            $filterFarm = intval($_GET['farm']);
+        }
+        $entities = null;
+        if ($user->getIsAdmin()) {//admin : on voit tous les produits
+            $entities = $em->getRepository('App\Entity\Product')->findAllOrderByFarm();
+        }
+        elseif ($user->isReferent()) {//référent : on voit les produits des fermes pour lesqueslles on est référent
+            $entities = $em->getRepository('App\Entity\Product')->findAllForReferent($user);
+        }
 
         $farms = [];
         foreach ($entities as $entity) {
             $farmName = $entity->getFkFarm()->getLabel();
             if (!in_array($farmName, $farms)) {
-                $farms[] = $farmName;
+                $farms[$entity->getFkFarm()->getIdFarm()] = $farmName;
             }
         }
         sort($farms);
 
+        if ($filterFarm>-1) {
+            $entities = array_filter($entities, function($a) use ($filterFarm) {
+                return $a->getFkFarm()->getIdFarm() == $filterFarm;
+            });
+        }
+
+
+
         return $this->render('Product/index.html.twig', array(
             'entities' => $entities,
-            'farms' => $farms
+            'farms' => $farms,
+            'filterFarm' => $filterFarm
         ));
     }
     /**
