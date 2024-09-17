@@ -45,7 +45,7 @@ class ProductController extends AmapBaseController
                 $farms[$entity->getFkFarm()->getIdFarm()] = $farmName;
             }
         }
-        sort($farms);
+        asort($farms);
 
         if ($filterFarm>-1) {
             $entities = array_filter($entities, function($a) use ($filterFarm) {
