@@ -29,7 +29,9 @@
                     <td class="row-receivedAt">{{ payment.receivedAt|date("Y-m-d") }}</td>
             {% endfor %}
        </table>
-       {% include 'Partials/_pagination.html.twig' with {'pagination': pagination, 'route':'paiements_adherent' } %}
+       <div class="col-md-12 text-center">
+            {% include 'Partials/_pagination.html.twig' with {'pagination': pagination, 'route':isReferentPage?'paiements_referent':'paiements_adherent' } %}
+        </div>
     </div>
 </div>
 {% include 'Payment/_modals.html.twig' %}
