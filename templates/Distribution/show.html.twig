@@ -126,7 +126,7 @@
 {%  endblock %}
     
 {% block footer_js %}
-    <script src="https://cdn.ckeditor.com/4.13.1/basic/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/4.22.1/basic/ckeditor.js"></script>
     <script type="text/javascript">    
         window.has_unsaved_changes = false;
         var editor1 = CKEDITOR.replace('distribution_infoLivraison', {height: 150, removeButtons:'Link,Unlink,Anchor,Cut,Copy,Paste,Subscript,Superscript,Undo,Redo,Strike,About,Indent,Outdent' });
@@ -146,4 +146,5 @@ document.forms['distribution'].onsubmit=()=>{
     return true;
 };
     </script>
+    <style>.cke_notification_warning{display:none;}</style>
 {%  endblock %}
