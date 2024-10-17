@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Doctrine\ORM\Mapping\JoinColumn;
@@ -15,11 +16,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @UniqueEntity(fields="username", message="L'identifiant de connexion est déjà utilisé par un autre adhérent. Merci de bien vouloir en choisir un différent.")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User implements UserInterface
+class User implements UserInterface, EquatableInterface
 {
     use IsActiveDefaultTrueTrait;
     use CreatedAtTrait;
-    
+
     const ROLE_USER = 'ROLE_USER';
     const ROLE_ADHERENT = 'ROLE_ADHERENT';
     const ROLE_REFERENT = 'ROLE_REFERENT';
@@ -58,10 +59,15 @@ class User implements UserInterface
      * @ORM\Column(name="password", type="string", length=255, nullable=false)
      */
     private $password;
+
+    /**
+     * @var ?string plain password. Do not store it !!
+     */
+    private $plainPassword;
+
     /**
      * @ORM\Column(type="json")
      */
-    
     private $roles = [];
     
     /**
@@ -234,38 +240,42 @@ class User implements UserInterface
     {
         return $this->email;
     }
+
     /**
      * @see UserInterface
      */
-
     public function getRoles()
     {
         $session = new Session();
-        $roles = array(); 
-        
-        if ($session->has('roles')) {
+        $sRoles = $this->roles;// Charge les rôles précédents
+        $sRoles[] = 'ROLE_USER';// garantie que l'utilisateur est au moins un utilisateur au sens de symfony
+
+        if ($session->has('roles')) {// charge la partie des rôles stockés en session
             $rolesStr = $session->get('roles');            
-            if (strpos($rolesStr,'1') !== false)
-                $roles[] = self::ROLE_USER;
-            if (strpos($rolesStr,'2') !== false)
-                $roles[] = self::ROLE_ADHERENT;
-            if (strpos($rolesStr,'3') !== false)
-                $roles[] = self::ROLE_REFERENT;
-            if (strpos($rolesStr,'4') !== false)
-                $roles[] = self::ROLE_FARMER;
+            if (strpos($rolesStr,'1') !== false) {
+                $sRoles[] = self::ROLE_USER;
+            }
+            if (strpos($rolesStr,'2') !== false) {
+                $sRoles[] = self::ROLE_ADHERENT;
+            }
+            if (strpos($rolesStr,'3') !== false) {
+                $sRoles[] = self::ROLE_REFERENT;
+            }
+            if (strpos($rolesStr,'4') !== false) {
+                $sRoles[] = self::ROLE_FARMER;
+            }
             if (strpos($rolesStr,'5') !== false) {
-                $roles[] = self::ROLE_ADMIN;                
-                $roles[] = self::ROLE_REFERENT;               
+                $sRoles[] = self::ROLE_ADMIN;
+                $sRoles[] = self::ROLE_REFERENT;
             }
         }
-        //$roles = [self::ROLE_USER,self::ROLE_ADHERENT];//TODP
-       //die(print_r($roles,1));
-        return $roles;
+
+        return $sRoles;
     }
     
     public function hasRole($role) {
-        $roles = $this->getRoles();
-        return in_array($role,$roles);
+        $sRoles = $this->getRoles();
+        return in_array($role,$sRoles);
     }
 
     public function setRoles(array $roles): self
@@ -281,19 +291,37 @@ class User implements UserInterface
      * @param string $password
      * @return User
      */
-    public function setPassword($password)
+    public function setPassword(string $password): User
     {
         $this->password = $password;
         return $this;
     }
+
     /**
      * Get password
      *
      * @return string 
      */
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * @param string $plainPassword
+     */
+    public function setPlainPassword(?string $plainPassword): void
+    {
+        $this->plainPassword = $plainPassword;
     }
     
     public function getFarms()
@@ -301,7 +329,7 @@ class User implements UserInterface
       return $this->farms;
     }
     
-    public function isReferent()
+    public function isReferent(): bool
     {
       return count($this->getFarms()) > 0;
     }
@@ -311,14 +339,14 @@ class User implements UserInterface
     {
       return $this->lastname.' '.$this->firstname;
     }
-    
+
 
     /**
      * @see UserInterface
      */
     public function getSalt()
     {
-        // not needed for apps that do not check user passwords
+        //No need to implements salt with bcrypt or sodium, salt is included in password
     }
 
     /**
@@ -326,22 +354,22 @@ class User implements UserInterface
      */
     public function eraseCredentials()
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        // clear plain text password (must be called after authentication)
+        $this->setPlainPassword(null);
     }
-    
-     public function isEnabled()
-    {
+
+     public function isEnabled(): ?bool
+     {
         return $this->isActive;
     }
     
-               /**
-     * Set isActive
+     /**
+     * Set isAdmin
      *
-     * @param boolean $isActive
+     * @param boolean $isAdmin
      * @return User
      */
-    public function setIsAdmin($isAdmin)
+    public function setIsAdmin(bool $isAdmin): User
     {
         $this->isAdmin = $isAdmin;
 
@@ -349,11 +377,11 @@ class User implements UserInterface
     }
 
     /**
-     * Get isActive
+     * Get isAdmin
      *
      * @return boolean 
      */
-    public function getIsAdmin()
+    public function getIsAdmin(): ?bool
     {        
         return $this->isAdmin;
     }
@@ -364,7 +392,7 @@ class User implements UserInterface
      * @param boolean $isAdherent
      * @return User
      */
-    public function setIsAdherent($isAdherent)
+    public function setIsAdherent(bool $isAdherent): User
     {
         $this->isAdherent = $isAdherent;
 
@@ -376,7 +404,7 @@ class User implements UserInterface
      *
      * @return boolean 
      */
-    public function getIsAdherent()
+    public function getIsAdherent(): ?bool
     {        
         return $this->isAdherent;
     }
@@ -444,4 +472,25 @@ class User implements UserInterface
     return $this;
     }
 
+    public function isEqualTo(UserInterface $user)
+    {
+
+        if (! $user instanceof User) {
+            return false;
+        }
+
+        if ($user->getIdUser() !== $this->getIdUser() ) {
+            return false;
+        }
+
+        if ($this->getUsername() !== $user->getUsername()) {
+            return false;
+        }
+
+        if ($this->getSalt() !== $user->getSalt()) {
+            return false;
+        }
+
+        return true;
+    }
 }

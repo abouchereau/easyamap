@@ -1,0 +1,12 @@
+<p>Bonjour !</p>
+
+<p>Quelqu'un a demandé la réinitialisation de votre mot de passe du compte {{ username }} sur le site easyamap <a href="{{ url('app_login') }}">{{ url('app_login') }}</a>.</p>
+
+<p> Si c'est bien vous, vous pouvez utiliser ce lien :
+    <a href="{{ url('app_reset_password', {token: resetToken.token}) }}">{{ url('app_reset_password', {token: resetToken.token}) }}</a>
+</p>
+<p>Ce lien expire dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
+
+<p>Si ce n'est pas vous, vous pouvez ignorer ce message.</p>
+
+<p>A bientôt !</p>

@@ -6,8 +6,13 @@ security:
             entity:
                 class: App\Entity\User
                 property: username
-        # used to reload user from session & other features (e.g. switch_user)
-        # used to reload user from session & other features (e.g. switch_user)
+    encoders:
+        legacy:
+            algorithm: plaintext
+        App\Entity\User:
+            algorithm: auto
+            migrate_from:
+                - legacy
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js|api)/
@@ -31,4 +36,5 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/reinitialisation-mdp*, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: ROLE_USER }
