@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  $('input[type=text], input[type=email],input[type=url], textarea, select').addClass('form-control');
+  $('input[type=text], input[type=email],input[type=url], input[type=password], textarea, select').addClass('form-control');
   $('form button[type=submit]').addClass('btn').addClass('btn-success').addClass('btn-lg').css({'display':'block','width':'100%'}).html('<span class="glyphicon glyphicon-save"></span> Enregistrer');
   //$('.alert-success').delay(2000).fadeOut(800);
   $('select[multiple=multiple]').height('250px');

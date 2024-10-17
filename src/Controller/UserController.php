@@ -7,6 +7,8 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Util\PasswordGenerator;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+
 /**
  * User controller.
  *
@@ -21,7 +23,7 @@ class UserController extends AmapBaseController
     public function index()
     {
         $user = $this->get('security.token_storage')->getToken()->getUser();
-        //die(var_dump($user->getRoles()));
+
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
           
         $em = $this->getDoctrine()->getManager();
@@ -53,7 +55,7 @@ class UserController extends AmapBaseController
             $em->flush();
             $sendMail = $form['sendMail']->getData();
             $mailSent = 'no';
-            if ($sendMail) {
+            if ($sendMail) {//TODO : gérer l'envoi de lien pour modifier le mot de passe
                 $mailSent = $this->sendMail($entity->getEmail(),$entity->getUsername(),$entity->getPassword());
             }
 
@@ -109,7 +111,7 @@ class UserController extends AmapBaseController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $entity = new User();
-        $password = PasswordGenerator::make();
+        $password = PasswordGenerator::make();// TODO Gérer la création de mot de passe autrement
         $entity->setPassword($password);
         $form   = $this->createCreateForm($entity);
 
@@ -192,7 +194,7 @@ class UserController extends AmapBaseController
      * Edits an existing User entity.
      *
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, UserPasswordEncoderInterface $userPasswordEncoder)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -213,6 +215,17 @@ class UserController extends AmapBaseController
         $canBeDeleted = $em->getRepository('App\Entity\User')->canBeDeleted($id);
 
         if ($editForm->isValid()) {
+            $user = $editForm->getData();
+            if($user->getPlainPassword() !== null) {
+                $user->setPassword(
+                    $userPasswordEncoder->encodePassword(
+                        $user,
+                        $user->getPlainPassword()
+                    )
+                );
+
+            }
+
             $em->flush();
             $this->get('session')->getFlashBag()->add('notice', 'Les données ont été mises à jour.');
             if ($adherent)

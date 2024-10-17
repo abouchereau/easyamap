@@ -5,44 +5,28 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\ORMException;
+use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Psr\Log\LoggerInterface;
+
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
  * @method User|null findOneBy(array $criteria, array $orderBy = null)
  * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserRepository extends ServiceEntityRepository
+class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    private $logger;
+
+    public function __construct(ManagerRegistry $registry, LoggerInterface $logger)
     {
         parent::__construct($registry, User::class);
+        $this->logger = $logger;
     }
 
-    public function tryAuthenticate($username,$password)
-    { 
-
-      try {    
-            $user = $this->createQueryBuilder('u')
-            ->where('UPPER(u.username) =:username')
-            ->andWhere('u.password = :password')
-            ->andWhere('u.isActive = 1')
-            ->setParameter('username', mb_strtoupper($username, 'UTF-8'))
-            ->setParameter('password', $password)
-            ->getQuery()
-            ->getOneOrNullResult();          
-        } catch (Exception $e) {            
-            $message = sprintf(
-                'Unable to find an active User object identified by "%s".',
-                $username
-            );
-            throw new UsernameNotFoundException($message, 0, $e);
-        }        
-
-        return $user;
-    }
-    
-    
     public function updateLastConnection($user)
     {
         $user->setLastConnection(new \DateTime());
@@ -55,6 +39,7 @@ class UserRepository extends ServiceEntityRepository
         
         //1: user,2: adherent, 3:referent, 4:farmer, 5:admin
         $rolesStr = '1';
+
         $em = $this->getEntityManager();
         if (is_object($user)) {
             
@@ -71,7 +56,7 @@ class UserRepository extends ServiceEntityRepository
             if ($farm != null)
                 $rolesStr .= '4';
 
-            if ($user->getIsAdmin()) {            
+            if ($user->getIsAdmin()) {
                 $rolesStr .= '5';            
             }
         }
@@ -93,7 +78,7 @@ class UserRepository extends ServiceEntityRepository
         } catch (NoResultException $e) {
             $message = sprintf(
                 'Unable to find an active admin AmapOrderBundle:User object identified by "%s".',
-                $username
+                $username//FIXME: appel d'une variable non déclarée
             );
             throw new UsernameNotFoundException($message, 0, $e);
         }
@@ -160,4 +145,20 @@ class UserRepository extends ServiceEntityRepository
          ->getQuery()
          ->getResult();
     }
+
+    public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
+    {
+        $this->logger->debug("Upgrading old password %s for user %s with a new password encoder.", [ $user->getPassword(), $user->getUsername() ] );
+        $user->setPassword($newEncodedPassword);
+
+        // execute the queries on the database
+        try {
+            $this->getEntityManager()
+                ->persist($user);
+            $this->getEntityManager()->flush();
+        } catch (ORMException $e) {
+            $this->logger->error("An ORM exception occurred when trying password upgrade :", $e);
+        }
+    }
+
 }
