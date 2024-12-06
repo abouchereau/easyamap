@@ -143,6 +143,21 @@ class User implements UserInterface
      */
     private $town;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="stripe_customer_id", type="string", length=255, nullable=true)
+     */
+    private $stripeCustomerId;
+    
+        /**
+     * @var string
+     *
+     * @ORM\Column(name="stripe_payment_method_id", type="string", length=255, nullable=true)
+     */
+    private $stripePaymentMethodId;
+    
+
     public function getIdUser(): ?int
     {
         return $this->idUser;
@@ -442,6 +457,24 @@ class User implements UserInterface
      function setTown($town) {
     $this->town = $town;
     return $this;
+    }
+
+    function getStripeCustomerId() {
+        return $this->stripeCustomerId;
+    }
+
+    function getStripePaymentMethodId() {
+        return $this->stripePaymentMethodId;
+    }
+
+    function setStripeCustomerId($stripeCustomerId) {
+        $this->stripeCustomerId = $stripeCustomerId;
+        return $this;
+    }
+
+    function setStripePaymentMethodId($stripePaymentMethodId) {
+        $this->stripePaymentMethodId = $stripePaymentMethodId;
+        return $this;
     }
 
 }

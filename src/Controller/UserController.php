@@ -7,6 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Util\PasswordGenerator;
+use App\Api\StripeManager;
 /**
  * User controller.
  *
@@ -285,5 +286,31 @@ class UserController extends AmapBaseController
     public function displayCurrentUser() {
         $user = $this->get('security.token_storage')->getToken()->getUser();
         return $this->render('User/show.html.twig', array('user' => $user));
+    }
+
+    public function compteBancaire(Request $request) {
+        $stripe = new StripeManager();
+        $iban = "";
+        $user = $this->get('security.token_storage')->getToken()->getUser();  
+        if ($request->request->get('iban')!=null) {
+            $iban = str_replace(' ', '', $request->request->get('iban'));
+            $em = $this->getDoctrine()->getManager(); 
+            if ($user->getStripeCustomerId()==null) {
+                $customerId = $stripe->createCustomer($user);
+                $user->setStripeCustomerId($customerId);
+                $em->persist($user);
+                $em->flush();
+            }
+            $paymentMethodId = $stripe->createPaymentMethod($user, $iban);                
+            $user->setStripePaymentMethodId($paymentMethodId);
+            $em->persist($user);
+            $em->flush();          
+            $this->get('session')->getFlashBag()->add('notice', 'Votre compte bancaire a bien été ajouté');
+        }
+
+        if ($user->getStripePaymentMethodId()!=null) {
+            $iban = $stripe->getObfuscatedIban( $user->getStripePaymentMethodId());
+        }
+        return $this->render('User/compte_bancaire.html.twig', ["iban"=>$iban]);
     }
 }

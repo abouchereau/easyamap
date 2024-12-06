@@ -67,6 +67,19 @@ class Farm
      */
     private $equitable = false;
 
+        /**
+     * @var string
+     *
+     * @ORM\Column(name="stripe_account_id", type="string", length=255, nullable=false, )
+     */
+    private $stripeAccountId;
+
+            /**
+     * @var string
+     *
+     * @ORM\Column(name="stripe_account_link_url", type="string", length=255, nullable=false, )
+     */
+    private $stripeAccountLinkUrl;
     
     
     /**
@@ -277,4 +290,30 @@ class Farm
     {
       return $this->label;
     }
+
+    public function setStripeAccountId($stripeAccountId)
+    {
+        $this->stripeAccountId = $stripeAccountId;
+
+        return $this;
+    }
+
+    public function getStripeAccountId()
+    {
+        return $this->stripeAccountId;        
+    }
+
+    public function setStripeAccountLinkUrl($stripeAccountLinkUrl)
+    {
+        $this->stripeAccountLinkUrl = $stripeAccountLinkUrl;
+
+        return $this;
+    }
+
+    public function getStripeAccountLinkUrl()
+    {
+        return $this->stripeAccountLinkUrl;        
+    }
+
+
 }

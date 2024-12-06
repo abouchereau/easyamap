@@ -245,6 +245,20 @@ donnees_personnelles:
     path: /donnees_personnelles
     controller: App\Controller\UserController:displayCurrentUser
 
+compte_bancaire:
+    path: /compte_bancaire
+    controller: App\Controller\UserController:compteBancaire
+
+compte_bancaire_farm:
+    path: /compte_bancaire_farm/{id}
+    controller: App\Controller\FarmController:compteBancaire
+
+stripe_create_account:
+    path: /stripe_create_account
+    controller: App\Controller\FarmController:stripeCreateAccount
+    methods: POST
+
+
 distribution:
     path:   /parametres/distribution
     controller: App\Controller\DistributionController:index

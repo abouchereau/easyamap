@@ -1,0 +1,106 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Compte bancaire producteur{% endblock %}
+
+{% block header_css %}<script src="https://js.stripe.com/v3/"></script>{% endblock %}
+  
+{% block body %}
+<div class="row">
+   <div class="col-md-4">   
+   
+   </div>
+   <div class="col-md-4">
+        <form id="account-form">
+            <div class="form-group">
+                <label for="farm_label" class="required">Nom de l'entreprise</label>
+                <input type="text" id="company_name" required value="{{ farm.label }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="address" class="required">Adresse</label>
+                <input type="text" id="address" required value="" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="postal_code" class="required">Code Postal</label>
+                <input type="text" id="postal_code" required value="" class="form-control">
+            </div>
+             <div class="form-group">
+                <label for="town" class="required">Ville</label>
+                <input type="text" id="town" required value="" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="email" class="required">E-mail</label>
+                <input type="text" id="email" required value="" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="towteln" class="required">Téléphone</label>
+                <input type="text" id="tel" required value="" class="form-control">
+            </div>
+            <div class="form-group">
+                <label><input type="checkbox" id="tos" required>
+                J'accepte les <a href="https://stripe.com/fr/legal/ssa#general-terms" target="_blank">Conditions d'utilisation Stripe</a></label>
+            </div>
+            <input type="hidden" id="id_farm" value="{{ farm.idFarm }}" />
+            <button type="submit">Créer un compte Stripe</button>
+        </form>
+
+    
+    </div>
+    <div class="col-md-4 text-right"></div>
+</div>
+{% endblock %}
+{% block footer_js %}
+<script type="text/javascript" src="{{ asset('js/form.js') }}"></script>
+<script>
+	const PUBLIC_KEY = '{{ app.request.server.get('STRIPE_PUBLIC_KEY') }}';
+    var stripe = Stripe(PUBLIC_KEY);
+
+    document.getElementById('account-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!document.getElementById('tos').checked)  {
+            alert("Veuillez accepter les conditions générales d'utilisation de Stripe pour continuer");
+        }
+        else {
+            const companyName = document.getElementById('company_name').value;
+            const address = document.getElementById('address').value;
+            const postalCode = document.getElementById('postal_code').value;
+            const town = document.getElementById('town').value;
+            const email = document.getElementById('email').value;
+            const tel = document.getElementById('tel').value;
+            const id_farm = document.getElementById('id_farm').value;
+
+            const result = await stripe.createToken('account', {
+                business_type: 'company',
+                company: {
+                    name: companyName,
+                    address: {
+                    line1: address,
+                    city: town,
+                    postal_code: postalCode,
+                    },
+                },
+                tos_shown_and_accepted: true
+            });
+
+            if (result.error) {   
+                alert(result.error.message);
+            } else {
+                fetch('/stripe_create_account', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        token: result.token.id,
+                        tel: tel,
+                        email: email,
+                        id_farm: id_farm             
+                    }),
+                }).then((response) => {			
+                    return response.json();
+                }).then((data) => {
+                    console.log(data);
+                });
+            } 
+        }
+    });
+</script>
+{% endblock %}

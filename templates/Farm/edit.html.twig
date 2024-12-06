@@ -5,7 +5,10 @@
 <div class="row">
    <div class="col-md-4">   
     {% if user.isAdmin %}
-    <a href="{{ path('farm') }}" class="btn btn-primary"><span class="glyphicon glyphicon-list"></span> Liste</a>
+    <a href="{{ path('farm') }}" class="btn btn-primary"><span class="glyphicon glyphicon-list"></span> Liste</a><br /><br />
+    {% endif %}
+    {% if "Virement" in entity.paymentTypes  %}
+      <a href="{{ path('compte_bancaire_farm', {'id':entity.idFarm}) }}" class="btn btn-primary"><span class="glyphicon glyphicon-euro"></span> Compte bancaire</a><br /><br />
     {% endif %}
    </div>
    <div class="col-md-4">

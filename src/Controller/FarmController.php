@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Farm;
 use App\Form\FarmType;
+use App\Api\StripeManager;
 
 /**
  * Farm controller.
@@ -236,5 +237,35 @@ class FarmController extends AmapBaseController
         return new Response($v?':)':':(');
     }
 
+    public function compteBancaire($id) {
+        $this->denyAccessUnlessGranted('ROLE_REFERENT');
+        $em = $this->getDoctrine()->getManager();
+        $farm = $em->getRepository('App\Entity\Farm')->find($id);
+        //TODO vérifier que l'utilisateur a droit
+        if ($farm->getStripeAccountId()==null) {
+            return $this->render('Farm/compte_bancaire_1.html.twig', ['farm'=>$farm]);
+        }
+        else if ($farm->getStripeAccountLinkUrl()==null) {            
+            return $this->render('Farm/compte_bancaire_2.html.twig', ['farm'=>$farm]);
+        }
+        else {            
+            return $this->render('Farm/compte_bancaire_3.html.twig', ['farm'=>$farm]);
+        }
+    }
+
+    public function stripeCreateAccount(Request $request) {
+        $this->denyAccessUnlessGranted('ROLE_REFERENT');
+        if ($request->request->get('token')!=null && $request->request->get('tel')!=null && $request->request->get('email')!=null && $request->request->get('id_farm')!=null) {
+            $stripe = new StripeManager();
+            $account_id = $stripe->createAccount($request->request->get('token'), $request->request->get('tel'),$request->request->get('email'));
+            $em = $this->getDoctrine()->getManager();
+            $farm = $em->getRepository('App\Entity\Farm')->find($request->request->get('id_farm'));
+            $farm->setStripeAccountId($account_id);
+            $em->persist($farm);
+            $em->flush();   
+            return new Response("ok");
+        }
+        return new Response("ko");
+    }
     
 }
