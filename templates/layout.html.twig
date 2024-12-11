@@ -14,7 +14,6 @@
     <link href="{{  asset('css/portal.css') }}" rel="stylesheet" />
     <link href="{{  asset('css/print.css') }}" rel="stylesheet" media="print" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
-    {# include 'Partials/_analytics.html.twig' #} 
   </head>
   <body>
     {% include 'Partials/_header.html.twig' with {'title':  block('header_title')} %}  
@@ -23,7 +22,8 @@
           
       {% block body %}{% endblock %}  
       </div>
-      {{ render(controller('App\\Controller\\HomeController:footer')) }}          
+      {{ render(controller('App\\Controller\\HomeController:footer')) }}    
+      {% include 'Partials/_spinner.html.twig' %}       
       <script type="text/javascript" src="{{ asset('js/jquery-1.11.2.min.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 {% block footer_js_before %}{# especially for datatable #}{% endblock %}

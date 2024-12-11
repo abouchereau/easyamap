@@ -1,0 +1,44 @@
+<div id="overlay">
+    <div id="spinner">
+        <span class="spin glyphicon glyphicon-cog"></span>
+    </div>
+</div>
+<style>
+    #overlay {
+        z-index:1500;
+        display:none;
+        position:fixed;
+        top:0;
+        left:0;
+        background-color:rgba(0,0,0,0.2);
+        width: 100vw;
+        height:100vh;
+    }
+    #spinner {
+        height:80px;
+        width:80px;
+        position: fixed;
+        top: calc(50vh - 40px);
+        left: calc(50vw - 40px);
+    }
+    .spin {
+        font-size:80px;
+        color:#FFF;
+        animation: spin infinite 4s linear;
+        height: 80px;
+        opacity:0.7;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+</style>
+<script>
+    const showSpinner = ()=>{document.getElementById('overlay').style.display = "block";}
+    const hideSpinner = ()=>{document.getElementById('overlay').style.display = "none";}
+    window.addEventListener("beforeunload", e=>{
+        showSpinner();
+        return undefined;
+    });
+</script>

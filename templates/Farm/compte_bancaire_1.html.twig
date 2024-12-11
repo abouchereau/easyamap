@@ -1,5 +1,5 @@
 {% extends 'layout.html.twig' %}
-{% block header_title %}Compte bancaire producteur{% endblock %}
+{% block header_title %}Compte Stripe producteur{% endblock %}
 
 {% block header_css %}<script src="https://js.stripe.com/v3/"></script>{% endblock %}
   
@@ -83,6 +83,7 @@
             if (result.error) {   
                 alert(result.error.message);
             } else {
+                showSpinner();
                 fetch('/stripe_create_account', {
                     method: 'POST',
                     headers: {
@@ -94,10 +95,16 @@
                         email: email,
                         id_farm: id_farm             
                     }),
-                }).then((response) => {			
-                    return response.json();
-                }).then((data) => {
-                    console.log(data);
+                }).then((response) => {		                    
+                    hideSpinner();
+                    const ret = response.statusText)	;
+                    if (ret=="OK") {
+                        window.location.reload();
+                    }
+                    else {
+                        alert("Problème lors de la création du compte Stripe");
+                    }
+                  
                 });
             } 
         }

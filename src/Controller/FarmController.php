@@ -8,7 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Farm;
 use App\Form\FarmType;
 use App\Api\StripeManager;
-
+use Symfony\Component\Routing\Generator\UrlGenerator;
 /**
  * Farm controller.
  *
@@ -245,21 +245,33 @@ class FarmController extends AmapBaseController
         if ($farm->getStripeAccountId()==null) {
             return $this->render('Farm/compte_bancaire_1.html.twig', ['farm'=>$farm]);
         }
-        else if ($farm->getStripeAccountLinkUrl()==null) {            
+        else {   
+            $stripe = new StripeManager();
+
+            if ($farm->getStripeAccountLinkUrl()==null) {
+                $refreshUrl = $this->generateUrl('account_link_expiration', [], UrlGenerator::ABSOLUTE_URL);
+                $returnUrl = $this->generateUrl('account_link_complete', [], UrlGenerator::ABSOLUTE_URL);
+                $account_url = $stripe->createAccountLink($farm->getStripeAccountId(), $refreshUrl, $returnUrl);
+                $farm->setStripeAccountLinkUrl($account_url);
+                $em->persist($farm);
+                $em->flush();             
+            }
+
+            $account = $stripe->getAccount($farm->getStripeAccountId());                    
+            
+            die(print_r($account,1));
             return $this->render('Farm/compte_bancaire_2.html.twig', ['farm'=>$farm]);
-        }
-        else {            
-            return $this->render('Farm/compte_bancaire_3.html.twig', ['farm'=>$farm]);
         }
     }
 
     public function stripeCreateAccount(Request $request) {
         $this->denyAccessUnlessGranted('ROLE_REFERENT');
-        if ($request->request->get('token')!=null && $request->request->get('tel')!=null && $request->request->get('email')!=null && $request->request->get('id_farm')!=null) {
-            $stripe = new StripeManager();
-            $account_id = $stripe->createAccount($request->request->get('token'), $request->request->get('tel'),$request->request->get('email'));
-            $em = $this->getDoctrine()->getManager();
-            $farm = $em->getRepository('App\Entity\Farm')->find($request->request->get('id_farm'));
+        $data = json_decode($request->getContent(),true);
+        if ($data['token']!=null && $data['tel']!=null && $data['email']!=null && $data['id_farm']!=null) {
+            $stripe = new StripeManager();           
+            $em = $this->getDoctrine()->getManager(); 
+            $farm = $em->getRepository('App\Entity\Farm')->find($data['id_farm']);
+            $account_id = $stripe->createAccount($farm, $data['token'], $data['tel'],$data['email']);
             $farm->setStripeAccountId($account_id);
             $em->persist($farm);
             $em->flush();   

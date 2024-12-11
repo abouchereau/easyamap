@@ -70,4 +70,20 @@ class StripeManager {
         return $account->id;
     }
     
+    public function getAccount($account_id) {
+        return $this->client->accounts->retrieve($account_id, []);
+    }
+
+    public function createAccountLink($account_id, $refreshUrl, $returnUrl) {
+        $accountLink = $this->client->accountLinks->create([
+            'account' => $account_id,
+            'refresh_url' => $refreshUrl, // URL de redirection en cas d'expiration du lien
+            'return_url' => $returnUrl,  // URL de redirection après complétion du formulaire
+            'type' => 'account_onboarding', // Type de lien, ici pour l'activation du compte
+            /*'capabilities' => [
+                'card_payments' => ['requested' => true],
+                'transfers' => ['requested' => true],
+            ],*/
+        ]);
+    }
 }

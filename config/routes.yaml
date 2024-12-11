@@ -588,3 +588,11 @@ tableau_livraison_par_produit:
     controller: App\Controller\PurchaseController:tableauLivraisonParProduit
     defaults:
         dateDebutStr: null
+
+account_link_expiration:
+    path: webhook/account_link_expiration
+    controller: App\Controller\WebhookController:accountLinkExpiration
+    
+account_link_complete:
+    path: webhook/account_link_complete
+    controller: App\Controller\WebhookController:accountLinkComplete
