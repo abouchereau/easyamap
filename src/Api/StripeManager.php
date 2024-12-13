@@ -85,5 +85,6 @@ class StripeManager {
                 'transfers' => ['requested' => true],
             ],*/
         ]);
+        return $accountLink;
     }
 }
