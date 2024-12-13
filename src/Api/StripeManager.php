@@ -1,14 +1,15 @@
 <?php
 namespace App\Api;
-use \Stripe\StripeClient;
+require __DIR__ . '/../../vendor/stripe/stripe-php/init.php';
+//use \Stripe\StripeClient;
 
 class StripeManager {
 
     private $client;
 
     public function __construct() {
-        $this->client = new StripeClient($_ENV['STRIPE_SECRET_KEY']);                
-    }
+        $this->client = new \Stripe\StripeClient($_ENV['STRIPE_SECRET_KEY']);                
+    }        
 
     public function createCustomer($user) {
         $customer = $this->client->customers->create([
