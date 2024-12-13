@@ -258,7 +258,7 @@ class FarmController extends AmapBaseController
             }
 
             $account = $stripe->getAccount($farm->getStripeAccountId());                    
-            
+            die(print_r($account,1));
             return $this->render('Farm/compte_bancaire_2.html.twig', ['farm'=>$farm]);
         }
     }
