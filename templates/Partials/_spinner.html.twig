@@ -41,4 +41,9 @@
         showSpinner();
         return undefined;
     });
+    window.addEventListener('pageshow', e=>{
+        if (e.persisted) { // Vérifie si la page est chargée depuis le cache BFCache
+            hideSpinner();
+        }
+    });
 </script>

@@ -71,6 +71,14 @@ class HomeController extends AmapBaseController
              'Rapports',
              'Statistiques par produit'
              );
+        $em = $this->getDoctrine()->getManager();
+        $farm = $em->getRepository('App\Entity\Farm')->findForFarmer($user);
+        $list[] = array(
+            $this->generateUrl('farm_edit', ["id"=>$farm->getIdFarm()]),
+            'grain',
+            'Fiche Producteur',
+            'Modifier les informations producteur.'
+        );
         /*$list[] = array(
              $this->generateUrl('payment_history_farmer'),
              'plus',

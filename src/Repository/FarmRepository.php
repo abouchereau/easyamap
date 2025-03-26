@@ -30,6 +30,13 @@ class FarmRepository extends EntityRepository
          ->addOrderBy('f.sequence');
          return $qb->getQuery()->getResult();
     }
+
+    public function findForFarmer($user) {
+        $qb = $this->createQueryBuilder('f')
+            ->where('f.fkUser = :user')
+            ->setParameter('user', $user);
+         return $qb->getQuery()->getSingleResult();
+    }
     
     public function findAllOrderByLabel2()
     {

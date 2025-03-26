@@ -596,3 +596,7 @@ account_link_expiration:
 account_link_complete:
     path: webhook/account_link_complete
     controller: App\Controller\WebhookController:accountLinkComplete
+
+confirm_prelevement:
+    path: confirmation_prelevement/:id_contrat
+    controller: App\Controller\PaymentController:confirmPrelevement

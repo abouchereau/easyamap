@@ -368,4 +368,12 @@ class PaymentController extends AmapBaseController
             'userMonth' => $userMonth
         ));
      }
+
+
+     
+    
+    public function confirmPrelevement($id_contrat) {
+        return $this->render('Payment/confirm_prelevement.html.twig', array(
+        ));
+     }
 }

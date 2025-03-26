@@ -5,44 +5,85 @@
     {% set payments = tab[1] %}
     {% set payment_info = tab[2] %}    
     {% set chosen_payment = tab[3] %}
-    <dl>
-    {% for i,choices in payments %}
-        <dt><span class="glyphicon glyphicon-{% if chosen_payment[i] %}check{% else %}unchecked{% endif %}"></span> {% if not loop.first %}ou {% endif %}<b>{{ choices|length }}</b> 
-        {% if 1 in types %}chèque{% else %}paiement{% endif %}{% if choices|length > 1 %}s{% endif %} :</dt>
-        <dd><span class="repartition">{% for choice in choices %}
-                {% if choice[2] == 1 %}{#
-                    #}<b>?</b> € <small>(selon livraison)</small>{#
-                     #}{% if not loop.last %} + {% endif %}
-                    {% else %}
-                {{ choice[1]|price_fr }}{#
-                #}{% if not loop.last %} + {% endif %}
-                {% endif %}
-            {% endfor %}
-        </span><small>({% for choice in choices %}{#
-                #}{% if choice[3] > 0 %}{# mensuel #}{#
-                   #}{{ choice[0]|creneau(choice[3]) }}{#
-                #}{% else %}{#
-                    #}{{ choice[0]|date_fr }}{#
-                #}{% endif %}{#
-                #}{% if not loop.last %} / {% endif %}{#
-            
-            #}{% endfor %})</small>
-    </dd>
-    {% endfor %}
-    </dl>
-    
-    <p class="small">
-        {% for type in types %}
-            {% if not loop.first %} / {% endif %}
-            {% if type == 1 %}
-                Chèques à l'ordre de "<i>{{ payment_info[0] }}</i>"
-            {% elseif type == 2 %}
-                Paiement en espèces
-            {% elseif type == 3 %}
-                Paiement par PayPal
-            {% endif %}
+
+    {% if 1 in types %}
+        <div class="row">
+            <div class="col-sm-2"><span class="glyphicon glyphicon-chevron-right"></span> <b>Chèque</b></div>
+            <div class="col-sm-8">
+        {% for i,choices in payments %}            
+            <div class="enum"><span class="glyphicon glyphicon-{% if chosen_payment[i] %}check{% else %}unchecked{% endif %}"></span> {% if not loop.first %}ou {% endif %}<b>{{ choices|length }}</b> 
+            {% if 1 in types %}chèque{% else %}paiement{% endif %}{% if choices|length > 1 %}s{% endif %} :</div>
+            <span class="repartition">{% for choice in choices %}
+                    {% if choice[2] == 1 %}{#
+                        #}<b>?</b> € <small>(selon livraison)</small>{#
+                        #}{% if not loop.last %} + {% endif %}
+                        {% else %}
+                    {{ choice[1]|price_fr }}{#
+                    #}{% if not loop.last %} + {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </span><small>({% for choice in choices %}{#
+                    #}{% if choice[3] > 0 %}{# mensuel #}{#
+                    #}{{ choice[0]|creneau(choice[3]) }}{#
+                    #}{% else %}{#
+                        #}{{ choice[0]|date_fr }}{#
+                    #}{% endif %}{#
+                    #}{% if not loop.last %} / {% endif %}{#
+                
+                #}{% endfor %})</small>
         {% endfor %}
-    </p>
+        <div class="small">Chèques à l'ordre de "<i>{{ payment_info[0] }}</i>"</div>
+        </div>
+        </div>
+    {% endif %}
+
+    {% if 2 in types %}
+        <div class="row mt">
+            <div class="col-sm-2"><span class="glyphicon glyphicon-chevron-right"></span> <b>Espèces</b></div>
+        <div class="col-sm-8">
+        
+        {% for i,choices in payments %}
+            <div class="enum"><span class="glyphicon glyphicon-{% if chosen_payment[i] %}check{% else %}unchecked{% endif %}"></span> {% if not loop.first %}ou {% endif %}<b>{{ choices|length }}</b> 
+            {% if 1 in types %}chèque{% else %}paiement{% endif %}{% if choices|length > 1 %}s{% endif %} :</div>
+            <span class="repartition">{% for choice in choices %}
+                    {% if choice[2] == 1 %}{#
+                        #}<b>?</b> € <small>(selon livraison)</small>{#
+                        #}{% if not loop.last %} + {% endif %}
+                        {% else %}
+                    {{ choice[1]|price_fr }}{#
+                    #}{% if not loop.last %} + {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </span><small>({% for choice in choices %}{#
+                    #}{% if choice[3] > 0 %}{# mensuel #}{#
+                    #}{{ choice[0]|creneau(choice[3]) }}{#
+                    #}{% else %}{#
+                        #}{{ choice[0]|date_fr }}{#
+                    #}{% endif %}{#
+                    #}{% if not loop.last %} / {% endif %}{#
+                
+                #}{% endfor %})</small>
+        
+        {% endfor %}
+        
+        </div>
+        </div>
+    {% endif %}
+
+    {% if 3 in types %}
+    <div class="row mt">
+        <div class="col-sm-2"><span class="glyphicon glyphicon-chevron-right"></span> <b>Prélèvement</b></div>
+        <div class="col-sm-8">
+                {% if user.stripeCustomerId is null %}
+                    Vous devez au prélable <a href="{{ path('compte_bancaire') }}" class="btn btn-info">ajouter un compte bancaire</a>
+                {% else %}
+                    <a href="{{ path('confirm_prelevement', {'id_contrat': contract.idContract}) }}" class="btn btn-info">Payer par prélèvement</a> <span class="small">Un e</span>
+                {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+
     {% if isReferentPage is defined and isReferentPage and idPayment is defined %}{# uniquement dans  sonata 
         #}<script>var descriptions=descriptions||{};descriptions[{{ idPayment }}]={{description|raw}};</script>{#
     #}{% endif %}
@@ -50,3 +91,12 @@
     {{ description|replace({'OU':'<b>OU</b>'})|raw }}    
 {% endif %}
 </div>
+<style>
+.mt {
+    margin-top:1em;
+}
+ .enum {
+    display:inline-block;
+    width:80px;
+    }
+</style>

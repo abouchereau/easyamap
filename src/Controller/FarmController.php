@@ -111,7 +111,7 @@ class FarmController extends AmapBaseController
      */
     public function edit($id)
     {
-        $this->denyAccessUnlessGranted('ROLE_REFERENT');
+        $this->denyAccessUnlessGranted(['ROLE_REFERENT','ROLE_FARMER']);
         
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('App\Entity\Farm')->find($id);
@@ -163,7 +163,7 @@ class FarmController extends AmapBaseController
      */
     public function update(Request $request, $id)
     {
-        $this->denyAccessUnlessGranted('ROLE_REFERENT');
+        $this->denyAccessUnlessGranted(['ROLE_REFERENT','ROLE_FARMER']);
         
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('App\Entity\Farm')->find($id);
@@ -238,7 +238,7 @@ class FarmController extends AmapBaseController
     }
 
     public function compteBancaire($id) {
-        $this->denyAccessUnlessGranted('ROLE_REFERENT');
+        $this->denyAccessUnlessGranted(['ROLE_FARMER','ROLE_ADHERENT']);
         $em = $this->getDoctrine()->getManager();
         $farm = $em->getRepository('App\Entity\Farm')->find($id);
         //TODO vérifier que l'utilisateur a droit
@@ -247,24 +247,52 @@ class FarmController extends AmapBaseController
         }
         else {   
             $stripe = new StripeManager();
+            $account = $stripe->getAccount($farm->getStripeAccountId());
 
-            if ($farm->getStripeAccountLinkUrl()==null) {
+            $active = $account['capabilities']!=null && $account['capabilities']['transfers'];
+            $account_link = "";
+            
+
+            if (true) {//!$active) {//enlever ce champ, vérifier si le compte est actif ou non
                 $refreshUrl = $this->generateUrl('account_link_expiration', [], UrlGenerator::ABSOLUTE_URL);
                 $returnUrl = $this->generateUrl('account_link_complete', [], UrlGenerator::ABSOLUTE_URL);
-                $account_url = $stripe->createAccountLink($farm->getStripeAccountId(), $refreshUrl, $returnUrl);
-                $farm->setStripeAccountLinkUrl($account_url);
-                $em->persist($farm);
-                $em->flush();             
+                $account_link = $stripe->createAccountLink($farm->getStripeAccountId(), $refreshUrl, $returnUrl);
+     die(print_r($account_link,1));
             }
+/**
+ * Stripe\Account Object
+(
+    [id] => acct_1QUTN0QxERCZWboI
+    [object] => account
+    [business_profile] => Stripe\StripeObject Object
+        (
+            [annual_revenue] => 
+            [estimated_worker_count] => 
+            [mcc] => 5734
+            [name] => Easyamap Assoc
+            [product_description] => Applications commandes pour AMAP
+            [support_address] => 
+            [support_email] => anthony@easyamap.fr
+            [support_phone] => 0664309539
+            [support_url] => 
+            [url] => 
+        )
 
-            $account = $stripe->getAccount($farm->getStripeAccountId());                    
-            die(print_r($account,1));
-            return $this->render('Farm/compte_bancaire_2.html.twig', ['farm'=>$farm]);
+    [business_type] => company
+    [capabilities] => Stripe\StripeObject Object
+        (
+            [card_payments] => active
+            [transfers] => active
+        )
+
+ */
+
+            return $this->render('Farm/compte_bancaire_2.html.twig', ['active'=>$active, 'account_link'=>$account_link]);
         }
     }
 
     public function stripeCreateAccount(Request $request) {
-        $this->denyAccessUnlessGranted('ROLE_REFERENT');
+        $this->denyAccessUnlessGranted(['ROLE_FARMER','ROLE_ADHERENT']);
         $data = json_decode($request->getContent(),true);
         if ($data['token']!=null && $data['tel']!=null && $data['email']!=null && $data['id_farm']!=null) {
             $stripe = new StripeManager();           

@@ -7,34 +7,19 @@
    
    </div>
    <div class="col-md-4">
+    {% if active %}
+        Le compte Stripe est actif.
+    {% else %}
+        Pour activer le compte Stripe, merci de suivre le lien qui suit et renseigner les informations demandées (SIREN, IBAN...) :<br />
+        <a href="{{ account_link }}">{{ account_link }}</a>
+    {% endif %}
     
-        <form id="iban-form" action="" method="POST" style="display:{% if iban != "" %}none{% else %}block{% endif %};">
-            <label for="iban">IBAN</label>
-            <input id="iban" type="text" name="iban" />
-            <br />
-            <button type="submit" class="btn btn-primary">Envoyer</button>
-        </form>
-
+       
     </div>
     <div class="col-md-4 text-right"></div>
 </div>
 {% endblock %}
 {% block footer_js %}
 <script type="text/javascript" src="{{ asset('js/form.js') }}"></script>
-<script>
 
- function space(el, after) {
-        after = after || 4;
-        var v = el.value.replace(/[^\dA-Z]/g, ''),
-            reg = new RegExp(".{" + after + "}","g")
-        el.value = v.replace(reg, function (a, b, c) {
-            return a + ' ';
-        });
-    }
-    
-    var el = document.getElementById('iban');
-    el.addEventListener('keyup', function () {
-        space(this, 4);
-    });
-</script>
 {% endblock %}
