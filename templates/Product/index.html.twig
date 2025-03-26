@@ -9,7 +9,7 @@
    </div>
    <div class="col-md-3">
     <select class="form-control" id="farm-choose">
-        <option value="">Tous producteurs</option>
+        <option value="-1">Tous producteurs</option>
         {% for id, farm in farms %}
             <option value="{{ id }}"{% if id == filterFarm %} selected{% endif %}>{{ farm }}</option>
         {% endfor %}
