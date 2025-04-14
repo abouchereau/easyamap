@@ -1,0 +1,25 @@
+{% extends 'layout.html.twig' %}
+
+{% block header_title %}Réinitialisation de mot de passe{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+
+            <h1 style="margin:0;"><span class="easyamap easyamap-medium">easy<span>amap</span></span></h1>
+            <div class="col-md-6">
+                <h2>Réinitialisation de mot de passe</h2>
+
+                {{ form_start(resetForm) }}
+                {{ form_row(resetForm.plainPassword) }}
+                <br/>
+                <button class="btn btn-primary">Réinitialiser le mot de passe</button>
+                {{ form_end(resetForm) }}
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}

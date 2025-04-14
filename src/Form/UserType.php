@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,7 +25,7 @@ class UserType extends AbstractType
             ->add('firstname',TextType::class,  array('label' => 'Prénom'        ,'required' => false))
             ->add('lastname',TextType::class,   array('label' => 'Nom *'         ,'required' => true))
             ->add('username',TextType::class,   array('label' => 'Identifiant de connexion * (généralement identique au nom)' ,'required' => true))
-            ->add('password',TextType::class,   array('label' => 'Mot de passe *','required' => true))
+            ->add('plainPassword',PasswordType::class,   array('label' => 'Mot de passe *', 'required' => false))
             ->add('isAdherent',CheckboxType::class,array('label' => 'Adhérent',   'required' => false,'attr' => array('checked'   => 'checked')))
             ->add('isAdmin',CheckboxType::class,array('label' => 'Administrateur','required' => false));
         if ($options['with_address']) {
