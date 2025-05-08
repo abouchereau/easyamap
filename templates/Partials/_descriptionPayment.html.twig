@@ -77,7 +77,7 @@
                 {% if user.stripeCustomerId is null %}
                     Vous devez au prélable <a href="{{ path('compte_bancaire') }}" class="btn btn-info">ajouter un compte bancaire</a>
                 {% else %}
-                    <a href="{{ path('confirm_prelevement', {'id_contrat': contract.idContract}) }}" class="btn btn-info">Payer par prélèvement</a> <span class="small">Un e</span>
+                    <a href="{{ path('confirm_prelevement', {'id_payment': id_payment}) }}" class="btn btn-info">Payer par prélèvement</a> <span class="small">Un e...</span>
                 {% endif %}
         </div>
     </div>

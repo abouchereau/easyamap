@@ -23,7 +23,7 @@
                     <td>{{ payment.contract }}</td>
                     {% if isReferentPage %}<td class="row-fkUser">{{ payment.adherent }}</td>{% endif %}
                     <td>{{ payment.farm }}</td>
-                    <td>{% include 'Partials/_descriptionPayment.html.twig' with {'description': payment.description, 'short':true, 'isReferentPage': isReferentPage, 'idPayment':payment.idPayment } %}</td>
+                    <td>{% include 'Partials/_descriptionPayment.html.twig' with {'description': payment.description, 'short':true, 'user':user, 'isReferentPage': isReferentPage, 'idPayment':payment.idPayment } %}</td>
                     <td class="row-amount" objectid="{{ payment.idPayment }}">{{ payment.amount|price_fr }}</td>
                     <td class="row-received" objectid="{{ payment.idPayment }}">{{ payment.received|price_fr }}</td>
                     <td class="row-receivedAt">{{ payment.receivedAt|date("Y-m-d") }}</td>

@@ -9,8 +9,10 @@ use App\Entity\Payment;
 use App\Entity\PaymentSplit;
 use App\Form\PaymentType;
 use App\Util\Utils;
+use App\Util\Amap;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\Api\StripeManager;
 /**
  * Payment controller.
  *
@@ -372,8 +374,27 @@ class PaymentController extends AmapBaseController
 
      
     
-    public function confirmPrelevement($id_contrat) {
-        return $this->render('Payment/confirm_prelevement.html.twig', array(
-        ));
+    public function confirmPrelevement($id_payment) {
+        $em = $this->getDoctrine()->getManager(); 
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $payment = $em->getRepository('App\Entity\Payment')->find($id_payment);
+
+        $stripe = new StripeManager();
+        $iban = "";
+        if (Amap::isLocalServer()) {
+            $iban = "See on dev server";
+        }
+        else {
+            if ($user->getStripePaymentMethodId()!=null) {            
+                $iban = $stripe->getObfuscatedIban( $user->getStripePaymentMethodId());
+            }
+        }
+        
+
+        return $this->render('Payment/confirm_prelevement.html.twig', [
+            "user" => $user,
+            "payment" => $payment,
+            "iban" => $iban
+        ]);
      }
 }

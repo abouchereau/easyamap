@@ -598,5 +598,5 @@ account_link_complete:
     controller: App\Controller\WebhookController:accountLinkComplete
 
 confirm_prelevement:
-    path: confirmation_prelevement/:id_contrat
+    path: confirmation_prelevement/{id_payment}
     controller: App\Controller\PaymentController:confirmPrelevement

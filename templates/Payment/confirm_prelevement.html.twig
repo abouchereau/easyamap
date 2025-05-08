@@ -1,14 +1,17 @@
-Compte bancaire : 
-
-Montant : 
-
-Au profit de :
-
-[Checkbox]
-Je valide les informations indiquées et autorise easyamap à présenter un ordre de prélèvement sur mon compte bancaire.
-
+{% extends 'layout.html.twig' %}
+{% block header_title %}Historique des paiements{% endblock %}
+{% block body %}
+    
+Compte bancaire : {{ iban }}
+<br />
+Montant : {{payment.amount|round(2)|number_format(2,',',' ')~' €'}}
+<br />
+Au profit de : {{payment.fkFarm.label}}
+<br />
+<label><input type="checkbox" />Je valide les informations indiquées et autorise easyamap à présenter un ordre de prélèvement sur mon compte bancaire.</label>
+<br /><br />
 Vous serez prélevé sur votre compte 3 jours ouvrés à compter d'aujourd'hui.
-Vous recevres la notification de votre paiement pour courriel à l'adresse : 
+Vous recevrez la notification de votre paiement par courriel à l'adresse : {{ user.email}}
 
 Valider / Annuler
 
@@ -22,3 +25,11 @@ Votre paiment au profit de **** a bien été pris en compte.
 Référence ?
 Montant
 Adresse électronique
+
+
+
+
+{% endblock %}
+{% block footer_js %}
+
+{% endblock %}

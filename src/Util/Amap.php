@@ -72,5 +72,9 @@ Merci de revenir dans quelques instants.<br /><img src='https://www.easyamap.fr/
     static public function isEasyamapMainServer() {
         return strpos($_SERVER['HTTP_HOST'], 'easyamap.fr')!==false;
     }
+
+    static public function isLocalServer() {
+        return strpos($_SERVER['HTTP_HOST'], 'localhost')!==false;
+    }
 }
 

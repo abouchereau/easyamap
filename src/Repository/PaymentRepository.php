@@ -89,7 +89,7 @@ class PaymentRepository extends EntityRepository
     public function findForUserContract($contract, $user)
     {
        $conn = $this->getEntityManager()->getConnection();
-       $sql = "SELECT fk_farm, amount, description, received
+       $sql = "SELECT fk_farm, amount, description, received, id_payment
          FROM payment
          WHERE fk_contract=".$contract->getIdContract()."
          AND fk_user=".$user->getIdUser();
