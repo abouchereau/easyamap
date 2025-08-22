@@ -88,4 +88,103 @@ class StripeManager {
         ]);
         return $accountLink;
     }
+
+    public function createPayment($payment, $url, $setting) {                
+        $paymentIntent = $this->client->paymentIntents->create([
+            'customer' => $payment->getFkUser()->getStripeCustomerId(),
+            'amount' => $payment->getAmountTaxStripePrelevement(), 
+            'currency' => 'eur',
+            'description' => 'Paiement pour le contrat '.$payment->getFkContract()->getLabel(),
+            'confirm' => true, 
+            //'payment_method_types' => ['card','sepa_debit'], 
+            'payment_method' => $user->getStripePaymentMethodId(),//'card',//'sepa_debit',//'card',
+            'transfer_data' => [
+                'destination' => $payment->getFkFarm()->getStripeAccountId(), 
+            ],
+            'return_url' => $url,
+            'metadata' => [
+                "amap" => $setting->getName(),
+                "user" =>  $user->getFirstname()." ".$user->getLastname(),
+                "farm" => $payment->getFkFarm()->getLabel()
+            ],
+            "receipt_email"=> $user->getEmail(),
+            'mandate_data' => [
+                'customer_acceptance' => [
+                    'type' => 'offline'         
+                ],
+            ],
+        ]);
+        return $paymentIntent;
+    }
+
+    /**
+Stripe\PaymentIntent Object
+(
+    [id] => pi_3Pb23lJLwGy52MhE1HSdAqul
+    [object] => payment_intent
+    [amount] => 200
+    [amount_capturable] => 0
+    [amount_details] => Stripe\StripeObject Object
+        (
+            [tip] => Array
+                (
+                )
+
+        )
+
+    [amount_received] => 0
+    [application] =>
+    [application_fee_amount] =>
+    [automatic_payment_methods] =>
+    [canceled_at] =>
+    [cancellation_reason] =>
+    [capture_method] => automatic_async
+    [client_secret] => pi_3Pb23lJLwGy52MhE1HSdAqul_secret_yRkgIq2AIqq4dKXoeXhinqhi6
+    [confirmation_method] => automatic
+    [created] => 1720623837
+    [currency] => eur
+    [customer] =>
+    [description] =>
+    [invoice] =>
+    [last_payment_error] =>
+    [latest_charge] =>
+    [livemode] => 1
+    [metadata] => Stripe\StripeObject Object
+        (
+        )
+
+    [next_action] =>
+    [on_behalf_of] =>
+    [payment_method] =>
+    [payment_method_configuration_details] =>
+    [payment_method_options] => Stripe\StripeObject Object
+        (
+            [card] => Stripe\StripeObject Object
+                (
+                    [installments] =>
+                    [mandate_options] =>
+                    [network] =>
+                    [request_three_d_secure] => automatic
+                )
+
+        )
+
+    [payment_method_types] => Array
+        (
+            [0] => card
+        )
+
+    [processing] =>
+    [receipt_email] =>
+    [review] =>
+    [setup_future_usage] =>
+    [shipping] =>
+    [source] =>
+    [statement_descriptor] =>
+    [statement_descriptor_suffix] =>
+    [status] => requires_payment_method
+    [transfer_data] =>
+    [transfer_group] =>
+)
+*/
 }

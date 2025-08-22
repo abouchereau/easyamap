@@ -597,6 +597,14 @@ account_link_complete:
     path: webhook/account_link_complete
     controller: App\Controller\WebhookController:accountLinkComplete
 
-confirm_prelevement:
-    path: confirmation_prelevement/{id_payment}
-    controller: App\Controller\PaymentController:confirmPrelevement
+confirm_prelevement_1:
+    path: confirmation_prelevement_1/{id_payment}
+    controller: App\Controller\PaymentController:confirmPrelevement1
+
+payment_stripe:
+    path: payment_stripe/{id_payment}
+    controller: App\Controller\PaymentController:paymentStripe
+    
+confirm_prelevement_2:
+    path: confirmation_prelevement_2/{id_payment}
+    controller: App\Controller\PaymentController:confirmPrelevement2

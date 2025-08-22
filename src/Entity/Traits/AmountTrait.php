@@ -38,4 +38,8 @@ trait AmountTrait
     {
         return $this->amount;
     }
+
+    public function getAmountTaxStripePrelevement() {
+        return $this->amount + 0.85;
+    }
 }

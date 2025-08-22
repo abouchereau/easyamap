@@ -28,6 +28,12 @@ class Payment
     use DescriptionTrait;    
     use AmountTrait;    
     
+    const STATUT_CREE = 1;
+    const STATUT_INITIALISE = 2;
+    const STATUT_EMIS = 3;
+    const STATUT_RECU = 4;
+    const STATUT_REFUSE = 5;
+
     /**
      * @var integer
      *
@@ -50,6 +56,29 @@ class Payment
      * @ORM\Column(name="received_at", type="date", nullable=true)
      */
     private $receivedAt;
+
+    /**
+     * @var string
+     * 
+     * @ORM\Column(name="type", type="integer", nullable=true)
+     */
+    private $type;
+
+    /**
+     * @var integer
+     * 
+     * @ORM\Column(name="status", type="integer", nullable=true)
+     */
+    private $status;  
+
+    /**
+     * @var integer
+     * 
+     * @ORM\Column(name="stripe_payment_intent_id", type="string", length=255, nullable=true)
+     */
+    private $stripePaymentIntentId;  
+    
+    
     
     /**
      * Get idPayment
@@ -112,5 +141,39 @@ class Payment
     public function getReceivedAt()
     {
         return $this->receivedAt;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+    
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    public function getStripePaymentIntentId()
+    {
+        return $this->stripePaymentIntentId;
+    }
+
+    public function setStripePaymentIntentId($stripePaymentIntentId)
+    {
+        $this->stripePaymentIntentId = $stripePaymentIntentId;
+        return $this;
     }
 }

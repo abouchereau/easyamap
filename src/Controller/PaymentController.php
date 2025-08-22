@@ -374,10 +374,14 @@ class PaymentController extends AmapBaseController
 
      
     
-    public function confirmPrelevement($id_payment) {
+    public function confirmPrelevement1($id_payment) {
         $em = $this->getDoctrine()->getManager(); 
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $payment = $em->getRepository('App\Entity\Payment')->find($id_payment);
+
+        if ($user->getIdUser() != $payment->getFkUser()->getIdUser()) {
+            die("Numéro de paiement incohérent");
+        }
 
         $stripe = new StripeManager();
         $iban = "";
@@ -388,13 +392,52 @@ class PaymentController extends AmapBaseController
             if ($user->getStripePaymentMethodId()!=null) {            
                 $iban = $stripe->getObfuscatedIban( $user->getStripePaymentMethodId());
             }
-        }
-        
+        }        
 
-        return $this->render('Payment/confirm_prelevement.html.twig', [
+        return $this->render('Payment/confirm_prelevement1.html.twig', [
             "user" => $user,
             "payment" => $payment,
             "iban" => $iban
+        ]);
+     }
+
+     public function paymentStripe($payment) {      
+        $url = $this->generateUrl('confirm_prelevement_2', [], UrlGenerator::ABSOLUTE_URL);
+        $setting = $em->getRepository('App\Entity\Setting')->getFromCache($_SERVER['APP_ENV']);
+        $stripe = new StripeManager();
+        $paymentIntent = $stripe->createPayment($payment, $url, $setting);
+        $payment->setStatus(Payment::STATUT_CREE);
+        $payment->setStripePaymentIntentId($paymentIntent->id);
+     }
+
+     public function confirmPrelevement2($id_payment) {
+        $stripe = new StripeManager();
+        $isSuccess = false;
+        $em = $this->getDoctrine()->getManager(); 
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $payment = $em->getRepository('App\Entity\Payment')->find($id_payment);
+
+        if ($user->getIdUser() != $payment->getFkUser()->getIdUser()) {
+            die("Numéro de paiement incohérent");
+        }
+
+        
+        if (Amap::isLocalServer()) {
+            $iban = "See on dev server";
+        }
+        else {
+            $this->paymentStripe($payment);
+        }
+
+        $isSuccess = true;
+        $messageErreur = "";
+        
+
+        return $this->render('Payment/confirm_prelevement2.html.twig', [
+            "user" => $user,
+            "payment" => $payment,
+            "isSuccess" => $isSuccess,
+            "messageErreur" => $messageErreur
         ]);
      }
 }

@@ -1,0 +1,36 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Confirmation de prélèvement{% endblock %}
+{% block body %}
+
+{% if isSuccess %}
+
+<div class="bg-success">
+    Votre paiement au profit de {{payment.fkFarm.label}} a bien été pris en compte.
+</div>
+ <table class="table table-striped">
+    <tr>
+        <th class="text-right">Compte bancaire</th><td>{{ iban }}</td>
+    </tr>
+    <tr>
+        <th class="text-right">Montant</th><td>{{payment.amount|round(2)|number_format(2,',',' ')~' €'}}</td>
+    </tr>
+    <tr>
+        <th class="text-right">Au profit de</th><td>{{payment.fkFarm.label}}</td>
+    </tr>
+    <tr>
+        <th class="text-right">Référence</th><td>{{ payment.stripePaymentIntentId }}</td>
+    </tr>
+</table>
+{% else %}
+
+<div class="bg-danger">
+    Un problème est survenu lors du paiment :
+</div>
+<div>{{ messageErreur }}</div>
+
+{% endif %}
+
+{% endblock %}
+{% block footer_js %}
+
+{% endblock %}

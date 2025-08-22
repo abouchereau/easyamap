@@ -1,0 +1,51 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Confirmation de prélèvement{% endblock %}
+{% block body %}
+
+ <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <form method="POST" action="{{ path('confirm_prelevement_2', {"id_payment": payment.idPayment}) }}" id="confirm-prelevement">
+                <table class="table table-striped">
+                    <tr>
+                        <th class="text-right">Compte bancaire</th><td>{{ iban }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Montant</th><td>{{payment.amount|round(2)|number_format(2,',',' ')~' €'}}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Au profit de</th><td>{{payment.fkFarm.label}}</td>
+                    </tr>
+                </table>
+   
+                <label style="font-size:115%"><input type="checkbox" name="valid" id="valid" /> Je valide les informations indiquées et autorise easyamap à présenter un ordre de prélèvement sur mon compte bancaire.</label>
+                <br /><br />
+                Vous serez prélevé sur votre compte 3 jours ouvrés à compter d'aujourd'hui.
+                <br />
+                Vous recevrez la notification de votre paiement par courriel à l'adresse : {{ user.email}}
+                <br />
+                <br />
+                <br />
+                <div class="text-center">
+                    <button onclick="history.back()" class="btn btn-secondary">Annuler</button> &nbsp; &nbsp;     
+                    <button type="submit" class="btn btn-primary">Valider</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block footer_js %}
+<script type="text/javascript">
+const form = document.getElementById("confirm-prelevement");
+const valid = document.getElementById("valid");
+form.addEventListener("submit", e=> {
+    if (!valid.checked) {
+        alert("Vous devez valider les informations pour confirmer le paiement");
+        e.preventDefault();
+        return false;
+    }
+});
+</script>
+{% endblock %}

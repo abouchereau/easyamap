@@ -257,7 +257,7 @@ class FarmController extends AmapBaseController
                 $refreshUrl = $this->generateUrl('account_link_expiration', [], UrlGenerator::ABSOLUTE_URL);
                 $returnUrl = $this->generateUrl('account_link_complete', [], UrlGenerator::ABSOLUTE_URL);
                 $account_link = $stripe->createAccountLink($farm->getStripeAccountId(), $refreshUrl, $returnUrl);
-     die(print_r($account_link,1));
+     //die(print_r($account_link,1));
             }
 /**
  * Stripe\Account Object
