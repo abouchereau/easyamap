@@ -21,7 +21,8 @@ class FarmType extends AbstractType
         $builder
             ->add('label',TextType::class,          array('label' => 'Nom *',     'required' => true))
             ->add('productType',TextType::class,    array('label' => 'Type de produits * (ex : produits laitiers)','required' => true))
-            ->add('checkPayableTo',TextType::class, array('label' => 'Chèques à l\'ordre de *','required' => true))
+            ->add('checkPayableTo',TextType::class, array('label' => 'Chèques à l\'ordre de *','required' => false))
+            ->add('iban',TextType::class, array('label' => 'IBAN','required' => false))
             ->add('paymentTypes',EntityType::class, array('class' => 'App\Entity\PaymentType','label' => 'Types de paiements acceptés','multiple'=>true,'expanded' => true,'required' => true))
             ->add('paymentFreqs',EntityType::class, array('class' => 'App\Entity\PaymentFreq','label' => 'Fréquences de paiements acceptées','multiple'=>true,'expanded' => true,'required' => true))
             ->add('equitable',CheckboxType::class,  array('label' => 'Lissage des paiements','required' => false))

@@ -1,5 +1,15 @@
 var has_unsaved_changes = false;
 
+const sepaData = `BCD
+001
+1
+SCT
+
+__BENEFICIAIRE__
+__IBAN__
+EUR__MONTANT__
+__REFERENCE__`;
+
 $(document).ready(function () {
     
     $('body').on('has-changes', function () {
@@ -59,6 +69,35 @@ $(document).ready(function () {
     if($('#payment_received_modal').length>0) {
         $('#payment_received_modal').modal('show');
     }
+
+    $("#virement-btn").click(e=> {
+        e.preventDefault(); 
+        $("#virement").modal("show");
+        let virement = {
+            "iban": "FR01 1234 1234 1234 1234 1234 123",
+            "montant": "27,00",
+            "reference": "EASYAMAP-CHAMBRAY-00001",
+            "beneficiaire": "Roussel"
+        };
+        $("#virement-iban").val(virement.iban);
+        $("#virement-montant").val(virement.montant);
+        $("#virement-reference").val(virement.reference);
+
+        let qrStr = sepaData
+            .replace("__BENEFICIAIRE__", virement.beneficiaire)
+            .replace("__IBAN__", virement.iban)
+            .replace("__MONTANT__", virement.montant.replace(",","."))
+            .replace("__REFERENCE__", virement.reference);
+
+        const qr = qrcode(0, 'M'); // niveau de correction
+        qr.addData(qrStr);
+        qr.make();
+
+       $("#qr-code").html(qr.createImgTag(3, 10, "QR Code"));
+
+        return false;
+    });
+
 });
 
 window.onbeforeunload = function () {

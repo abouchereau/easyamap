@@ -368,4 +368,24 @@ class PaymentController extends AmapBaseController
             'userMonth' => $userMonth
         ));
      }
+
+    public function validationVirements() {
+         
+        $this->denyAccessUnlessGranted('ROLE_FARMER');
+        $virements = [[
+            "reference"=>"EASYAMAP-CHAMBRAY-000001",
+            "montant"=>"27,00 €",
+            "description"=>"Contrat : Boulangerie Pâtisserie Biologique ROUSSEL TRADITION (Juillet)",
+            "adherent"=>"Antoine DUPONT",
+            "date"=>"16 septembre 2025"
+        ],[
+            "reference"=>"EASYAMAP-LARICHE-123456",
+            "montant"=>"21,48 €",
+            "description"=>"Contrat : Boulangerie",
+            "adherent"=>"Mathieu JALIBERT",
+            "date"=>"16 septembre 2025"]];
+        return $this->render('Payment/validation_virements.html.twig', array(
+            "virements" => $virements
+        ));
+     }
 }

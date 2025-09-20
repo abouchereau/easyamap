@@ -15,7 +15,7 @@ class PaymentType
 {
     const CHECK  = 1;
     const CASH   = 2;
-    const PAYPAL = 3;
+    const VIREMENT = 3;
     
     
     use LabelTrait;
@@ -43,7 +43,7 @@ class PaymentType
         switch ($type) {
             case self::CHECK: return "Chèque"; break;
             case self::CASH: return "Espèces"; break;
-            case self::PAYPAL: return "PayPal"; break;
+            case self::VIREMENT: return "Virement"; break;
         }
         return false;
     }

@@ -5,44 +5,80 @@
     {% set payments = tab[1] %}
     {% set payment_info = tab[2] %}    
     {% set chosen_payment = tab[3] %}
-    <dl>
-    {% for i,choices in payments %}
-        <dt><span class="glyphicon glyphicon-{% if chosen_payment[i] %}check{% else %}unchecked{% endif %}"></span> {% if not loop.first %}ou {% endif %}<b>{{ choices|length }}</b> 
-        {% if 1 in types %}chèque{% else %}paiement{% endif %}{% if choices|length > 1 %}s{% endif %} :</dt>
-        <dd><span class="repartition">{% for choice in choices %}
-                {% if choice[2] == 1 %}{#
-                    #}<b>?</b> € <small>(selon livraison)</small>{#
-                     #}{% if not loop.last %} + {% endif %}
-                    {% else %}
-                {{ choice[1]|price_fr }}{#
-                #}{% if not loop.last %} + {% endif %}
-                {% endif %}
-            {% endfor %}
-        </span><small>({% for choice in choices %}{#
-                #}{% if choice[3] > 0 %}{# mensuel #}{#
-                   #}{{ choice[0]|creneau(choice[3]) }}{#
-                #}{% else %}{#
-                    #}{{ choice[0]|date_fr }}{#
-                #}{% endif %}{#
-                #}{% if not loop.last %} / {% endif %}{#
-            
-            #}{% endfor %})</small>
-    </dd>
-    {% endfor %}
-    </dl>
-    
-    <p class="small">
-        {% for type in types %}
-            {% if not loop.first %} / {% endif %}
-            {% if type == 1 %}
-                Chèques à l'ordre de "<i>{{ payment_info[0] }}</i>"
-            {% elseif type == 2 %}
-                Paiement en espèces
-            {% elseif type == 3 %}
-                Paiement par PayPal
-            {% endif %}
+  {% if 1 in types %}
+        <div class="row">
+            <div class="col-sm-2"><span class="glyphicon glyphicon-chevron-right"></span> <b>Chèque</b></div>
+            <div class="col-sm-8">
+        {% for i,choices in payments %}            
+            <div class="enum"><span class="glyphicon glyphicon-{% if chosen_payment[i] %}check{% else %}unchecked{% endif %}"></span> {% if not loop.first %}ou {% endif %}<b>{{ choices|length }}</b> 
+            {% if 1 in types %}chèque{% else %}paiement{% endif %}{% if choices|length > 1 %}s{% endif %} :</div>
+            <span class="repartition">{% for choice in choices %}
+                    {% if choice[2] == 1 %}{#
+                        #}<b>?</b> € <small>(selon livraison)</small>{#
+                        #}{% if not loop.last %} + {% endif %}
+                        {% else %}
+                    {{ choice[1]|price_fr }}{#
+                    #}{% if not loop.last %} + {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </span><small>({% for choice in choices %}{#
+                    #}{% if choice[3] > 0 %}{# mensuel #}{#
+                    #}{{ choice[0]|creneau(choice[3]) }}{#
+                    #}{% else %}{#
+                        #}{{ choice[0]|date_fr }}{#
+                    #}{% endif %}{#
+                    #}{% if not loop.last %} / {% endif %}{#
+                
+                #}{% endfor %})</small>
         {% endfor %}
-    </p>
+        <div class="small">Chèques à l'ordre de "<i>{{ payment_info[0] }}</i>"</div>
+        </div>
+        </div>
+    {% endif %}
+
+    {% if 2 in types %}
+        <div class="row mt">
+            <div class="col-sm-2"><span class="glyphicon glyphicon-chevron-right"></span> <b>Espèces</b></div>
+        <div class="col-sm-8">
+        
+        {% for i,choices in payments %}
+            <div class="enum"><span class="glyphicon glyphicon-{% if chosen_payment[i] %}check{% else %}unchecked{% endif %}"></span> {% if not loop.first %}ou {% endif %}<b>{{ choices|length }}</b> 
+            {% if 1 in types %}chèque{% else %}paiement{% endif %}{% if choices|length > 1 %}s{% endif %} :</div>
+            <span class="repartition">{% for choice in choices %}
+                    {% if choice[2] == 1 %}{#
+                        #}<b>?</b> € <small>(selon livraison)</small>{#
+                        #}{% if not loop.last %} + {% endif %}
+                        {% else %}
+                    {{ choice[1]|price_fr }}{#
+                    #}{% if not loop.last %} + {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </span><small>({% for choice in choices %}{#
+                    #}{% if choice[3] > 0 %}{# mensuel #}{#
+                    #}{{ choice[0]|creneau(choice[3]) }}{#
+                    #}{% else %}{#
+                        #}{{ choice[0]|date_fr }}{#
+                    #}{% endif %}{#
+                    #}{% if not loop.last %} / {% endif %}{#
+                
+                #}{% endfor %})</small>
+        
+        {% endfor %}
+        
+        </div>
+        </div>
+    {% endif %}
+
+    {% if 3 in types %}
+    <div class="row mt">
+        <div class="col-sm-2"><span class="glyphicon glyphicon-chevron-right"></span> <b>Virement</b></div>
+        <div class="col-sm-8">
+            <a id="virement-btn" class="btn btn-info" href="#">Payer par virement</a>
+        </div>
+    </div>
+    {% endif %}
+
+
     {% if isReferentPage is defined and isReferentPage and idPayment is defined %}{# uniquement dans  sonata 
         #}<script>var descriptions=descriptions||{};descriptions[{{ idPayment }}]={{description|raw}};</script>{#
     #}{% endif %}
@@ -50,3 +86,90 @@
     {{ description|replace({'OU':'<b>OU</b>'})|raw }}    
 {% endif %}
 </div>
+
+
+
+<div class="modal fade" id="virement">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+     <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Informations pour votre virement bancaire</h4>
+    </div>
+      <div class="modal-body">
+
+        <div class="row">
+            <div class="col col-md-7">
+                <div class="row">
+                    <div class="col col-md-12 p-3">
+                        <p>Pour effectuer un virement, merci de copier exactement les informations suivantes dans votre application bancaire.</p>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col col-md-3 py-3">
+                        <b>IBAN</b>
+                    </div>
+                    <div class="col col-md-7">
+                        <input type="text" id="virement-iban" value="" class="form-control" style="font-family: 'Roboto Mono'"/>
+                    </div>
+                    <div class="col col-md-2">
+                        <a class="btn btn-info">Copier</a>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col col-md-3 py-3">
+                        <b>Référence</b>
+                    </div>
+                    <div class="col col-md-7">
+                        <input type="text" id="virement-reference" value="" class="form-control" style="font-family: 'Roboto Mono'"/>
+                    </div>
+                    <div class="col col-md-2">
+                        <a class="btn btn-info">Copier</a>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col col-md-3 py-3">
+                        <b>Montant (€)</b>
+                    </div>
+                    <div class="col col-md-7">
+                        <input type="text" id="virement-montant" value="" class="form-control" style="font-family: 'Roboto Mono'"/>
+                    </div>
+                    <div class="col col-md-2">
+                        <a class="btn btn-info">Copier</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col col-md-4 col-md-offset-1 bg-grey">
+                <div class="row">
+                    <div class="col col-md-12 p-3">
+                        <p>Si votre application bancaire le permet, vous pouvez scanner ce QR Code afin de préremplir les informations du virement.</p>
+                    </div>
+                </div>                
+                <div class="row">
+                    <div class="col col-md-12 pb-3 text-center">
+                        <div id="qr-code"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <hr />
+
+         <div class="row mt-4">
+            <div class="col col-md-12">
+                <p>Une fois le virement effectué, merci de cocher la case ci-dessous : le producteur sera averti et pourra valider la réception du virement.</p>
+            </div>
+        </div>
+          <div class="row py-3 my-3 bg-success">
+            <div class="col col-md-12 text-center" style="transform: scale(1.5);">
+                <input type="checkbox" class="form-check-input" id="user-check-payment" style="position:relative;top:2px;right:5px;"/> 
+                  <label for="user-check-payment" >J'ai effectué le virement.</label>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

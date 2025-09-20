@@ -1,0 +1,43 @@
+{% extends 'layout.html.twig' %}
+{% block header_title %}Validation des virements{% endblock %}
+
+{% block body %}
+    
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <ul class="nav nav-tabs nav-justified">
+            <li role="presentation" class="active"><a href="#">Virements à approuver</a></li>
+            <li role="presentation"><a href="#">Virements approuvés</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8 col-md-offset-2">
+      <ul class="list-group">
+        {% for virement in virements %}
+        <li class="list-group-item">
+            <table style="width:100%">
+                <tr>
+                <td style="width:75%">
+                    <h4 class="list-group-item-heading">{{virement.reference}}</h4>
+                    <h3 class="list-group-item-text mt-0">{{virement.montant}}</h3>
+                    <p class="list-group-item-text"><b>{{virement.adherent}}</b></p>
+                    <p class="list-group-item-text">{{virement.description}}</p>
+                    <p class="list-group-item-text"><i>{{virement.date}}</i></p>
+                </td>
+                <td>
+                    <button class="btn btn-block btn-primary">Valider</button>
+                </td>
+                </tr>
+            </table>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+</div>
+{% endblock %}
+{% block footer_js %}
+
+{% endblock %}
+

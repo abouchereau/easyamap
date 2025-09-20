@@ -574,3 +574,7 @@ tableau_livraison_par_produit:
     controller: App\Controller\PurchaseController:tableauLivraisonParProduit
     defaults:
         dateDebutStr: null
+
+validation_virements:
+    path: validation_virements
+    controller: App\Controller\PaymentController:validationVirements

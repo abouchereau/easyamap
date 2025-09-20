@@ -53,6 +53,13 @@ class Farm
     private $checkPayableTo;
 
 
+        /**
+     * @var string
+     *
+     * @ORM\Column(name="iban", type="string", length=255, nullable=true)
+     */
+    private $iban;
+
     /**
      * @var string
      *
@@ -214,6 +221,28 @@ class Farm
         return $this->checkPayableTo;
     }
 
+       /**
+     * Set iban
+     *
+     * @param string $iban
+     * @return Farm
+     */
+    public function setIban($iban)
+    {
+        $this->iban = $iban;
+
+        return $this;
+    }
+
+    /**
+     * Get iban
+     *
+     * @return string 
+     */
+    public function getIban()
+    {
+        return $this->iban;
+    }
     /**
      * Set link
      *

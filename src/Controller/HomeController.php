@@ -71,12 +71,12 @@ class HomeController extends AmapBaseController
              'Rapports',
              'Statistiques par produit'
              );
-        /*$list[] = array(
-             $this->generateUrl('payment_history_farmer'),
-             'plus',
-             'Somme des paiements',
-             'Somme des paiements par annnée et par adhérent.'
-             );*/
+        $list[] = array(
+             $this->generateUrl('validation_virements'),
+             'euro',
+             'Virements',
+             'Validation des virements'
+             );
         return $list;
     }
     
