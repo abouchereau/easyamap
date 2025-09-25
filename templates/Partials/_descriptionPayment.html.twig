@@ -5,9 +5,12 @@
     {% set payments = tab[1] %}
     {% set payment_info = tab[2] %}    
     {% set chosen_payment = tab[3] %}
-  {% if 1 in types %}
+
+
+
+  {% if 1 in types  and 3 not in types %}
         <div class="row">
-            <div class="col-sm-2"><span class="glyphicon glyphicon-chevron-right"></span> <b>Chèque</b></div>
+            <div class="col-sm-4"><span class="glyphicon glyphicon-chevron-right"></span> <b>Chèque</b></div>
             <div class="col-sm-8">
         {% for i,choices in payments %}            
             <div class="enum"><span class="glyphicon glyphicon-{% if chosen_payment[i] %}check{% else %}unchecked{% endif %}"></span> {% if not loop.first %}ou {% endif %}<b>{{ choices|length }}</b> 
@@ -70,11 +73,22 @@
     {% endif %}
 
     {% if 3 in types %}
-    <div class="row mt">
-        <div class="col-sm-2"><span class="glyphicon glyphicon-chevron-right"></span> <b>Virement</b></div>
+        <div class="row mt">
+            <div class="col-sm-4"><span class="glyphicon glyphicon-chevron-right"></span> <b>Virement</b></div>
+        {% if isReferentPage %}
+          <div class="col-sm-8">
+            <i class="glyphicon glyphicon-ok text-success"></i> Envoyé
+            {% if payment_info[0] == "SARLU MAC TRADITION" %}
+            <i class="glyphicon glyphicon-ok text-success"></i>
+            {% else %}            
+            <i class="glyphicon glyphicon-remove text-danger"></i>
+            {% endif %} Reçu
+        </div>
+    {% else %}
         <div class="col-sm-8">
             <a id="virement-btn" class="btn btn-info" href="#">Payer par virement</a>
         </div>
+    {% endif %}
     </div>
     {% endif %}
 
