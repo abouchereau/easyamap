@@ -70,31 +70,39 @@ $(document).ready(function () {
         $('#payment_received_modal').modal('show');
     }
 
-    $("#virement-btn").click(e=> {
+    $(".virement-btn").click(e=> {
+        let idPayment = e.target.dataset.idPayment;
         e.preventDefault(); 
-        $("#virement").modal("show");
-        let virement = {
-            "iban": "FR01 1234 1234 1234 1234 1234 123",
-            "montant": "27,00",
-            "reference": "EASYAMAP-CHAMBRAY-00001",
-            "beneficiaire": "Roussel"
-        };
-        $("#virement-iban").val(virement.iban);
-        $("#virement-montant").val(virement.montant);
-        $("#virement-reference").val(virement.reference);
+        $.ajax({
+            url: root+"ajax/getInfoVirement/"+idPayment,
+            dataType: 'json',
+            beforeSend: function () {
+                 $("#loader").show();
+            },
+            success: function(data) {
+                $("#loader").hide();                
+                $("#virement").modal("show");                    
+                $("#virement-iban").val(data.iban);
+                $("#virement-montant").val(data.montant);
+                $("#virement-reference").val(data.reference);
+                $("#virement-beneficiaire").html("("+data.beneficiaire+")");
 
-        let qrStr = sepaData
-            .replace("__BENEFICIAIRE__", virement.beneficiaire)
-            .replace("__IBAN__", virement.iban)
-            .replace("__MONTANT__", virement.montant.replace(",","."))
-            .replace("__REFERENCE__", virement.reference);
+                let qrStr = sepaData
+                    .replace("__BENEFICIAIRE__", data.beneficiaire)
+                    .replace("__IBAN__", data.iban)
+                    .replace("__MONTANT__", data.montant.replace(",","."))
+                    .replace("__REFERENCE__", data.reference);
 
-        const qr = qrcode(0, 'M'); // niveau de correction
-        qr.addData(qrStr);
-        qr.make();
+                const qr = qrcode(0, 'M'); // niveau de correction
+                qr.addData(qrStr);
+                qr.make();
 
-       $("#qr-code").html(qr.createImgTag(3, 10, "QR Code"));
+                $("#qr-code").html(qr.createImgTag(3, 10, "QR Code"));
 
+                showLoader(false);
+            }
+        });          
+    
         return false;
     });
 

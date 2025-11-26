@@ -89,7 +89,7 @@ class PaymentRepository extends EntityRepository
     public function findForUserContract($contract, $user)
     {
        $conn = $this->getEntityManager()->getConnection();
-       $sql = "SELECT fk_farm, amount, description, received
+       $sql = "SELECT fk_farm, amount, description, received, id_payment
          FROM payment
          WHERE fk_contract=".$contract->getIdContract()."
          AND fk_user=".$user->getIdUser();
@@ -770,5 +770,20 @@ class PaymentRepository extends EntityRepository
         else {
             return '[]';
         }
+    }
+
+    public function getInfoVirement($idPayment) {  
+        $conn = $this->getEntityManager()->getConnection();
+        $params = ['id_payment' => $idPayment];
+        $sql = "select p.id_payment as reference, p.amount as montant, f.label as beneficiaire, f.iban
+            from payment p
+            left join farm f on f.id_farm = p.fk_farm
+            where p.id_payment=:id_payment";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+        $obj = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $obj["reference"] = "EASYAMAP-".strtoupper($_SERVER['APP_ENV'])."-".str_pad($obj['reference'], 7, '0', STR_PAD_LEFT);
+        $obj["montant"] = number_format($obj["montant"], 2, ',',' ');
+        return $obj;
     }
 }

@@ -387,5 +387,11 @@ class PaymentController extends AmapBaseController
         return $this->render('Payment/validation_virements.html.twig', array(
             "virements" => $virements
         ));
-     }
+    }
+
+    public function getInfoVirement($idPayment) {        
+        $em = $this->getDoctrine()->getManager(); 
+        $infos = $em->getRepository('App\Entity\Payment')->getInfoVirement($idPayment);
+        return new Response(json_encode($infos));        
+    }
 }

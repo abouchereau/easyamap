@@ -75,7 +75,7 @@
     {% if 3 in types %}
         <div class="row mt">
             <div class="col-sm-4"><span class="glyphicon glyphicon-chevron-right"></span> <b>Virement</b></div>
-        {% if isReferentPage %}
+        {% if isReferentPage is defined and isReferentPage %}
           <div class="col-sm-8">
             <i class="glyphicon glyphicon-ok text-success"></i> Envoyé
             {% if payment_info[0] == "SARLU MAC TRADITION" %}
@@ -86,7 +86,7 @@
         </div>
     {% else %}
         <div class="col-sm-8">
-            <a id="virement-btn" class="btn btn-info" href="#">Payer par virement</a>
+            <a class="btn btn-info virement-btn" href="#" data-id-payment="{{ idPayment }}">Payer par virement</a>
         </div>
     {% endif %}
     </div>
@@ -121,35 +121,35 @@
                 </div>
                 <div class="row mt-4">
                     <div class="col col-md-3 py-3">
-                        <b>IBAN</b>
+                        <b>IBAN</b><br /><span id="virement-beneficiaire"></span>
                     </div>
-                    <div class="col col-md-7">
-                        <input type="text" id="virement-iban" value="" class="form-control" style="font-family: 'Roboto Mono'"/>
+                    <div class="col col-md-7 py-3">
+                        <input readonly type="text" id="virement-iban" value="" class="form-control" style="font-family: 'Roboto Mono'" onclick="this.select()"/>
                     </div>
-                    <div class="col col-md-2">
-                        <a class="btn btn-info">Copier</a>
+                    <div class="col col-md-2 py-3">
+                        <a class="btn btn-info" onclick="toClipboard('virement-iban')">Copier</a>
                     </div>
                 </div>
                 <div class="row mt-2">
                     <div class="col col-md-3 py-3">
                         <b>Référence</b>
                     </div>
-                    <div class="col col-md-7">
-                        <input type="text" id="virement-reference" value="" class="form-control" style="font-family: 'Roboto Mono'"/>
+                    <div class="col col-md-7 py-3">
+                        <input readonly type="text" id="virement-reference" value="" class="form-control" style="font-family: 'Roboto Mono'" onclick="this.select()" />
                     </div>
-                    <div class="col col-md-2">
-                        <a class="btn btn-info">Copier</a>
+                    <div class="col col-md-2 py-3">
+                        <a class="btn btn-info" onclick="toClipboard('virement-reference')">Copier</a>
                     </div>
                 </div>
                 <div class="row mt-2">
                     <div class="col col-md-3 py-3">
                         <b>Montant (€)</b>
                     </div>
-                    <div class="col col-md-7">
-                        <input type="text" id="virement-montant" value="" class="form-control" style="font-family: 'Roboto Mono'"/>
+                    <div class="col col-md-7 py-3">
+                        <input readonly type="text" id="virement-montant" value="" class="form-control" style="font-family: 'Roboto Mono'" onclick="this.select()"/>
                     </div>
-                    <div class="col col-md-2">
-                        <a class="btn btn-info">Copier</a>
+                    <div class="col col-md-2 py-3">
+                        <a class="btn btn-info" onclick="toClipboard('virement-montant')">Copier</a>
                     </div>
                 </div>
             </div>
@@ -178,7 +178,7 @@
         </div>
           <div class="row py-3 my-3 bg-success">
             <div class="col col-md-12 text-center" style="transform: scale(1.5);">
-                <input type="checkbox" class="form-check-input" id="user-check-payment" style="position:relative;top:2px;right:5px;"/> 
+                <input type="checkbox" class="form-check-input" id="user-check-payment" style="position:relative;top:2px;right:5px;" onchange="changeCheckboxPayment(this.checked)" /> 
                   <label for="user-check-payment" >J'ai effectué le virement.</label>
             </div>
         </div>
@@ -187,3 +187,41 @@
   </div>
 </div>
 
+<script>
+const toClipboard = (id) => {
+    const elt = document.getElementById(id);
+    elt.select();
+    const text = elt.value.replaceAll(" ","");
+    navigator.clipboard.writeText(text)
+        .then(()=>alert("Texte copié dans le presse-papier"))
+        .catch(console.error);
+
+}
+
+const changeCheckboxPayment = (checked) => {
+    console.log("CHECKED", checked);
+    const url = root+'distributions_between/'+dateStart+'/'+dateEnd;
+    $.ajax({
+      url: url,
+      dataType: 'json',
+      beforeSend: function () 
+      {
+
+      },
+      success: function(data) 
+      {
+        
+        var nb = data.length;
+        var html = nb+' distribution(s) entre ces 2 dates :<ul class="list-group">';
+        for (var i in data)
+        {
+          var date = new Date(data[i]);
+          html += '<li class="list-group-item">'+jours[date.getDay()]+' '+date.getDate()+' '+mois[date.getMonth()]+'</li>';
+        }
+        html += '</ul>';
+        $("#msg-alert .modal-body").html(html);
+        $("#msg-alert").modal('show');
+      }
+    });
+};
+</script>

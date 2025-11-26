@@ -103,7 +103,6 @@ class PurchaseController extends AmapBaseController
     if ($contract->getCountPurchaseSince() != null) {
         $purchaseSince = $em->getRepository('App\Entity\Purchase')->getPurchaseCountSince($contract->getCountPurchaseSince(), $products, $user);
     }
-  
     return $this->render('Purchase/view.html.twig', array(
           'contract'      => $contract,
           'distributions' => $distributions,

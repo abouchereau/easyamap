@@ -578,3 +578,7 @@ tableau_livraison_par_produit:
 validation_virements:
     path: validation_virements
     controller: App\Controller\PaymentController:validationVirements
+
+ajax_get_info_virement:
+    path: ajax/getInfoVirement/{idPayment}
+    controller: App\Controller\PaymentController:getInfoVirement

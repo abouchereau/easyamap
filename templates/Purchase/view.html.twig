@@ -129,7 +129,7 @@
                     {% endif %}
                 </div>
                     <div class="payment not-first">Paiement reçu</div><div class="payment_right not-first">{% if payments[product.fkFarm.idFarm].received==0 %}non{% else %}oui{% endif %}</div>
-                    <div class="payment not-first">Règlement</div><div class="payment_right not-first"> {% include 'Partials/_descriptionPayment.html.twig' with {'description': payments[product.fkFarm.idFarm].description, 'short':false } %}</div>
+                    <div class="payment not-first">Règlement</div><div class="payment_right not-first"> {% include 'Partials/_descriptionPayment.html.twig' with {'idPayment': payments[product.fkFarm.idFarm].id_payment, 'description': payments[product.fkFarm.idFarm].description, 'short':false } %}</div>
                     {% if user_list is not null and not enable %}
                         <div class="text-danger">Ce contrat ne peut pas être édité car le paiement a déjà été reçu.<br />
                             Si vous souhaitez l'éditer, il faut d'abord remettre la montant du paiement reçu à 0,00 € (dans "Réception des paiements")
@@ -249,6 +249,9 @@
 {% endblock %}
 
 {% block footer_js %}
+<script>
+var root = '{{ url('home') }}';
+</script>
 <script type="text/javascript" src="{{ asset('js/purchase.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator/qrcode.js"></script>
 {% endblock %}
