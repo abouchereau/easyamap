@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Product;
 use App\Form\ProductType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\Session\Session;
 /**
  * Product controller.
  *
@@ -27,9 +28,21 @@ class ProductController extends AmapBaseController
         $user = $this->get('security.token_storage')->getToken()->getUser();
 
         $filterFarm = -1;
+                 
+        $session = new Session();
         if (isset($_GET['farm'])) {
-            $filterFarm = intval($_GET['farm']);
+            $filterFarm = intval($_GET['farm']);   
+            if ($filterFarm == -1) {
+                $session->remove('filterFarm');
+            }
+            else {
+                $session->set('filterFarm', $filterFarm);
+            }            
         }
+        elseif ($session->has('filterFarm')) {            
+            $filterFarm = $session->get('filterFarm');  
+        }
+
         $entities = null;
         if ($user->getIsAdmin()) {//admin : on voit tous les produits
             $entities = $em->getRepository('App\Entity\Product')->findAllOrderByFarm();
