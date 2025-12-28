@@ -13,104 +13,60 @@ use App\Entity\Traits\SequenceTrait;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * Farm
- *
- * @ORM\Table(name="farm", uniqueConstraints={@ORM\UniqueConstraint(name="label", columns={"label"})})
- * @ORM\Entity(repositoryClass="App\Repository\FarmRepository")
- * @UniqueEntity("label")
- */
+#[ORM\Table(name: 'farm', uniqueConstraints: [new ORM\UniqueConstraint(name: 'label', columns: ['label'])])]
+#[ORM\Entity(repositoryClass: \App\Repository\FarmRepository::class)]
+#[UniqueEntity('label')]
 class Farm
 {
-  
     use LabelTrait;
     use IsActiveDefaultTrueTrait;
     use DescriptionTrait;
     use SequenceTrait;
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id_farm", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+    #[ORM\Column(name: 'id_farm', type: 'integer')]
     private $idFarm;
 
    
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="product_type", type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(name: 'product_type', type: 'string', length: 255, nullable: true)]
     private $productType;
 
     
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="check_payable_to", type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(name: 'check_payable_to', type: 'string', length: 255, nullable: true)]
     private $checkPayableTo;
 
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="link", type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(name: 'link', type: 'string', length: 255, nullable: true)]
     private $link;
     
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="equitable", type="boolean", nullable=false, )
-     */
+    #[ORM\Column(name: 'equitable', type: 'boolean', nullable: false)]
     private $equitable = false;
 
     
     
-    /**
-    * @ORM\ManyToMany(targetEntity="App\Entity\User")
-     * @JoinTable(name="referent",
-     *      joinColumns={@JoinColumn(name="fk_farm", referencedColumnName="id_farm")},
-     *      inverseJoinColumns={@JoinColumn(name="fk_user", referencedColumnName="id_user")}
-     *      )
-     **/
-
-
+    #[ORM\ManyToMany(targetEntity: \App\Entity\User::class)]
+    #[ORM\JoinTable(name: 'referent', joinColumns: [new ORM\JoinColumn(name: 'fk_farm', referencedColumnName: 'id_farm')], inverseJoinColumns: [new ORM\JoinColumn(name: 'fk_user', referencedColumnName: 'id_user')])]
     private $referents;
     
 
-   /**
-     * @var \User
-     *
-     * @ORM\OneToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="fk_user", referencedColumnName="id_user")
-     * })
-     */
-    private $fkUser;
+        #[ORM\OneToOne(targetEntity: \App\Entity\User::class)]
+        #[ORM\JoinColumn(name: 'fk_user', referencedColumnName: 'id_user')]
+        private $fkUser;
 
     
     /**    
      * @Assert\Count(min = 1, minMessage = "Merci de choisir au moins un type de paiement")  
-     * @ORM\ManyToMany(targetEntity="App\Entity\PaymentType")
-     * @JoinTable(name="farm_payment_type",
-     *      joinColumns={@JoinColumn(name="fk_farm", referencedColumnName="id_farm")},
-     *      inverseJoinColumns={@JoinColumn(name="fk_payment_type", referencedColumnName="id_payment_type")}
-     *      )
-     **/
+     */
+    #[ORM\ManyToMany(targetEntity: \App\Entity\PaymentType::class)]
+    #[ORM\JoinTable(name: 'farm_payment_type', joinColumns: [new ORM\JoinColumn(name: 'fk_farm', referencedColumnName: 'id_farm')], inverseJoinColumns: [new ORM\JoinColumn(name: 'fk_payment_type', referencedColumnName: 'id_payment_type')])]
     private $payment_types;
     
     
     /**
      * @Assert\Count(min = 1, minMessage = "Merci de choisir au moins une fréquence de paiement") 
-     * @ORM\ManyToMany(targetEntity="App\Entity\PaymentFreq")
-     * @JoinTable(name="farm_payment_freq",
-     *      joinColumns={@JoinColumn(name="fk_farm", referencedColumnName="id_farm")},
-     *      inverseJoinColumns={@JoinColumn(name="fk_payment_freq", referencedColumnName="id_payment_freq")}
-     *      )
-     **/
+     */
+    #[ORM\ManyToMany(targetEntity: \App\Entity\PaymentFreq::class)]
+    #[ORM\JoinTable(name: 'farm_payment_freq', joinColumns: [new ORM\JoinColumn(name: 'fk_farm', referencedColumnName: 'id_farm')], inverseJoinColumns: [new ORM\JoinColumn(name: 'fk_payment_freq', referencedColumnName: 'id_payment_freq')])]
     private $payment_freqs;
     
     

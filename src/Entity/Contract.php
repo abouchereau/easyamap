@@ -13,13 +13,12 @@ use App\Entity\Traits\FkUserTrait;
 use App\Entity\Traits\DescriptionTrait;
 /**
  * Contract
- *
- * @ORM\Table(name="contract")
- * @ORM\Entity(repositoryClass="App\Repository\ContractRepository")
  */
+#[ORM\Table(name: 'contract')]
+#[ORM\Entity(repositoryClass: \App\Repository\ContractRepository::class)]
 class Contract
 {  
-  
+
     use LabelTrait;
     use IsActiveDefaultFalseTrait;
     use IsVisibleDefaultTrueTrait;
@@ -78,15 +77,12 @@ class Contract
      */
     private $autoEndHour;
 
-    /**
-    * @ORM\ManyToMany(targetEntity="App\Entity\Product")
-     * @JoinTable(name="contract_product",
-     *      joinColumns={@JoinColumn(name="fk_contract", referencedColumnName="id_contract")},
-     *      inverseJoinColumns={@JoinColumn(name="fk_product", referencedColumnName="id_product")}
-     *      )
-     **/
-
-     private $products;
+    #[ORM\ManyToMany(targetEntity: \App\Entity\Product::class)]
+    #[ORM\JoinTable(name: 'contract_product',
+        joinColumns: [new ORM\JoinColumn(name: 'fk_contract', referencedColumnName: 'id_contract')],
+        inverseJoinColumns: [new ORM\JoinColumn(name: 'fk_product', referencedColumnName: 'id_product')]
+    )]
+    private $products;
      
      
     /**

@@ -4,49 +4,25 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * Distribution
- *
- * @ORM\Table(name="distribution")
- * @ORM\Entity(repositoryClass="App\Repository\DistributionRepository")
- */
+#[ORM\Table(name: 'distribution')]
+#[ORM\Entity(repositoryClass: \App\Repository\DistributionRepository::class)]
 class Distribution
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id_distribution", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+    #[ORM\Column(name: 'id_distribution', type: 'integer')]
     private $idDistribution;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="date", type="date", nullable=false)
-     */
+    #[ORM\Column(name: 'date', type: 'date', nullable: false)]
     private $date;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="info_livraison", type="text", nullable=true)
-     */
+    #[ORM\Column(name: 'info_livraison', type: 'text', nullable: true)]
     private $infoLivraison;
-    
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="info_distribution", type="text", nullable=true)
-     */
+
+    #[ORM\Column(name: 'info_distribution', type: 'text', nullable: true)]
     private $infoDistribution;
-    
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="info_divers", type="text", nullable=true)
-     */
+
+    #[ORM\Column(name: 'info_divers', type: 'text', nullable: true)]
     private $infoDivers;
 
 

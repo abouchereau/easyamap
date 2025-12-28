@@ -5,66 +5,59 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\LabelTrait;
 use App\Entity\Traits\IsActiveDefaultTrueTrait;
-/**
- * Setting
- *
- * @ORM\Table(name="task")
- * @ORM\Entity(repositoryClass="App\Repository\TaskRepository")
- */
+
+#[ORM\Table(name: 'task')]
+#[ORM\Entity(repositoryClass: \App\Repository\TaskRepository::class)]
 class Task
 {
     use LabelTrait;
     use IsActiveDefaultTrueTrait;
-   /**
-     * @var integer
-     *
-     * @ORM\Column(name="id_task", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $idTask;
-    
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="min", type="integer", nullable=true)
-     */
-    private $min;
-    
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="max", type="integer", nullable=true)
-     */
-    private $max;
-    
-    function getIdTask() {
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+    #[ORM\Column(name: 'id_task', type: 'integer')]
+    private ?int $idTask = null;
+
+    #[ORM\Column(name: 'min', type: 'integer', nullable: true)]
+    private ?int $min = null;
+
+    #[ORM\Column(name: 'max', type: 'integer', nullable: true)]
+    private ?int $max = null;
+
+    public function getIdTask(): ?int
+    {
         return $this->idTask;
     }
 
-    function setIdTask($idTask) {
+    public function setIdTask(?int $idTask): static
+    {
         $this->idTask = $idTask;
+
         return $this;
     }
-    
-    function getMin() {
+
+    public function getMin(): ?int
+    {
         return $this->min;
     }
 
-    function getMax() {
+    public function getMax(): ?int
+    {
         return $this->max;
     }
 
-    function setMin($min) {
+    public function setMin(?int $min): static
+    {
         $this->min = $min;
+
         return $this;
     }
 
-    function setMax($max) {
+    public function setMax(?int $max): static
+    {
         $this->max = $max;
+
         return $this;
     }
 
-
-    
 }

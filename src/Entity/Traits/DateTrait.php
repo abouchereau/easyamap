@@ -7,11 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
  
 trait DateTrait
 {
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="date", type="date", nullable=true)
-     */
+    #[ORM\Column(name: 'date', type: 'date', nullable: true)]
     private $date;
     
         

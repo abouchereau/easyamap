@@ -8,11 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 trait AmountTrait
 {
         
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="amount", type="float", precision=10, scale=0, nullable=true)
-     */
+    #[ORM\Column(name: 'amount', type: 'float', precision: 10, scale: 0, nullable: true)]
     private $amount;
     
         

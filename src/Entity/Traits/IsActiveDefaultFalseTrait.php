@@ -5,11 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
  
 trait IsActiveDefaultFalseTrait
 {
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="is_active", type="boolean", nullable=true)
-     */
+    #[ORM\Column(name: 'is_active', type: 'boolean', nullable: true)]
     private $isActive = false;
     
             /**

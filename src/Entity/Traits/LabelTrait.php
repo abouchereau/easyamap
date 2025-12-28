@@ -7,12 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
  
 trait LabelTrait
 {
-    /**
-   * @var string
-   *
-   * @ORM\Column(name="label", type="string", length=255, nullable=false)
-   */
-  private $label;
+    #[ORM\Column(name: 'label', type: 'string', length: 255, nullable: false)]
+    private $label;
     /**
    * Set label
    *

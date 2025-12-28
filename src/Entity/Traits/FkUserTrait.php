@@ -7,15 +7,9 @@ use Doctrine\ORM\Mapping as ORM;
  
 trait FkUserTrait
 {
-    /**
-     * @var \User
-     *
-     * @ORM\ManyToOne(targetEntity="User")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="fk_user", referencedColumnName="id_user")
-     * })
-     * @ORM\OrderBy({"isActive" = "DESC", "lastname" = "ASC"})
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\User::class)]
+    #[ORM\JoinColumn(name: 'fk_user', referencedColumnName: 'id_user')]
+    #[ORM\OrderBy(['isActive' => 'DESC', 'lastname' => 'ASC'])]
     private $fkUser;
     
 

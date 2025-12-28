@@ -7,15 +7,9 @@ use Doctrine\ORM\Mapping as ORM;
  
 trait FkPaymentTrait
 {
-   /**
-     * @var \Payment
-     *
-     * @ORM\ManyToOne(targetEntity="Payment")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="fk_payment", referencedColumnName="id_payment")
-     * })
-     */
-    private $fkPayment;
+        #[ORM\ManyToOne(targetEntity: \App\Entity\Payment::class)]
+        #[ORM\JoinColumn(name: 'fk_payment', referencedColumnName: 'id_payment')]
+        private $fkPayment;
     
 
     public function setFkPayment(\App\Entity\Payment $fkPayment = null)

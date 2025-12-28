@@ -13,42 +13,26 @@ use App\Entity\Traits\DescriptionTrait;
 use App\Entity\Traits\AmountTrait;
 
 
-/**
- * Payment
- *
- * @ORM\Table(name="payment")
- * @ORM\Entity(repositoryClass="App\Repository\PaymentRepository")
- */
+#[ORM\Table(name: 'payment')]
+#[ORM\Entity(repositoryClass: \App\Repository\PaymentRepository::class)]
 class Payment
 {  
-  
+
     use FkUserTrait;
     use FkFarmTrait;
     use FkContractTrait;
     use DescriptionTrait;    
     use AmountTrait;    
-    
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id_payment", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+    #[ORM\Column(name: 'id_payment', type: 'integer')]
     private $idPayment;
-    
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="received", type="float", precision=10, scale=0, nullable=false)
-     */
+
+    #[ORM\Column(name: 'received', type: 'float', precision: 10, scale: 0, nullable: false)]
     private $received;
-    
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="received_at", type="date", nullable=true)
-     */
+
+    #[ORM\Column(name: 'received_at', type: 'date', nullable: true)]
     private $receivedAt;
     
     /**

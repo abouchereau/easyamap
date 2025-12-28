@@ -10,13 +10,10 @@ use App\Entity\Traits\FkFarmTrait;
 use App\Entity\Traits\TraceTimeTrait;
 use App\Entity\Traits\SequenceTrait;
 use App\Entity\Traits\DescriptionTrait;
-/**
- * Product
- *
- * @ORM\Table(name="product", uniqueConstraints={@ORM\UniqueConstraint(name="label", columns={"label", "unit", "fk_farm"})}, indexes={@ORM\Index(name="fk_farm", columns={"fk_farm"})})
- * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
- * @UniqueEntity(fields={"label", "unit", "fkFarm"},message="Un produit similaire existe déjà.")
- */
+
+#[ORM\Table(name: 'product', uniqueConstraints: [new ORM\UniqueConstraint(name: 'label', columns: ['label', 'unit', 'fk_farm'])], indexes: [new ORM\Index(name: 'fk_farm', columns: ['fk_farm'])])]
+#[ORM\Entity(repositoryClass: \App\Repository\ProductRepository::class)]
+#[UniqueEntity(fields: ['label', 'unit', 'fkFarm'], message: 'Un produit similaire existe déjà.')]
 class Product
 {      
     use LabelTrait;
@@ -25,49 +22,26 @@ class Product
     use TraceTimeTrait;
     use SequenceTrait;
     use DescriptionTrait;
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id_product", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+    #[ORM\Column(name: 'id_product', type: 'integer')]
     private $idProduct;
 
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="unit", type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(name: 'unit', type: 'string', length: 255, nullable: true)]
     private $unit;
 
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="base_price", type="float", precision=10, scale=0, nullable=true)
-     */
+    #[ORM\Column(name: 'base_price', type: 'float', precision: 10, scale: 0, nullable: true)]
     private $basePrice;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="ratio", type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(name: 'ratio', type: 'string', length: 255, nullable: true)]
     private $ratio;
     
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="is_subscription", type="boolean", nullable=false)
-     */
+    #[ORM\Column(name: 'is_subscription', type: 'boolean', nullable: false)]
     private $isSubscription = false;
     
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="is_certified", type="boolean", nullable=false)
-     */
+    #[ORM\Column(name: 'is_certified', type: 'boolean', nullable: false)]
     private $isCertified = true;
 
 

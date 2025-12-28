@@ -4,43 +4,25 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\FkUserTrait;
-/**
- * Contract
- *
- * @ORM\Table(name="booth")
- * @ORM\Entity(repositoryClass="App\Repository\BoothRepository")
- */
+
+#[ORM\Table(name: 'booth')]
+#[ORM\Entity(repositoryClass: \App\Repository\BoothRepository::class)]
 class Booth
 {  
     use FkUserTrait;
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id_booth", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+    #[ORM\Column(name: 'id_booth', type: 'integer')]
     private $idBooth;
     
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="route", type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(name: 'route', type: 'string', length: 255, nullable: true)]
     private $route;
     
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="params", type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(name: 'params', type: 'string', length: 255, nullable: true)]
     private $params;
     
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="started_at", type="datetime", nullable=true)
-     */
+    #[ORM\Column(name: 'started_at', type: 'datetime', nullable: true)]
     private $startedAt;
     
     /**

@@ -5,12 +5,8 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\LabelTrait;
 
-/**
- * PaymentFreq
- *
- * @ORM\Table(name="payment_freq", uniqueConstraints={@ORM\UniqueConstraint(name="label", columns={"label"})})
- * @ORM\Entity
- */
+#[ORM\Table(name: 'payment_freq', uniqueConstraints: [new ORM\UniqueConstraint(name: 'label', columns: ['label'])])]
+#[ORM\Entity]
 class PaymentFreq
 {
     const EACH_DISTRIBUTION = 1;
@@ -24,13 +20,9 @@ class PaymentFreq
     
     use LabelTrait;
     
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id_payment_freq", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+    #[ORM\Column(name: 'id_payment_freq', type: 'integer')]
     private $idPaymentFreq;
     
     /**

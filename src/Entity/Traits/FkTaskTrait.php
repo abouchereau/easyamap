@@ -7,14 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
  
 trait FkTaskTrait
 {
-    /**
-     * @var \Task
-     *
-     * @ORM\ManyToOne(targetEntity="Task")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="fk_task", referencedColumnName="id_task")
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Task::class)]
+    #[ORM\JoinColumn(name: 'fk_task', referencedColumnName: 'id_task')]
     private $fkTask;
     
 

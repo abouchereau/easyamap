@@ -5,11 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
  
 trait IsVisibleDefaultTrueTrait
 {
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="is_visible", type="boolean", nullable=true)
-     */
+    #[ORM\Column(name: 'is_visible', type: 'boolean', nullable: true)]
     private $isVisible = true;
     
             /**

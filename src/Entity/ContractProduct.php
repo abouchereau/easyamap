@@ -6,25 +6,16 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\FkContractTrait;
 use App\Entity\Traits\FkProductTrait;
 
-/**
- * ContractProduct
- *
- * @ORM\Table(name="contract_product", indexes={@ORM\Index(name="fk_contract", columns={"fk_contract"}), @ORM\Index(name="fk_product", columns={"fk_product"})})
- * @ORM\Entity(repositoryClass="App\Repository\ContractProductRepository")
- */
+#[ORM\Table(name: 'contract_product', indexes: [new ORM\Index(name: 'fk_contract', columns: ['fk_contract']), new ORM\Index(name: 'fk_product', columns: ['fk_product'])])]
+#[ORM\Entity(repositoryClass: \App\Repository\ContractProductRepository::class)]
 class ContractProduct
 {
-  
     use FkContractTrait;
     use FkProductTrait;
-    
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id_contract_product", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+    #[ORM\Column(name: 'id_contract_product', type: 'integer')]
     private $idContractProduct;
 
 

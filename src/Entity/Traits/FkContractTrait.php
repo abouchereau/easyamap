@@ -7,15 +7,9 @@ use Doctrine\ORM\Mapping as ORM;
  
 trait FkContractTrait
 {
-   /**
-     * @var \Contract
-     *
-     * @ORM\ManyToOne(targetEntity="Contract")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="fk_contract", referencedColumnName="id_contract")
-     * })
-     */
-    private $fkContract;
+        #[ORM\ManyToOne(targetEntity: \App\Entity\Contract::class)]
+        #[ORM\JoinColumn(name: 'fk_contract', referencedColumnName: 'id_contract')]
+        private $fkContract;
     
 
     public function setFkContract(\App\Entity\Contract $fkContract = null)

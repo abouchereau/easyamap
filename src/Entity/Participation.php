@@ -7,24 +7,17 @@ use App\Entity\Traits\FkUserTrait;
 use App\Entity\Traits\FkDistributionTrait;
 use App\Entity\Traits\FkTaskTrait;
 
-/**
- * Participation
- *
- * @ORM\Table(name="participation")
- * @ORM\Entity(repositoryClass="App\Repository\ParticipationRepository")
- */
+#[ORM\Table(name: 'participation')]
+#[ORM\Entity(repositoryClass: \App\Repository\ParticipationRepository::class)]
 class Participation
 {
     use FkUserTrait;
     use FkDistributionTrait;
     use FkTaskTrait;
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id_participation", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+    #[ORM\Column(name: 'id_participation', type: 'integer')]
     private $idParticipation;
     
     function getIdParticipation() {

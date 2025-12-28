@@ -5,12 +5,8 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\LabelTrait;
 
-/**
- * PaymentType
- *
- * @ORM\Table(name="payment_type", uniqueConstraints={@ORM\UniqueConstraint(name="label", columns={"label"})})
- * @ORM\Entity
- */
+#[ORM\Table(name: 'payment_type', uniqueConstraints: [new ORM\UniqueConstraint(name: 'label', columns: ['label'])])]
+#[ORM\Entity]
 class PaymentType
 {
     const CHECK  = 1;
@@ -20,13 +16,9 @@ class PaymentType
     
     use LabelTrait;
     
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id_payment_type", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+    #[ORM\Column(name: 'id_payment_type', type: 'integer')]
     private $idPaymentType;
     
     /**

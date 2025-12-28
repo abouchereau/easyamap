@@ -4,92 +4,41 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * Setting
- *
- * @ORM\Table(name="setting")
- * @ORM\Entity(repositoryClass="App\Repository\SettingRepository")
- */
+#[ORM\Table(name: 'setting')]
+#[ORM\Entity(repositoryClass: \App\Repository\SettingRepository::class)]
 class Setting
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $id;
-    
-   /**
-     * @var boolean
-     *
-     * @ORM\Column(name="use_address", type="boolean", nullable=false, )
-     */
-    private $useAddress = true;
-    
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="register_distribution", type="boolean", nullable=false, )
-     */
-    private $registerDistribution = true;
-    
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="use_report", type="boolean", nullable=false, )
-     */
-    private $useReport = false;
-    
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="cotisation", type="boolean", nullable=false, )
-     */
-    //private $cotisation = true;
+        #[ORM\Id]
+        #[ORM\GeneratedValue(strategy: "IDENTITY")]
+        #[ORM\Column(name: 'id', type: 'integer')]
+        private $id;
 
-   /**
-     * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=255, nullable=true)
-     */
-    private $name;
-    
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="link", type="string", length=255, nullable=true)
-     */
-    private $link;
+        #[ORM\Column(name: 'use_address', type: 'boolean', nullable: false)]
+        private $useAddress = true;
 
-   /**
-     * @var string
-     *
-     * @ORM\Column(name="logo_small_url", type="string", length=255, nullable=true)
-     */
-    private $logoSmallUrl;    
-    
-   /**
-     * @var string
-     *
-     * @ORM\Column(name="logo_large_url", type="string", length=255, nullable=true)
-     */
-    private $logoLargeUrl;
-    
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="text_register_distribution", type="text", nullable=true)
-     */
-    private $textRegisterDistribution;
-    
-   /**
-     * @var string
-     *
-     * @ORM\Column(name="logo_secondary", type="string", length=255, nullable=true)
-     */
-    private $logoSecondary;
+        #[ORM\Column(name: 'register_distribution', type: 'boolean', nullable: false)]
+        private $registerDistribution = true;
+
+        #[ORM\Column(name: 'use_report', type: 'boolean', nullable: false)]
+        private $useReport = false;
+
+        #[ORM\Column(name: 'name', type: 'string', length: 255, nullable: true)]
+        private $name;
+
+        #[ORM\Column(name: 'link', type: 'string', length: 255, nullable: true)]
+        private $link;
+
+        #[ORM\Column(name: 'logo_small_url', type: 'string', length: 255, nullable: true)]
+        private $logoSmallUrl;
+
+        #[ORM\Column(name: 'logo_large_url', type: 'string', length: 255, nullable: true)]
+        private $logoLargeUrl;
+
+        #[ORM\Column(name: 'text_register_distribution', type: 'text', nullable: true)]
+        private $textRegisterDistribution;
+
+        #[ORM\Column(name: 'logo_secondary', type: 'string', length: 255, nullable: true)]
+        private $logoSecondary;
     
     function getId() {
         return $this->id;

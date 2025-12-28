@@ -5,60 +5,35 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Traits\FkProductTrait;
 use App\Entity\Traits\FkDistributionTrait;
-/**
- * ProductDistribution
- *
- * @ORM\Table(name="product_distribution", indexes={@ORM\Index(name="fk_product", columns={"fk_product"}), @ORM\Index(name="fk_distribution", columns={"fk_distribution"})})
- * @ORM\Entity(repositoryClass="App\Repository\ProductDistributionRepository")
- */
+
+#[ORM\Table(name: 'product_distribution', indexes: [new ORM\Index(name: 'fk_product', columns: ['fk_product']), new ORM\Index(name: 'fk_distribution', columns: ['fk_distribution'])])]
+#[ORM\Entity(repositoryClass: \App\Repository\ProductDistributionRepository::class)]
 class ProductDistribution
 {
     use FkProductTrait;
     use FkDistributionTrait;
-    
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id_product_distribution", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+    #[ORM\Column(name: 'id_product_distribution', type: 'integer')]
     private $idProductDistribution;
 
 
 
 
     
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="price", type="float", precision=10, scale=0, nullable=true)
-     */
+    #[ORM\Column(name: 'price', type: 'float', precision: 10, scale: 0, nullable: true)]
     private $price;
     
     
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="max_quantity", type="integer", nullable=true)
-     */
+    #[ORM\Column(name: 'max_quantity', type: 'integer', nullable: true)]
     private $maxQuantity;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="max_per_user", type="integer", nullable=true)
-     */
+    #[ORM\Column(name: 'max_per_user', type: 'integer', nullable: true)]
     private $maxPerUser;
     
-    /**
-     * @var \Distribution
-     *
-     * @ORM\ManyToOne(targetEntity="Distribution")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="fk_distribution_shift", referencedColumnName="id_distribution")
-     * })
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Distribution::class)]
+    #[ORM\JoinColumn(name: 'fk_distribution_shift', referencedColumnName: 'id_distribution')]
     private $fkDistributionShift;
     
 

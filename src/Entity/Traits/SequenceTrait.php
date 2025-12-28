@@ -7,11 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
  
 trait SequenceTrait
 {
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="sequence", type="integer")
-     */
+    #[ORM\Column(name: 'sequence', type: 'integer')]
     private $sequence;
 
     /**
