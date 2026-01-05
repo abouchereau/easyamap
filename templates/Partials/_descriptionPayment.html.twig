@@ -136,6 +136,7 @@
                     </div>
                     <div class="col col-md-7 py-3">
                         <input readonly type="text" id="virement-reference" value="" class="form-control" style="font-family: 'Roboto Mono'" onclick="this.select()" />
+                        <input type="hidden" id="virement-id-payment" />
                     </div>
                     <div class="col col-md-2 py-3">
                         <a class="btn btn-info" onclick="toClipboard('virement-reference')">Copier</a>
@@ -198,30 +199,31 @@ const toClipboard = (id) => {
 
 }
 
-const changeCheckboxPayment = (checked) => {
-    console.log("CHECKED", checked);
-    const url = root+'distributions_between/'+dateStart+'/'+dateEnd;
-    $.ajax({
-      url: url,
-      dataType: 'json',
-      beforeSend: function () 
-      {
-
-      },
-      success: function(data) 
-      {
-        
-        var nb = data.length;
-        var html = nb+' distribution(s) entre ces 2 dates :<ul class="list-group">';
-        for (var i in data)
-        {
-          var date = new Date(data[i]);
-          html += '<li class="list-group-item">'+jours[date.getDay()]+' '+date.getDate()+' '+mois[date.getMonth()]+'</li>';
-        }
-        html += '</ul>';
-        $("#msg-alert .modal-body").html(html);
-        $("#msg-alert").modal('show');
-      }
-    });
+const changeCheckboxPayment = (checked) => {    
+    let messageConfirm = checked?"Confirmez-vous avoir émis le virement ?":"Souhaitez-vous vraiment annuler la validation de votre virement ?";
+    if (confirm(messageConfirm)) {
+        let idPayment = $("#virement-id-payment").val();
+        const url = root+'ajax/checkPayment';
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: { 
+                'idPayment': idPayment, 
+                'checked': (checked?"1":"0")
+            },
+            dataType: 'json',
+            beforeSend: function () {            
+                $("#loader").show();
+            },
+            success: function(data) {
+                $("#loader").hide();
+                alert("Nous avons enregistré l'émission de votre virement.\nNous allons avertir le producteur afin qu'il puisse valider la réception.");
+            }
+        });
+    }
+    else {
+        $("#user-check-payment").prop("checked",!checked);
+    }
+    
 };
 </script>

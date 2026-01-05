@@ -86,6 +86,7 @@ $(document).ready(function () {
                 $("#virement-montant").val(data.montant);
                 $("#virement-reference").val(data.reference);
                 $("#virement-beneficiaire").html("("+data.beneficiaire+")");
+                $("#virement-id-payment").val(idPayment);
 
                 let qrStr = sepaData
                     .replace("__BENEFICIAIRE__", data.beneficiaire)

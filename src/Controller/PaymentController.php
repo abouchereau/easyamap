@@ -394,4 +394,22 @@ class PaymentController extends AmapBaseController
         $infos = $em->getRepository('App\Entity\Payment')->getInfoVirement($idPayment);
         return new Response(json_encode($infos));        
     }
+
+    public function checkVirementAdherent(Request $request) {
+
+        $em = $this->getDoctrine()->getManager();    
+        $idPayment = $request->request->get('idPayment');
+        $checked = $request->request->get('checked')=="1";
+        //vérifier que le paiement est bien émis par l'adhérent
+        $curUser = $this->get('security.token_storage')->getToken()->getUser();
+        $payment = $em->getRepository('App\Entity\Payment')->findOneBy(["idPayment"=>$idPayment]);
+        if ($curUser->getIdUser() != $payment->getFkUser()->getIdUser()) {
+            $this->denyAccess();
+        }
+        else {
+            
+        }
+
+    }
+
 }

@@ -582,3 +582,9 @@ validation_virements:
 ajax_get_info_virement:
     path: ajax/getInfoVirement/{idPayment}
     controller: App\Controller\PaymentController:getInfoVirement
+
+ajax_check_virement:
+    path: ajax/checkVirement
+    controller: App\Controller\PaymentController:checkVirement
+    methods: POST
+
