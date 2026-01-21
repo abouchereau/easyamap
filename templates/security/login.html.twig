@@ -53,13 +53,7 @@
               <label for="inputUsername" class="sr-only">Nom</label>
                 <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" placeholder="Nom" required autofocus>
                 <label for="inputPassword" class="sr-only">Mot de passe</label>
-                <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Mot de passe" required>  
-            
-            
-     <!--     <label for="user"  class="sr-only">Adresse email</label>
-          <input type="text" id="inputEmail" class="form-control" id="username" name="_username" value="{{ last_username }}" required autofocus placeholder="Nom" />
-          <label for="pass" class="sr-only">Mot de passe</label>
-          <input type="password" id="password" name="_password" class="form-control" placeholder="Mot de passe" required />-->
+                <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Mot de passe" required>
         </p>
         {% if error %}
             <div  class="alert alert-dismissible alert-warning">
@@ -71,9 +65,12 @@
                value="{{ csrf_token('authenticate') }}"
         >
         <div style="margin-top:40px;">
-          <input type="submit"  class="btn btn-lg btn-default btn-block" value="Connexion" />
+          <input type="submit"  class="btn btn-lg btn-primary btn-block" value="Connexion" />
         </div>
       </form>
+      <div class="text-center">
+        <a href="{{ url('app_forgot_password_request') }}"><button class="btn btn-sm btn-default"> Réinitialiser le mot de passe</button></a>
+      </div>
     </div>
     <div class="col-md-2"></div>
 </div>

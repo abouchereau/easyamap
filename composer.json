@@ -16,7 +16,7 @@
         "symfony/asset": "4.4.*",
         "symfony/console": "4.4.*",
         "symfony/expression-language": "4.4.*",
-        "symfony/flex": "^1.4",
+        "symfony/flex": "^1.6",
         "symfony/form": "4.4.*",
         "symfony/framework-bundle": "4.4.*",
         "symfony/http-client": "4.4.*",
@@ -36,6 +36,7 @@
         "symfony/yaml": "4.4.*",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0"
+        "symfonycasts/reset-password-bundle": "^1.11"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",
