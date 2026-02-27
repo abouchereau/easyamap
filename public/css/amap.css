@@ -238,8 +238,8 @@ td.distri-explication {
 #table-summary {
     table-layout: fixed;
 }
-#table-summary tr td:first-child, #table-summary tr th:first-child {
- /*   width:160px;*/
+#table-summary tr td:first-child {
+    width:160px;
 }
 #table-summary tr {
     page-break-inside: avoid;
@@ -281,10 +281,10 @@ td.distri-explication {
   margin-right:10px;
 }
 .product {
-    width:100%;
+    /*width:100%;
     white-space: nowrap;
     overflow:hidden;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis;*/
 }
 .product2 {
     width:200px;
