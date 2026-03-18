@@ -585,6 +585,6 @@ ajax_get_info_virement:
 
 ajax_check_virement:
     path: ajax/checkVirement
-    controller: App\Controller\PaymentController:checkVirement
+    controller: App\Controller\PaymentController:checkVirementAdherent
     methods: POST
 

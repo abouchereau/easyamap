@@ -10,6 +10,7 @@ use App\Entity\Traits\LabelTrait;
 use App\Entity\Traits\IsActiveDefaultTrueTrait;
 use App\Entity\Traits\DescriptionTrait;
 use App\Entity\Traits\SequenceTrait;
+use App\Entity\Traits\EmailTrait;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -27,6 +28,7 @@ class Farm
     use IsActiveDefaultTrueTrait;
     use DescriptionTrait;
     use SequenceTrait;
+    use EmailTrait;
     /**
      * @var integer
      *

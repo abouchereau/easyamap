@@ -407,9 +407,16 @@ class PaymentController extends AmapBaseController
             $this->denyAccess();
         }
         else {
-            
+            if ($checked) {
+                $payment->setTransferIssuedAt(new \DateTime());
+            }
+            else {
+                $payment->setTransferIssuedAt(null);
+            }            
+            $em->persist($payment);
+            $em->flush();
+            return new Response('ok');
         }
-
     }
 
 }

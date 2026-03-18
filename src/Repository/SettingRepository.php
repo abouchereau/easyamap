@@ -79,8 +79,35 @@ class SettingRepository extends EntityRepository
         $out = array_reverse($out);
         return $out;
     }
-    
 
+    public function getAllDatabases() {
+        require_once __DIR__.'/../../config/url2env.php';
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "SHOW DATABASES 
+            WHERE `Database` LIKE 'amap_%' 
+            AND `Database` NOT LIKE 'amap_test%'
+            AND `Database` NOT LIKE 'amap_tmp%'
+            AND `Database` not in('amap_init', 'amap_admin', 'amap_corresp')";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $allDb = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        $sqlTab = [];
+        foreach($allDb as $db) {
+            $ndd = "";
+            foreach ($url2env as $nom_domaine => $env) {
+                if ($env[0] == str_replace("amap_","",$db)) {
+                    $ndd = $nom_domaine;
+                    break;
+                }
+            }
+            $sqlTab[] = "select '".$db."' as db, '".$ndd."' as nom_domaine, name from ".$db.".setting";
+        }
+        $sql = implode(" UNION ALL ", $sqlTab);
+        $stmt = $conn->prepare($sql);   
+        $stmt->execute();
+        $res = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $res;
+    }
 
-   
+       
 }

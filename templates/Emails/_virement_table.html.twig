@@ -1,0 +1,29 @@
+<p style="margin: 20px 0;">Un ou plusieurs nouveaux virements à destination de {{ beneficiaire }} ont été déclarés. Voici les détails :</p>
+
+<table cellspacing="0" cellpadding="0" border="0">
+    <thead>
+        <tr>
+            <th style="border:1px solid #ddd; padding:8px; background-color:#f2f2f2;">AMAP</th>
+            <th style="border:1px solid #ddd; padding:8px; background-color:#f2f2f2;">Adhérent</th>
+            <th style="border:1px solid #ddd; padding:8px; background-color:#f2f2f2;">Référence</th>
+            <th style="border:1px solid #ddd; padding:8px; background-color:#f2f2f2;">Montant</th>
+            <th style="border:1px solid #ddd; padding:8px; background-color:#f2f2f2;">Date de déclaration</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for virement in virements %}
+        <tr>
+            <td style="border:1px solid #ddd; padding:8px;">{{ virement.amap_name }}</td>
+            <td style="border:1px solid #ddd; padding:8px;">{{ virement.adherent }}</td>
+            <td style="border:1px solid #ddd; padding:8px;">{{ virement.reference }}</td>
+            <td style="border:1px solid #ddd; padding:8px;">{{ virement.montant }} €</td>
+            <td style="border:1px solid #ddd; padding:8px;">{{ virement.transfer_issued_at|date('d/m/Y') }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>    
+
+<p style="margin: 20px 0;">Merci de vérifier la réception de ces virements dans votre application bancaire.<br />
+Nous vous remercions ensuite d’en accuser réception dans votre espace producteur sur Easyamap.</p>
+<p><a href="{{ lien }}">{{lien}}</a></p>
+<p style="margin: 20px 0;">Cordialement,<br>L'équipe Easyamap</p>

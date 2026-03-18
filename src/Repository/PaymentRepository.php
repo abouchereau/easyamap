@@ -775,15 +775,54 @@ class PaymentRepository extends EntityRepository
     public function getInfoVirement($idPayment) {  
         $conn = $this->getEntityManager()->getConnection();
         $params = ['id_payment' => $idPayment];
-        $sql = "select p.id_payment as reference, p.amount as montant, f.label as beneficiaire, f.iban
+        $sql = "select concat('EASYAMAP-"+strtoupper($_SERVER['APP_ENV'])."-', LPAD(p.id_payment, 7, '0')) as reference, format(p.amount,2,'fr_FR') as montant, f.label as beneficiaire, f.iban
             from payment p
             left join farm f on f.id_farm = p.fk_farm
             where p.id_payment=:id_payment";
         $stmt = $conn->prepare($sql);
         $stmt->execute($params);
         $obj = $stmt->fetch(\PDO::FETCH_ASSOC);
-        $obj["reference"] = "EASYAMAP-".strtoupper($_SERVER['APP_ENV'])."-".str_pad($obj['reference'], 7, '0', STR_PAD_LEFT);
-        $obj["montant"] = number_format($obj["montant"], 2, ',',' ');
         return $obj;
+    }
+
+    public function getUncheckedVirementAllDatabase() {        
+        $em = $this->getEntityManager();
+        $conn = $em->getConnection();
+        $allDb = $em->getRepository('App\Entity\Setting')->getAllDatabases(); 
+        
+        $sqlTab = [];    
+        //TODO : voir différences BDD / Env
+        /*
+        DB => env
+aufildulong	=> amapaufildulong
+cote_jardin => cotejardin
+*/
+        foreach($allDb as $db) {
+            $sqlTab[] = "select '".$db['name']."' as amap_name, 
+                '".$db['nom_domaine']."' as nom_domaine,
+                concat('EASYAMAP-".strtoupper(str_replace("amap_","",$db['db']))."-', LPAD(p.id_payment, 7, '0')) as reference, 
+                format(p.amount,2,'fr_FR') as montant, 
+                CONCAT(u.lastname, ' ', u.firstname) as adherent, 
+                f.label as beneficiaire, 
+                p.transfer_issued_at,
+                f.email
+                from ".$db['db'].".payment p
+                left join ".$db['db'].".farm f on f.id_farm = p.fk_farm
+                left join ".$db['db'].".user u on u.id_user = p.fk_user
+                where p.transfer_issued_at is not null
+                and p.transfer_received_at is null";
+        }
+        $sql = implode(PHP_EOL." UNION ALL ".PHP_EOL, $sqlTab);        
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();   
+        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);        
+        $resultsByEmail = [];
+        foreach ($results as $obj) {
+            if (!isset($resultsByEmail[$obj['email']])) {
+                $resultsByEmail[$obj['email']] = [];
+            }
+            $resultsByEmail[$obj['email']][] = $obj;
+        }
+        return $resultsByEmail;
     }
 }

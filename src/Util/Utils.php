@@ -26,4 +26,21 @@ class Utils
   static public function numerize($num) {
       return 1.0*str_replace(',','.',$num);
   }
+
+  static public function htmlToText($html) {
+    // Remplacer certains blocs par des retours ligne
+    $html = preg_replace('/<(br|\/p|\/div)>/i', "\n", $html);
+
+    // Supprimer les balises
+    $text = strip_tags($html);
+
+    // Décoder les entités HTML (&nbsp; etc.)
+    $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+    // Nettoyage espaces
+    $text = preg_replace("/[ \t]+/", " ", $text);
+    $text = preg_replace("/\n\s*\n/", "\n\n", $text);
+
+    return trim($text);
+}
 }

@@ -50,6 +50,20 @@ class Payment
      * @ORM\Column(name="received_at", type="date", nullable=true)
      */
     private $receivedAt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="transfer_issued_at", type="datetime", nullable=true)
+     */
+    private $transferIssuedAt;
+    
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="transfer_received_at", type="datetime", nullable=true)
+     */
+    private $transferReceivedAt;
     
     /**
      * Get idPayment
@@ -91,7 +105,7 @@ class Payment
         return $this->received;
     }
     
-        /**
+    /**
      * Set receivedAt
      *
      * @param \DateTime $receivedAt
@@ -113,4 +127,54 @@ class Payment
     {
         return $this->receivedAt;
     }
+
+        /**
+     * Set transferIssuedAt
+     *
+     * @param \DateTime $transferIssuedAt
+     * @return Payment
+     */
+    public function setTransferIssuedAt($transferIssuedAt)
+    {
+        $this->transferIssuedAt = $transferIssuedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get transferIssuedAt
+     *
+     * @return \DateTime 
+     */
+    public function getTransferIssuedAt()
+    {
+        return $this->transferIssuedAt;
+    }
+
+    
+        /**
+     * Set transferReceivedAt
+     *
+     * @param \DateTime $transferReceivedAt
+     * @return Payment
+     */
+    public function setTransferReceivedAt($transferReceivedAt)
+    {
+        $this->transferReceivedAt = $transferReceivedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get transferReceivedAt
+     *
+     * @return \DateTime 
+     */
+    public function getTransferReceivedAt()
+    {
+        return $this->transferReceivedAt;
+    }
+
+
+
 }

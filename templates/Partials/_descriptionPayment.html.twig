@@ -8,13 +8,13 @@
 
 
 
-  {% if 1 in types  and 3 not in types %}
+  {% if constant('App\\Entity\\PaymentType::CHECK') in types and constant('App\\Entity\\PaymentType::VIREMENT') not in types %}
         <div class="row">
             <div class="col-sm-4"><span class="glyphicon glyphicon-chevron-right"></span> <b>Chèque</b></div>
             <div class="col-sm-8">
         {% for i,choices in payments %}            
             <div class="enum"><span class="glyphicon glyphicon-{% if chosen_payment[i] %}check{% else %}unchecked{% endif %}"></span> {% if not loop.first %}ou {% endif %}<b>{{ choices|length }}</b> 
-            {% if 1 in types %}chèque{% else %}paiement{% endif %}{% if choices|length > 1 %}s{% endif %} :</div>
+            {% if constant('App\\Entity\\PaymentType::CHECK') in types %}chèque{% else %}paiement{% endif %}{% if choices|length > 1 %}s{% endif %} :</div>
             <span class="repartition">{% for choice in choices %}
                     {% if choice[2] == 1 %}{#
                         #}<b>?</b> € <small>(selon livraison)</small>{#
@@ -39,14 +39,14 @@
         </div>
     {% endif %}
 
-    {% if 2 in types %}
+    {% if constant('App\\Entity\\PaymentType::CASH') in types %}
         <div class="row mt">
             <div class="col-sm-2"><span class="glyphicon glyphicon-chevron-right"></span> <b>Espèces</b></div>
         <div class="col-sm-8">
         
         {% for i,choices in payments %}
             <div class="enum"><span class="glyphicon glyphicon-{% if chosen_payment[i] %}check{% else %}unchecked{% endif %}"></span> {% if not loop.first %}ou {% endif %}<b>{{ choices|length }}</b> 
-            {% if 1 in types %}chèque{% else %}paiement{% endif %}{% if choices|length > 1 %}s{% endif %} :</div>
+            {% if constant('App\\Entity\\PaymentType::CHECK') in types %}chèque{% else %}paiement{% endif %}{% if choices|length > 1 %}s{% endif %} :</div>
             <span class="repartition">{% for choice in choices %}
                     {% if choice[2] == 1 %}{#
                         #}<b>?</b> € <small>(selon livraison)</small>{#
@@ -72,7 +72,7 @@
         </div>
     {% endif %}
 
-    {% if 3 in types %}
+    {% if constant('App\\Entity\\PaymentType::VIREMENT') in types %}
         <div class="row mt">
             <div class="col-sm-4"><span class="glyphicon glyphicon-chevron-right"></span> <b>Virement</b></div>
         {% if isReferentPage is defined and isReferentPage %}
@@ -203,7 +203,7 @@ const changeCheckboxPayment = (checked) => {
     let messageConfirm = checked?"Confirmez-vous avoir émis le virement ?":"Souhaitez-vous vraiment annuler la validation de votre virement ?";
     if (confirm(messageConfirm)) {
         let idPayment = $("#virement-id-payment").val();
-        const url = root+'ajax/checkPayment';
+        const url = root+'ajax/checkVirement';
         $.ajax({
             url: url,
             type: 'POST',

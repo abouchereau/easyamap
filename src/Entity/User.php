@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping\JoinTable;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\Traits\IsActiveDefaultTrueTrait;
 use App\Entity\Traits\CreatedAtTrait;
+use App\Entity\Traits\EmailTrait;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @UniqueEntity(fields="username", message="L'identifiant de connexion est déjà utilisé par un autre adhérent. Merci de bien vouloir en choisir un différent.")
@@ -19,6 +20,7 @@ class User implements UserInterface
 {
     use IsActiveDefaultTrueTrait;
     use CreatedAtTrait;
+    use EmailTrait;
     
     const ROLE_USER = 'ROLE_USER';
     const ROLE_ADHERENT = 'ROLE_ADHERENT';
@@ -63,16 +65,7 @@ class User implements UserInterface
      */
     
     private $roles = [];
-    
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=255, nullable=true)
-     */
-    private $email;
-    
-
-    
+        
     /**
      * @var boolean
      *
@@ -210,29 +203,6 @@ class User implements UserInterface
         $this->username = $username;
 
         return $this;
-    }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     * @return User
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string 
-     */
-    public function getEmail()
-    {
-        return $this->email;
     }
     /**
      * @see UserInterface
