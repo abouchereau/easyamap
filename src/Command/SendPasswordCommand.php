@@ -14,7 +14,8 @@ class SendPasswordCommand extends Command {
      */
     protected function configure() {
         $this
-                ->setName('amap:send-password')
+                ->setName('amap:send-password')                
+                ->addArgument('username', InputArgument::OPTIONAL, 'Nom d\'utilisateur (laisser vide pour tous les utilisateurs)')
                 ->setDescription('Envoie par mail les mots de passe')
         ;
     }
@@ -29,11 +30,16 @@ class SendPasswordCommand extends Command {
         $container = $this->getApplication()->getKernel()->getContainer();
         $em = $container->get('doctrine')->getManager();
         $users = $em->getRepository('App\Entity\User')->getAllUsers();
+        $username = $input->getArgument('username');
         
-        $url = 'http://contrats.la-riche-en-bio.com';//à modifier avant envoi !!
+        $url = 'https://cange.easyamap.fr';//à modifier avant envoi !!
         
         foreach ($users as $user)
         {
+
+          if ($username != null && $user->getUsername() != $username) {
+              continue;
+          }
           $msg = "Bonjour,
 
 Vous pouvez maintenant réaliser vos commandes sur easyamap à cette adresse : 
@@ -51,7 +57,7 @@ Cordialement
 easyamap";
           
 
-          
+
           
           $message = (new \Swift_Message())
             ->setSubject('easyamap : identifiants connexion')
