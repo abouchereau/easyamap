@@ -81,7 +81,7 @@ class SettingRepository extends EntityRepository
     }
 
     public function getAllDatabases() {
-        require_once __DIR__.'/../../config/url2env.php';
+        require __DIR__.'/../../config/url2env.php';
         $conn = $this->getEntityManager()->getConnection();
         $sql = "SHOW DATABASES 
             WHERE `Database` LIKE 'amap_%' 

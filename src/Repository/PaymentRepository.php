@@ -785,37 +785,45 @@ class PaymentRepository extends EntityRepository
         return $obj;
     }
 
-    public function getUncheckedVirementAllDatabase() {        
+    public function getIssuedVirementAllDatabase($emails = null, $received = false) {        
         $em = $this->getEntityManager();
         $conn = $em->getConnection();
         $allDb = $em->getRepository('App\Entity\Setting')->getAllDatabases(); 
         
         $sqlTab = [];    
-        //TODO : voir différences BDD / Env
-        /*
-        DB => env
-aufildulong	=> amapaufildulong
-cote_jardin => cotejardin
-*/
+        $placeholders = implode(',', array_fill(0, count($emails), '?'));
+        $allParameters = [];
         foreach($allDb as $db) {
-            $sqlTab[] = "select '".$db['name']."' as amap_name, 
+            $sqlPart = "select '".$db['name']."' as amap_name, 
                 '".$db['nom_domaine']."' as nom_domaine,
                 concat('EASYAMAP-".strtoupper(str_replace("amap_","",$db['db']))."-', LPAD(p.id_payment, 7, '0')) as reference, 
                 format(p.amount,2,'fr_FR') as montant, 
-                CONCAT(u.lastname, ' ', u.firstname) as adherent, 
+                CONCAT(u_adherent.lastname, ' ', u_adherent.firstname) as adherent, 
                 f.label as beneficiaire, 
                 p.transfer_issued_at,
-                f.email
+                f.email,
+                group_concat(distinct u_referent.email separator ',') as referents_email
                 from ".$db['db'].".payment p
                 left join ".$db['db'].".farm f on f.id_farm = p.fk_farm
-                left join ".$db['db'].".user u on u.id_user = p.fk_user
+                left join ".$db['db'].".referent r on r.fk_farm = f.id_farm
+                left join ".$db['db'].".user u_referent on u_referent.id_user = r.fk_user
+                left join ".$db['db'].".user u_adherent on u_adherent.id_user = p.fk_user
                 where p.transfer_issued_at is not null
-                and p.transfer_received_at is null";
+                and p.transfer_received_at is " . ($received ? "not null" : "null");
+                if($emails != null) {
+                    $sqlPart .= " and f.email IN (".$placeholders.")";
+                    $allParameters = array_merge($allParameters, $emails);
+                }
+                $sqlTab[] = $sqlPart;
         }
+
         $sql = implode(PHP_EOL." UNION ALL ".PHP_EOL, $sqlTab);        
         $stmt = $conn->prepare($sql);
-        $stmt->execute();   
-        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);        
+        $stmt->execute($allParameters);   
+        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);       
+        if ($emails != null) {
+            return $results;
+        }
         $resultsByEmail = [];
         foreach ($results as $obj) {
             if (!isset($resultsByEmail[$obj['email']])) {

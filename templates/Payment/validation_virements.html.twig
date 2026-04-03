@@ -6,34 +6,36 @@
 <div class="row">
     <div class="col-md-8 col-md-offset-2">
         <ul class="nav nav-tabs nav-justified">
-            <li role="presentation" class="active"><a href="#">Virements à approuver</a></li>
-            <li role="presentation"><a href="#">Virements approuvés</a></li>
+                <li role="presentation"{% if received is defined and not received %} class="active"{% endif %}><a href="{{ path('validation_virements_a_valider') }}">Virements à approuver</a></li>
+            {% else %}
+                <li role="presentation"{% if received is defined and received %} class="active"{% endif %}><a href="{{ path('validation_virements_valides') }}">Virements approuvés</a></li>   
+            {% endif %}
         </ul>
     </div>
 </div>
 
 <div class="row mt-4">
     <div class="col-md-8 col-md-offset-2">
-      <ul class="list-group">
-        {% for virement in virements %}
-        <li class="list-group-item">
-            <table style="width:100%">
-                <tr>
-                <td style="width:75%">
-                    <h4 class="list-group-item-heading">{{virement.reference}}</h4>
-                    <h3 class="list-group-item-text mt-0">{{virement.montant}}</h3>
-                    <p class="list-group-item-text"><b>{{virement.adherent}}</b></p>
-                    <p class="list-group-item-text">{{virement.description}}</p>
-                    <p class="list-group-item-text"><i>{{virement.date}}</i></p>
-                </td>
-                <td>
-                    <button class="btn btn-block btn-primary">Valider</button>
-                </td>
-                </tr>
-            </table>
-        </li>
-        {% endfor %}
-      </ul>
+        <ul class="list-group">
+            {% for virement in virements %}
+            <li class="list-group-item">
+                <table style="width:100%">
+                    <tr>
+                        <td style="width:75%">
+                            <h4 class="list-group-item-heading">{{virement.amap_name}}</h4>
+                            <h3 class="list-group-item-text mt-0">{{virement.montant}} €</h3>
+                            <p class="list-group-item-text"><b>{{virement.reference}}</b></p>
+                            <p class="list-group-item-text">{{virement.adherent}}</p>
+                            <p class="list-group-item-text"><i>{{virement.transfer_issued_at|date('d/m/Y')}}</i></p>
+                        </td>
+                        <td>
+                            <button class="btn btn-block btn-primary">Valider</button>
+                        </td>
+                    </tr>
+                </table>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
 </div>
 {% endblock %}

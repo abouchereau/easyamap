@@ -39,37 +39,45 @@ class CheckTransferCommand extends Command {
         
 
         //recherche des nouvelles déclarations de virement
-        $payments = $em->getRepository('App\Entity\Payment')->getUncheckedVirementAllDatabase();
-               
-
+        $payments = $em->getRepository('App\Entity\Payment')->getIssuedVirementAllDatabase();
+              
         foreach($payments as $mail => $virements) {
           $body = $this->twig->render('Emails/_virement_table.html.twig', [
                 'virements' => $virements,
-                'lien' => "https://".$virements[0]["nom_domaine"]."/validation_virements",
+                'lien' => "https://".$virements[0]["nom_domaine"]."/validation_virements/a_valider",
                 'beneficiaire' => $virements[0]['beneficiaire']
             ]);
           $content = $this->twig->render('Emails/layout.html.twig', [
                 'body' => $body
             ]);
             
-        }
-          
+
+          $referents_email = [];
+          foreach($virements as $virement) {
+            if (!empty($virement['referents_email'])) {
+              $referents_email = array_merge($referents_email, array_filter(explode(',',$virement['referents_email'])));
+            }
+          }
+           die(print_r($referents_email,1));
           $message = (new \Swift_Message())
-            ->setSubject('easyamap : nouveaux virements à vérifier')
+            ->setSubject('easyamap : '.count($virements).' virement'.(count($virements) > 1 ? 's' : '').' à vérifier')
             ->setFrom(array('ne_pas_repondre@easyamap.fr' => "easyamap"))
             ->setTo($mail)
-            ->setBody($content)
-            ->setText(Utils::htmlToText($content));
+            ->setCc($referents_email)
+            ->setBody($content, 'text/html')
+            ->addPart(Utils::htmlToText($content), 'text/plain');
            $mailer = $container->get('mailer');
            $v = $mailer->send($message);
-           if ($v)
+           if ($v) {
              echo 'Message envoyé à '.$mail.PHP_EOL;
-           else
+           }
+           else {
              echo 'Echec de l\'envoi de l\'e-mail à '.$mail.PHP_EOL;
-           
+           }
 
       
         $output->writeln('Ok');
   
       }
+    }
 }

@@ -72,7 +72,7 @@ class HomeController extends AmapBaseController
              'Statistiques par produit'
              );
         $list[] = array(
-             $this->generateUrl('validation_virements'),
+             $this->generateUrl('validation_virements_a_valider'),
              'euro',
              'Virements',
              'Validation des virements'

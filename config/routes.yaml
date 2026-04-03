@@ -575,9 +575,13 @@ tableau_livraison_par_produit:
     defaults:
         dateDebutStr: null
 
-validation_virements:
-    path: validation_virements
-    controller: App\Controller\PaymentController:validationVirements
+validation_virements_a_valider:
+    path: validation_virements/a_valider
+    controller: App\Controller\PaymentController:validationVirementsAValider
+
+validation_virements_valides:
+    path: validation_virements/valides
+    controller: App\Controller\PaymentController:validationVirementsValides
 
 ajax_get_info_virement:
     path: ajax/getInfoVirement/{idPayment}

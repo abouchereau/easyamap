@@ -3,21 +3,21 @@
 <table cellspacing="0" cellpadding="0" border="0">
     <thead>
         <tr>
-            <th style="border:1px solid #ddd; padding:8px; background-color:#f2f2f2;">AMAP</th>
-            <th style="border:1px solid #ddd; padding:8px; background-color:#f2f2f2;">Adhérent</th>
-            <th style="border:1px solid #ddd; padding:8px; background-color:#f2f2f2;">Référence</th>
-            <th style="border:1px solid #ddd; padding:8px; background-color:#f2f2f2;">Montant</th>
-            <th style="border:1px solid #ddd; padding:8px; background-color:#f2f2f2;">Date de déclaration</th>
+            <th style="border:1px solid #ddd; padding:8px; background-color:#f2f2f2;font-size: 13px;">AMAP</th>
+            <th style="border:1px solid #ddd; padding:8px; background-color:#f2f2f2;font-size: 13px;">Adhérent</th>
+            <th style="border:1px solid #ddd; padding:8px; background-color:#f2f2f2;font-size: 13px;">Référence</th>
+            <th style="border:1px solid #ddd; padding:8px; background-color:#f2f2f2;font-size: 13px;">Montant</th>
+            <th style="border:1px solid #ddd; padding:8px; background-color:#f2f2f2;font-size: 13px;">Date de déclaration</th>
         </tr>
     </thead>
     <tbody>
         {% for virement in virements %}
         <tr>
-            <td style="border:1px solid #ddd; padding:8px;">{{ virement.amap_name }}</td>
-            <td style="border:1px solid #ddd; padding:8px;">{{ virement.adherent }}</td>
-            <td style="border:1px solid #ddd; padding:8px;">{{ virement.reference }}</td>
-            <td style="border:1px solid #ddd; padding:8px;">{{ virement.montant }} €</td>
-            <td style="border:1px solid #ddd; padding:8px;">{{ virement.transfer_issued_at|date('d/m/Y') }}</td>
+            <td style="border:1px solid #ddd; padding:8px;font-size: 13px;">{{ virement.amap_name }}</td>
+            <td style="border:1px solid #ddd; padding:8px;font-size: 13px;">{{ virement.adherent }}</td>
+            <td style="border:1px solid #ddd; padding:8px;font-size: 13px;">{{ virement.reference }}</td>
+            <td style="border:1px solid #ddd; padding:8px;font-size: 13px;">{{ virement.montant }} €</td>
+            <td style="border:1px solid #ddd; padding:8px;font-size: 13px;">{{ virement.transfer_issued_at|date('d/m/Y') }}</td>
         </tr>
         {% endfor %}
     </tbody>

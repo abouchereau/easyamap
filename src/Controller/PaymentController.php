@@ -11,6 +11,7 @@ use App\Form\PaymentType;
 use App\Util\Utils;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 /**
  * Payment controller.
  *
@@ -369,23 +370,67 @@ class PaymentController extends AmapBaseController
         ));
      }
 
-    public function validationVirements() {
+    public function validationVirementsAValider() {
          
-        $this->denyAccessUnlessGranted('ROLE_FARMER');
-        $virements = [[
-            "reference"=>"EASYAMAP-CHAMBRAY-000001",
-            "montant"=>"27,00 €",
-            "description"=>"Contrat : Boulangerie Pâtisserie Biologique ROUSSEL TRADITION (Juillet)",
-            "adherent"=>"Antoine DUPONT",
-            "date"=>"16 septembre 2025"
-        ],[
-            "reference"=>"EASYAMAP-LARICHE-123456",
-            "montant"=>"21,48 €",
-            "description"=>"Contrat : Boulangerie",
-            "adherent"=>"Mathieu JALIBERT",
-            "date"=>"16 septembre 2025"]];
+        $this->denyAccessUnlessGranted(['ROLE_REFERENT', 'ROLE_FARMER']);
+        
+        $em = $this->getDoctrine()->getManager();
+        $curUser = $this->get('security.token_storage')->getToken()->getUser();
+        $emails = [];
+        if ($curUser->isReferent()) {
+            $farms = $em->getRepository('App\Entity\Farm')->findForReferent($curUser);
+            foreach($farms as $farm) {
+                if ($farm->getEmail() != null) {
+                    $emails[] = $farm->getEmail();
+                }
+            }
+        }
+        else {
+            $farm = $em->getRepository('App\Entity\Farm')->findOneBy(["fkUser" => $curUser->getIdUser()]);
+            if ($farm != null && $farm->getEmail() != null) {
+                $emails[] = $farm->getEmail();
+            }
+        }
+
+        if (empty($emails)  ) {
+            throw new AccessDeniedException();
+        }
+        $virements = $em->getRepository('App\Entity\Payment')->getIssuedVirementAllDatabase($emails);       
         return $this->render('Payment/validation_virements.html.twig', array(
-            "virements" => $virements
+            "virements" => $virements,
+            "received" => false
+        ));
+    }
+
+    public function validationVirementsValides() {
+         
+        $this->denyAccessUnlessGranted(['ROLE_REFERENT', 'ROLE_FARMER']);
+        
+        $em = $this->getDoctrine()->getManager();
+        $curUser = $this->get('security.token_storage')->getToken()->getUser();
+        $emails = [];
+        if ($curUser->isReferent()) {
+            $farms = $em->getRepository('App\Entity\Farm')->findForReferent($curUser);
+            foreach($farms as $farm) {
+                if ($farm->getEmail() != null) {
+                    $emails[] = $farm->getEmail();
+                }
+            }
+        }
+        else {
+            $farm = $em->getRepository('App\Entity\Farm')->findOneBy(["fkUser" => $curUser->getIdUser()]);
+            if ($farm != null && $farm->getEmail() != null) {
+                $emails[] = $farm->getEmail();
+            }
+        }
+
+        if (empty($emails)  ) {
+            throw new AccessDeniedException();
+        }
+        $virements = $em->getRepository('App\Entity\Payment')->getIssuedVirementAllDatabase($emails, true);       
+        return $this->render('Payment/validation_virements.html.twig', array(
+            "virements" => $virements,
+            "received" => true
         ));
     }
 
