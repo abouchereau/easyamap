@@ -64,6 +64,14 @@ class Payment
      * @ORM\Column(name="transfer_received_at", type="datetime", nullable=true)
      */
     private $transferReceivedAt;
+
+    /**
+     * @var \App\Entity\User
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
+     * @ORM\JoinColumn(name="transfer_validated_by", referencedColumnName="id_user", nullable=true)
+     */
+    private $transferValidatedBy;
     
     /**
      * Get idPayment
@@ -175,6 +183,25 @@ class Payment
         return $this->transferReceivedAt;
     }
 
+    /**
+     * Set transferValidatedBy
+     *
+     * @param \App\Entity\User $transferValidatedBy
+     * @return Payment
+     */
+    public function setTransferValidatedBy(\App\Entity\User $transferValidatedBy = null) {
+        $this->transferValidatedBy = $transferValidatedBy;
 
+        return $this;
+    }
+
+    /**
+     * Get transferValidatedBy
+     *
+     * @return \App\Entity\User 
+     */    
+    public function getTransferValidatedBy() {
+        return $this->transferValidatedBy;
+    }
 
 }

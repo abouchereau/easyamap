@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use App\Entity\User;
 use App\Entity\Payment;
 use App\Entity\PaymentSplit;
 use App\Form\PaymentType;
@@ -12,6 +13,7 @@ use App\Util\Utils;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 /**
  * Payment controller.
  *
@@ -369,10 +371,21 @@ class PaymentController extends AmapBaseController
             'userMonth' => $userMonth
         ));
      }
+/*
+     public function validationVirementsAValiderAdmin() {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        
+        $em = $this->getDoctrine()->getManager();
+        $virements = $em->getRepository('App\Entity\Payment')->getIssuedVirementAllDatabase(null, false, true);       
+        return $this->render('Payment/validation_virements.html.twig', array(
+            "virements" => $virements,
+            "received" => false
+        ));
+     }*/
 
     public function validationVirementsAValider() {
          
-        $this->denyAccessUnlessGranted(['ROLE_REFERENT', 'ROLE_FARMER']);
+        $this->denyAccessUnlessGranted(['ROLE_REFERENT', 'ROLE_FARMER', 'ROLE_ADMIN']);
         
         $em = $this->getDoctrine()->getManager();
         $curUser = $this->get('security.token_storage')->getToken()->getUser();
@@ -392,19 +405,23 @@ class PaymentController extends AmapBaseController
             }
         }
 
-        if (empty($emails)  ) {
-            throw new AccessDeniedException();
+        if (empty($emails)) {
+            $virements = [];
+        } else {
+            $virements = $em->getRepository('App\Entity\Payment')->getIssuedVirementAllDatabase($emails);
         }
-        $virements = $em->getRepository('App\Entity\Payment')->getIssuedVirementAllDatabase($emails);       
+
         return $this->render('Payment/validation_virements.html.twig', array(
             "virements" => $virements,
             "received" => false
         ));
     }
 
+
+
     public function validationVirementsValides() {
          
-        $this->denyAccessUnlessGranted(['ROLE_REFERENT', 'ROLE_FARMER']);
+        $this->denyAccessUnlessGranted(['ROLE_REFERENT', 'ROLE_FARMER', 'ROLE_ADMIN']);
         
         $em = $this->getDoctrine()->getManager();
         $curUser = $this->get('security.token_storage')->getToken()->getUser();
@@ -425,13 +442,82 @@ class PaymentController extends AmapBaseController
         }
 
         if (empty($emails)  ) {
-            throw new AccessDeniedException();
+            $virements = [];
         }
-        $virements = $em->getRepository('App\Entity\Payment')->getIssuedVirementAllDatabase($emails, true);       
+        else {
+            $virements = $em->getRepository('App\Entity\Payment')->getIssuedVirementAllDatabase($emails, true);    
+        }     
         return $this->render('Payment/validation_virements.html.twig', array(
             "virements" => $virements,
             "received" => true
         ));
+    }
+
+    public function validerVirement($amap, $id_payment, $valide) {
+        
+        $em = $this->getDoctrine()->getManager();    
+        $allVirements = $em->getRepository('App\Entity\Payment')->getIssuedVirementAllDatabase(null, !$valide);  
+        //on vérifie que le les valeurs pour db/id_payment existent dans la liste
+        $virementFound = null;
+        foreach($allVirements as $email => $virements) {
+            foreach($virements as $virement) {                
+                if ($virement['id_payment'] == $id_payment && $virement['db_name'] == $amap) {
+                    $virementFound = $virement;
+                    break;
+                }
+            }
+        }
+
+        if (!$virementFound) {
+            die("pouju");
+            throw new AccessDeniedException();
+        }
+
+        $curUser = $this->get('security.token_storage')->getToken()->getUser();
+
+        //vérifie le virement
+        $isValid = false;
+        if ($curUser->getIsAdmin()) {
+            $isValid = true;
+        } else {
+            $emails = [];
+            if ($curUser->isReferent()) {
+                $farms = $em->getRepository('App\Entity\Farm')->findForReferent($curUser);
+                foreach($farms as $farm) {
+                    if ($farm->getEmail() != null) {
+                        $emails[] = $farm->getEmail();
+                    }
+                }
+            }
+            if ($curUser->hasRole(User::ROLE_FARMER)) {
+                $farm = $em->getRepository('App\Entity\Farm')->findOneBy(["fkUser" => $curUser->getIdUser()]);
+                if ($farm != null && $farm->getEmail() != null) {
+                    $emails[] = $farm->getEmail();
+                }
+            }
+
+            $emailFarmer = $virementFound['email'];
+            if ($emailFarmer != null && in_array($emailFarmer, $emails)) {
+                $isValid = true;
+            }
+        }
+
+        if (!$isValid) {
+            die("pou");
+            throw new AccessDeniedException();
+        }   
+
+        if ($valide) {
+            $em->getRepository('App\Entity\Payment')->valideVirement( $virementFound['db_name'], $virementFound['id_payment'], $curUser->getIdUser());        
+            $this->get('session')->getFlashBag()->add('notice', 'Le virement a été validé.');
+            return $this->redirect($this->generateUrl('validation_virements_a_valider'));
+        }
+        else {
+            $em->getRepository('App\Entity\Payment')->invalideVirement( $virementFound['db_name'], $virementFound['id_payment']);
+            $this->get('session')->getFlashBag()->add('notice', 'La validation du virement est annulée.');
+            return $this->redirect($this->generateUrl('validation_virements_valides'));
+        }
+
     }
 
     public function getInfoVirement($idPayment) {        
@@ -449,7 +535,7 @@ class PaymentController extends AmapBaseController
         $curUser = $this->get('security.token_storage')->getToken()->getUser();
         $payment = $em->getRepository('App\Entity\Payment')->findOneBy(["idPayment"=>$idPayment]);
         if ($curUser->getIdUser() != $payment->getFkUser()->getIdUser()) {
-            $this->denyAccess();
+            throw new AccessDeniedException();
         }
         else {
             if ($checked) {

@@ -791,12 +791,16 @@ class PaymentRepository extends EntityRepository
         $allDb = $em->getRepository('App\Entity\Setting')->getAllDatabases(); 
         
         $sqlTab = [];    
-        $placeholders = implode(',', array_fill(0, count($emails), '?'));
+        if ($emails != null) {
+            $placeholders = implode(',', array_fill(0, count($emails), '?'));
+        }
         $allParameters = [];
         foreach($allDb as $db) {
             $sqlPart = "select '".$db['name']."' as amap_name, 
+                '".$db['db']."' as db_name,
                 '".$db['nom_domaine']."' as nom_domaine,
                 concat('EASYAMAP-".strtoupper(str_replace("amap_","",$db['db']))."-', LPAD(p.id_payment, 7, '0')) as reference, 
+                p.id_payment,
                 format(p.amount,2,'fr_FR') as montant, 
                 CONCAT(u_adherent.lastname, ' ', u_adherent.firstname) as adherent, 
                 f.label as beneficiaire, 
@@ -817,10 +821,10 @@ class PaymentRepository extends EntityRepository
                 $sqlTab[] = $sqlPart;
         }
 
-        $sql = implode(PHP_EOL." UNION ALL ".PHP_EOL, $sqlTab);        
+        $sql = "select * from(".implode(PHP_EOL." UNION ALL ".PHP_EOL, $sqlTab).") t where id_payment is not null order by transfer_issued_at DESC";        
         $stmt = $conn->prepare($sql);
         $stmt->execute($allParameters);   
-        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);       
+        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);  
         if ($emails != null) {
             return $results;
         }
@@ -832,5 +836,33 @@ class PaymentRepository extends EntityRepository
             $resultsByEmail[$obj['email']][] = $obj;
         }
         return $resultsByEmail;
+    }
+
+    public function valideVirement($amap, $idPayment, $idUSer) {
+        if (!preg_match('/^amap_[a-z0-9_]+$/', $amap)) {
+            throw new \Exception("Nom de base de données invalide");
+        }
+        $em = $this->getEntityManager();
+        $conn = $em->getConnection();
+        $sql = "update ".$amap.".payment 
+                set transfer_received_at=now(), transfer_validated_by=:id_user
+                where id_payment=:id_payment";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['id_user' => $idUSer, 'id_payment' => $idPayment]);
+        return true;
+    }
+
+    public function invalideVirement($amap, $idPayment) {
+        if (!preg_match('/^amap_[a-z0-9_]+$/', $amap)) {
+            throw new \Exception("Nom de base de données invalide");
+        }
+        $em = $this->getEntityManager();
+        $conn = $em->getConnection();
+        $sql = "update ".$amap.".payment 
+                set transfer_received_at=null
+                where id_payment=:id_payment";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['id_payment' => $idPayment]);
+        return true;
     }
 }

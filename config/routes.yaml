@@ -583,6 +583,18 @@ validation_virements_valides:
     path: validation_virements/valides
     controller: App\Controller\PaymentController:validationVirementsValides
 
+validation_virements_valider:
+    path: validation_virements/valider/{amap}/{valide}/{id_payment}
+    controller: App\Controller\PaymentController:validerVirement
+
+validation_virements_a_valider_admin:
+    path: validation_virements/a_valider/admin
+    controller: App\Controller\PaymentController:validationVirementsAValiderAdmin
+
+validation_virements_valides_admin:
+    path: validation_virements/valides/admin
+    controller: App\Controller\PaymentController:validationVirementsValidesAdmin
+
 ajax_get_info_virement:
     path: ajax/getInfoVirement/{idPayment}
     controller: App\Controller\PaymentController:getInfoVirement
