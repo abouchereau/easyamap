@@ -604,3 +604,7 @@ ajax_check_virement:
     controller: App\Controller\PaymentController:checkVirementAdherent
     methods: POST
 
+
+set_payment_type:
+    path: set_payment_type/{idPayment}/{paymentType}
+    controller: App\Controller\PaymentController:setPaymentType

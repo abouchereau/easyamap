@@ -72,6 +72,13 @@ class Payment
      * @ORM\JoinColumn(name="transfer_validated_by", referencedColumnName="id_user", nullable=true)
      */
     private $transferValidatedBy;
+
+    /**
+     * @var integer
+     * @ORM\Column(name="payment_type", type="integer", nullable=true)
+     * @ORM\JoinColumn(name="payment_type", referencedColumnName="id_payment_type", nullable=true)
+     */
+    private $paymentType;
     
     /**
      * Get idPayment
@@ -204,4 +211,12 @@ class Payment
         return $this->transferValidatedBy;
     }
 
+    public function getPaymentType() {
+        return $this->paymentType;
+    }
+
+    public function setPaymentType($paymentType) {
+        $this->paymentType = $paymentType;
+        return $this;   
+    }
 }

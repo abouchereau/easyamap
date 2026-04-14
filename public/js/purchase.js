@@ -124,6 +124,12 @@ $("button.btn").click(function () {
   });
   $("#json").val(JSON.stringify(notEmptyValues));
   $("#current_farm").val(getCurrentFarm());
+
+
+  if (farmPaymentTypes != null && farmPaymentTypes.some(a => a.types.length > 1)) {
+    alert("plusieurs types de paiement sont présents dans cette ferme, merci de les différencier avant de valider");
+    return false;
+  }
   $("#json_form").submit();
 });
 

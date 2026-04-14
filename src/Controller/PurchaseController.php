@@ -103,6 +103,16 @@ class PurchaseController extends AmapBaseController
     if ($contract->getCountPurchaseSince() != null) {
         $purchaseSince = $em->getRepository('App\Entity\Purchase')->getPurchaseCountSince($contract->getCountPurchaseSince(), $products, $user);
     }
+
+    $lastIdFarm = 0;
+    $farmPaymentTypes = [];
+    foreach ($products as $product) {
+        if ($product->getFkFarm()->getIdFarm() != $lastIdFarm) {
+            $farmPaymentTypes[] = ['farm' => ['id_farm' =>$product->getFkFarm()->getIdFarm(), 'label' => $product->getFkFarm()->getLabel()], 'types' => $product->getFkFarm()->getPaymentTypes()];
+            $lastIdFarm = $product->getFkFarm()->getIdFarm();
+        }
+    }
+    
     return $this->render('Purchase/view.html.twig', array(
           'contract'      => $contract,
           'distributions' => $distributions,
@@ -117,7 +127,8 @@ class PurchaseController extends AmapBaseController
           'user_list'     => $user_list,
           'user'          => $user,
           'purchaseSince' => $purchaseSince,
-          'commandesExistantes' => $commandesExistantes
+          'commandesExistantes' => $commandesExistantes,
+          'farmPaymentTypes' => $farmPaymentTypes
         ));
   }
   

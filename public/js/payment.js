@@ -39,13 +39,13 @@ $(document).ready(function() {
            var receivedAt = $.trim($(this).parent().find('.row-receivedAt').html().replace(/&nbsp;/g, ''));
            var amount = $.trim($(this).parent().find('.row-amount').html());
            if (receivedAt == '') {
-               $(this).addClass('text-danger');
+               $(this).addClass('btn btn-danger');
            } 
            else {
                if (amount == received)
-                    $(this).addClass('text-success');
+                    $(this).addClass('btn btn-success');
                 else
-                    $(this).addClass('text-warning');
+                    $(this).addClass('btn btn-warning');
            }
        })
        
@@ -70,7 +70,6 @@ $(document).ready(function() {
             });
             
             $('.paiement .row-amount').click(function () {
-                console.log("YO",$(this).attr('objectid'));
                 window.id_payment = $(this).attr('objectid');
                 var amount = toNum($(this).html());
                 var user = $.trim($(this).parent().find('.row-fkUser').html());
@@ -104,6 +103,15 @@ $(document).ready(function() {
             });
             
         }
+
+        $('.paiement .row-virement').each(function() {       
+            $(this).addClass('btn btn-default').attr('rel','tooltip').attr('data-container','body').attr('data-placement','bottom').attr('data-title','Virement effectué');            
+            $(this).css('marginLeft','0px').css('marginRight','0px').css('fontSize', '12px');
+            $(this).click(function() {
+                const url = $(this).attr('data-url');
+                window.location.href = url;
+            });
+        });
         $("[rel='tooltip']").tooltip();
 });
 

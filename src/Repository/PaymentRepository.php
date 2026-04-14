@@ -47,6 +47,8 @@ class PaymentRepository extends EntityRepository
             ->addSelect('p.amount')
             ->addSelect('p.received')
             ->addSelect('p.receivedAt')
+            ->addSelect('p.transferIssuedAt')
+            ->addSelect('p.transferReceivedAt')
             ->leftJoin('App\Entity\Contract','c','WITH','p.fkContract = c.idContract')
             ->leftJoin('App\Entity\Farm','f','WITH','p.fkFarm = f.idFarm')
             ->leftJoin('App\Entity\User','u','WITH','p.fkUser = u.idUser')
@@ -89,7 +91,7 @@ class PaymentRepository extends EntityRepository
     public function findForUserContract($contract, $user)
     {
        $conn = $this->getEntityManager()->getConnection();
-       $sql = "SELECT fk_farm, amount, description, received, id_payment
+       $sql = "SELECT fk_farm, amount, description, received, id_payment as idPayment, transfer_issued_at as transferIssuedAt, transfer_received_at as transferReceivedAt
          FROM payment
          WHERE fk_contract=".$contract->getIdContract()."
          AND fk_user=".$user->getIdUser();
@@ -733,7 +735,7 @@ class PaymentRepository extends EntityRepository
             $payments = $description[1];
             $chosen = $description[3];
 
-            //dans la description on met à jour le paeiment choisi
+            //dans la description on met à jour le paiement choisi
             foreach ($chosen as $i => $val) {
                 $description[3][$i] = ($i==$split_index?1:0);
             }
@@ -775,7 +777,7 @@ class PaymentRepository extends EntityRepository
     public function getInfoVirement($idPayment) {  
         $conn = $this->getEntityManager()->getConnection();
         $params = ['id_payment' => $idPayment];
-        $sql = "select concat('EASYAMAP-"+strtoupper($_SERVER['APP_ENV'])."-', LPAD(p.id_payment, 7, '0')) as reference, format(p.amount,2,'fr_FR') as montant, f.label as beneficiaire, f.iban
+        $sql = "select concat('EASYAMAP-".strtoupper($_SERVER['APP_ENV'])."-', LPAD(p.id_payment, 7, '0')) as reference, format(p.amount,2,'fr_FR') as montant, f.label as beneficiaire, f.iban
             from payment p
             left join farm f on f.id_farm = p.fk_farm
             where p.id_payment=:id_payment";

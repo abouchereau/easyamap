@@ -428,11 +428,16 @@ class PaymentController extends AmapBaseController
         $emails = [];
         if ($curUser->isReferent()) {
             $farms = $em->getRepository('App\Entity\Farm')->findForReferent($curUser);
+            
+            
             foreach($farms as $farm) {
+                    echo $farm->getLabel()."--";
                 if ($farm->getEmail() != null) {
+                    echo $farm->getEmail()."--";
                     $emails[] = $farm->getEmail();
                 }
             }
+            die();
         }
         else {
             $farm = $em->getRepository('App\Entity\Farm')->findOneBy(["fkUser" => $curUser->getIdUser()]);
@@ -548,6 +553,24 @@ class PaymentController extends AmapBaseController
             $em->flush();
             return new Response('ok');
         }
+    }
+
+    public function setPaymentType($idPayment, $paymentType) {   
+        $em = $this->getDoctrine()->getManager();    
+        $payment = $em->getRepository('App\Entity\Payment')->findOneBy(["idPayment"=>$idPayment]);
+        if ($payment == null) {
+            throw new AccessDeniedException();
+        }
+        else {
+            if (!in_array($paymentType, [App\Entity\PaymentType::CHECK, App\Entity\PaymentType::CASH, App\Entity\PaymentType::VIREMENT])) {
+                throw new AccessDeniedException();
+            }
+            $payment->setPaymentType($paymentType);
+            $em->persist($payment);
+            $em->flush();
+            return new Response('ok');
+        }
+
     }
 
 }

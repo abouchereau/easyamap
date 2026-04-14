@@ -1,6 +1,6 @@
 <div class="payment_description">
-{% if description[:1] == '[' %}    
-    {% set tab = description|json_decode() %}
+{% if payment.description[:1] == '[' %}    
+    {% set tab = payment.description|json_decode() %}
     {% set types = tab[0] %}
     {% set payments = tab[1] %}
     {% set payment_info = tab[2] %}    
@@ -8,7 +8,7 @@
 
 
 
-  {% if constant('App\\Entity\\PaymentType::CHECK') in types and constant('App\\Entity\\PaymentType::VIREMENT') not in types %}
+  {% if constant('App\\Entity\\PaymentType::CHECK') in types %}
         <div class="row">
             <div class="col-sm-4"><span class="glyphicon glyphicon-chevron-right"></span> <b>Chèque</b></div>
             <div class="col-sm-8">
@@ -73,157 +73,35 @@
     {% endif %}
 
     {% if constant('App\\Entity\\PaymentType::VIREMENT') in types %}
-        <div class="row mt">
-            <div class="col-sm-4"><span class="glyphicon glyphicon-chevron-right"></span> <b>Virement</b></div>
-        {% if isReferentPage is defined and isReferentPage %}
-          <div class="col-sm-8">
-            <i class="glyphicon glyphicon-ok text-success"></i> Envoyé
-            {% if payment_info[0] == "SARLU MAC TRADITION" %}
-            <i class="glyphicon glyphicon-ok text-success"></i>
-            {% else %}            
-            <i class="glyphicon glyphicon-remove text-danger"></i>
-            {% endif %} Reçu
+        <div class="row mt row-virement" data-url="{{ path('validation_virements_a_valider') }}">
+            <div class="col-sm-12"><span class="glyphicon glyphicon-chevron-right"></span> <b>Virement</b></div>
+            {% if isReferentPage is defined and isReferentPage %}
+                <div class="col-sm-12">
+                    {% if payment.transferIssuedAt %}
+                        <i class="glyphicon glyphicon-ok text-success"></i>
+                    {% else %}
+                        <i class="glyphicon glyphicon-remove text-danger"></i>
+                    {% endif %} Envoyé 
+                    {% if payment.transferReceivedAt %}
+                        <i class="glyphicon glyphicon-ok text-success"></i>
+                    {% else %}
+                        <i class="glyphicon glyphicon-remove text-danger"></i>
+                    {% endif %} Reçu
+                </div>
+            {% else %}
+                <div class="col-sm-12">
+                    <a class="btn btn-info virement-btn" href="#" data-id-payment="{{ payment.idPayment }}">Payer par virement</a>
+                </div>
+            {% endif %}
         </div>
-    {% else %}
-        <div class="col-sm-8">
-            <a class="btn btn-info virement-btn" href="#" data-id-payment="{{ idPayment }}">Payer par virement</a>
-        </div>
-    {% endif %}
-    </div>
     {% endif %}
 
 
-    {% if isReferentPage is defined and isReferentPage and idPayment is defined %}{# uniquement dans  sonata 
-        #}<script>var descriptions=descriptions||{};descriptions[{{ idPayment }}]={{description|raw}};</script>{#
+    {% if isReferentPage is defined and isReferentPage and payment.idPayment is defined %}{# uniquement dans  sonata 
+        #}<script>var descriptions=descriptions||{};descriptions[{{ payment.idPayment }}]={{description|raw}};</script>{#
     #}{% endif %}
 {% else %}
     {{ description|replace({'OU':'<b>OU</b>'})|raw }}    
 {% endif %}
 </div>
 
-
-
-<div class="modal fade" id="virement">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Informations pour votre virement bancaire</h4>
-    </div>
-      <div class="modal-body">
-
-        <div class="row">
-            <div class="col col-md-7">
-                <div class="row">
-                    <div class="col col-md-12 p-3">
-                        <p>Pour effectuer un virement, merci de copier exactement les informations suivantes dans votre application bancaire.</p>
-                    </div>
-                </div>
-                <div class="row mt-4">
-                    <div class="col col-md-3 py-3">
-                        <b>IBAN</b><br /><span id="virement-beneficiaire"></span>
-                    </div>
-                    <div class="col col-md-7 py-3">
-                        <input readonly type="text" id="virement-iban" value="" class="form-control" style="font-family: 'Roboto Mono'" onclick="this.select()"/>
-                    </div>
-                    <div class="col col-md-2 py-3">
-                        <a class="btn btn-info" onclick="toClipboard('virement-iban')">Copier</a>
-                    </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col col-md-3 py-3">
-                        <b>Référence</b>
-                    </div>
-                    <div class="col col-md-7 py-3">
-                        <input readonly type="text" id="virement-reference" value="" class="form-control" style="font-family: 'Roboto Mono'" onclick="this.select()" />
-                        <input type="hidden" id="virement-id-payment" />
-                    </div>
-                    <div class="col col-md-2 py-3">
-                        <a class="btn btn-info" onclick="toClipboard('virement-reference')">Copier</a>
-                    </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col col-md-3 py-3">
-                        <b>Montant (€)</b>
-                    </div>
-                    <div class="col col-md-7 py-3">
-                        <input readonly type="text" id="virement-montant" value="" class="form-control" style="font-family: 'Roboto Mono'" onclick="this.select()"/>
-                    </div>
-                    <div class="col col-md-2 py-3">
-                        <a class="btn btn-info" onclick="toClipboard('virement-montant')">Copier</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col col-md-4 col-md-offset-1 bg-grey">
-                <div class="row">
-                    <div class="col col-md-12 p-3">
-                        <p>Si votre application bancaire le permet, vous pouvez scanner ce QR Code afin de préremplir les informations du virement.</p>
-                    </div>
-                </div>                
-                <div class="row">
-                    <div class="col col-md-12 pb-3 text-center">
-                        <div id="qr-code"></div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <hr />
-
-         <div class="row mt-4">
-            <div class="col col-md-12">
-                <p>Une fois le virement effectué, merci de cocher la case ci-dessous : le producteur sera averti et pourra valider la réception du virement.</p>
-            </div>
-        </div>
-          <div class="row py-3 my-3 bg-success">
-            <div class="col col-md-12 text-center" style="transform: scale(1.5);">
-                <input type="checkbox" class="form-check-input" id="user-check-payment" style="position:relative;top:2px;right:5px;" onchange="changeCheckboxPayment(this.checked)" /> 
-                  <label for="user-check-payment" >J'ai effectué le virement.</label>
-            </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-const toClipboard = (id) => {
-    const elt = document.getElementById(id);
-    elt.select();
-    const text = elt.value.replaceAll(" ","");
-    navigator.clipboard.writeText(text)
-        .then(()=>alert("Texte copié dans le presse-papier"))
-        .catch(console.error);
-
-}
-
-const changeCheckboxPayment = (checked) => {    
-    let messageConfirm = checked?"Confirmez-vous avoir émis le virement ?":"Souhaitez-vous vraiment annuler la validation de votre virement ?";
-    if (confirm(messageConfirm)) {
-        let idPayment = $("#virement-id-payment").val();
-        const url = root+'ajax/checkVirement';
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: { 
-                'idPayment': idPayment, 
-                'checked': (checked?"1":"0")
-            },
-            dataType: 'json',
-            beforeSend: function () {            
-                $("#loader").show();
-            },
-            success: function(data) {
-                $("#loader").hide();
-                alert("Nous avons enregistré l'émission de votre virement.\nNous allons avertir le producteur afin qu'il puisse valider la réception.");
-            }
-        });
-    }
-    else {
-        $("#user-check-payment").prop("checked",!checked);
-    }
-    
-};
-</script>

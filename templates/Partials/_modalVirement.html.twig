@@ -1,0 +1,86 @@
+
+
+<div class="modal fade" id="virement">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+     <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Informations pour votre virement bancaire</h4>
+    </div>
+      <div class="modal-body">
+
+        <div class="row">
+            <div class="col col-md-7">
+                <div class="row">
+                    <div class="col col-md-12 p-3">
+                        <p>Pour effectuer un virement, merci de copier exactement les informations suivantes dans votre application bancaire.</p>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col col-md-3 py-3">
+                        <b>IBAN</b><br /><span id="virement-beneficiaire"></span>
+                    </div>
+                    <div class="col col-md-7 py-3">
+                        <input readonly type="text" id="virement-iban" value="" class="form-control" style="font-family: 'Roboto Mono'" onclick="this.select()"/>
+                    </div>
+                    <div class="col col-md-2 py-3">
+                        <a class="btn btn-info" onclick="toClipboard('virement-iban')">Copier</a>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col col-md-3 py-3">
+                        <b>Référence</b>
+                    </div>
+                    <div class="col col-md-7 py-3">
+                        <input readonly type="text" id="virement-reference" value="" class="form-control" style="font-family: 'Roboto Mono'" onclick="this.select()" />
+                        <input type="hidden" id="virement-id-payment" />
+                    </div>
+                    <div class="col col-md-2 py-3">
+                        <a class="btn btn-info" onclick="toClipboard('virement-reference')">Copier</a>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col col-md-3 py-3">
+                        <b>Montant (€)</b>
+                    </div>
+                    <div class="col col-md-7 py-3">
+                        <input readonly type="text" id="virement-montant" value="" class="form-control" style="font-family: 'Roboto Mono'" onclick="this.select()"/>
+                    </div>
+                    <div class="col col-md-2 py-3">
+                        <a class="btn btn-info" onclick="toClipboard('virement-montant')">Copier</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col col-md-4 col-md-offset-1 bg-grey">
+                <div class="row">
+                    <div class="col col-md-12 p-3">
+                        <p>Si votre application bancaire le permet, vous pouvez scanner ce QR Code afin de préremplir les informations du virement.</p>
+                    </div>
+                </div>                
+                <div class="row">
+                    <div class="col col-md-12 pb-3 text-center">
+                        <div id="qr-code"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <hr />
+
+         <div class="row mt-4">
+            <div class="col col-md-12">
+                <p>Une fois le virement effectué, merci de cocher la case ci-dessous : le producteur sera averti et pourra valider la réception du virement.</p>
+            </div>
+        </div>
+          <div class="row py-3 my-3 bg-success">
+            <div class="col col-md-12 text-center" style="transform: scale(1.5);">
+                <input type="checkbox" class="form-check-input" id="user-check-payment" style="position:relative;top:2px;right:5px;" onchange="changeCheckboxPayment(this.checked)" /> 
+                  <label for="user-check-payment" >J'ai effectué le virement.</label>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
