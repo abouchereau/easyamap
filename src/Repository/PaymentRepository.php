@@ -9,6 +9,7 @@ use App\Entity\PaymentSplit;
 use App\Entity\PaymentFreq;
 use App\Util\Utils;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Entity\PaymentType;
 
 class PaymentRepository extends EntityRepository 
 {
@@ -99,7 +100,7 @@ class PaymentRepository extends EntityRepository
       return $r->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE);
     }
     
-    public function compute($user, $contract, $ids_purchase_farm)
+    public function compute($user, $contract, $ids_purchase_farm, $farm_payment_types = null)
     {
       //rien à calculer : on fait rien
       if (count($ids_purchase_farm) == 0)
@@ -189,6 +190,17 @@ class PaymentRepository extends EntityRepository
             usort($all[$id_farm]['split_payments'], function ($a,$b) {return count($a) > count($b);});//classé par nombre de chèques ascendant
         }
         $payment_farm = array();
+
+        $payment_type_farm = [];
+        if (!empty($farm_payment_types)) {
+            $farm_payment_types = json_decode($farm_payment_types, true);
+            foreach ($farm_payment_types as $key => $val) {
+                $id_farm = str_replace('payment_type_', '', $key);
+                $payment_type = 1*$val;                
+                $payment_type_farm[$id_farm] = $payment_type;
+            }
+        }
+        
         foreach ($all as $id_farm => $each) {
             if (!isset($farms[$id_farm])) {
                 try {
@@ -204,7 +216,7 @@ class PaymentRepository extends EntityRepository
 //                $this->addPayment(0,$user, $farm,$contract, $each['payment_types'],$each['split_payments'],$farm->getCheckPayableTo(),$each['chosen_payment']);
 //            }
             if ($each['total_amount']>0 || $each['has_ratio_products']) {
-                $id_payment = $this->addPayment($each['total_amount'],$user, $farms[$id_farm],$contract, $each['payment_types'],$each['split_payments'],$farms[$id_farm]->getCheckPayableTo(),$each['chosen_payment']);
+                $id_payment = $this->addPayment($each['total_amount'],$user, $farms[$id_farm],$contract, $each['payment_types'],$each['split_payments'],$farms[$id_farm]->getCheckPayableTo(),$each['chosen_payment'], $payment_type_farm[$id_farm] ?? null);
                 $payment_farm[$id_farm] = $id_payment;
             }     
         }
@@ -223,7 +235,7 @@ class PaymentRepository extends EntityRepository
         }
     }
     
-    private function addPayment($amount,$user,$farm,$contract, $payment_types,$split_payments,$checkPayableTo,$chosen_payment) {
+    private function addPayment($amount,$user,$farm,$contract, $payment_types,$split_payments,$checkPayableTo,$chosen_payment,$payment_type = null) {
         $em = $this->getEntityManager();
         $payment = new Payment();
         $payment->setAmount(round($amount,2));
@@ -232,6 +244,7 @@ class PaymentRepository extends EntityRepository
         $payment->setFkContract($contract);        
         $payment->setDescription(json_encode(array($payment_types,$split_payments,array($checkPayableTo),$chosen_payment),JSON_NUMERIC_CHECK));
         $payment->setReceived(0);
+        $payment->setPaymentType($payment_type);
 
         try {
          $em->persist($payment);
@@ -774,10 +787,10 @@ class PaymentRepository extends EntityRepository
         }
     }
 
-    public function getInfoVirement($idPayment) {  
+    public function getInfoVirement($idPayment, $paymentType) {  
         $conn = $this->getEntityManager()->getConnection();
         $params = ['id_payment' => $idPayment];
-        $sql = "select concat('EASYAMAP-".strtoupper($_SERVER['APP_ENV'])."-', LPAD(p.id_payment, 7, '0')) as reference, format(p.amount,2,'fr_FR') as montant, f.label as beneficiaire, f.iban
+        $sql = "select concat('EASYAMAP-".PaymentType::getPrefix($paymentType)."-".strtoupper($_SERVER['APP_ENV'])."-', LPAD(p.id_payment, 7, '0')) as reference, format(p.amount,2,'fr_FR') as montant, f.label as beneficiaire, f.iban
             from payment p
             left join farm f on f.id_farm = p.fk_farm
             where p.id_payment=:id_payment";

@@ -74,10 +74,11 @@
                 <p>Une fois le virement effectué, merci de cocher la case ci-dessous : le producteur sera averti et pourra valider la réception du virement.</p>
             </div>
         </div>
-          <div class="row py-3 my-3 bg-success">
+          <div class="row py-3 my-3">
             <div class="col col-md-12 text-center" style="transform: scale(1.5);">
-                <input type="checkbox" class="form-check-input" id="user-check-payment" style="position:relative;top:2px;right:5px;" onchange="changeCheckboxPayment(this.checked)" /> 
-                  <label for="user-check-payment" >J'ai effectué le virement.</label>
+                <a href="#" class="btn btn-default" id="payment-{{ constant('App\\Entity\\PaymentType::VIREMENT') }}-cancel-btn" data-dismiss="modal" onclick="return false;">Annuler</a>
+                <a href="#" class="btn btn-success" id="payment-{{ constant('App\\Entity\\PaymentType::VIREMENT') }}-validate-btn-true" onclick="validatePayment(true, {{ constant('App\\Entity\\PaymentType::VIREMENT') }});return false;">J'ai effectué le virement VIREMENT</a>
+                <a href="#" class="btn btn-warning" id="payment-{{ constant('App\\Entity\\PaymentType::VIREMENT') }}-validate-btn-false" onclick="validatePayment(false, {{ constant('App\\Entity\\PaymentType::VIREMENT') }});return false;">Le virement VIREMENT n'a en fait pas été effectué</a>          
             </div>
         </div>
       </div>

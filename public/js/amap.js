@@ -17,30 +17,32 @@ const toClipboard = (id) => {
 
 }
 
-const changeCheckboxPayment = (checked) => {    
+const validatePayment = (checked, paymentType) => {    
     let messageConfirm = checked?"Confirmez-vous avoir émis le virement ?":"Souhaitez-vous vraiment annuler la validation de votre virement ?";
     if (confirm(messageConfirm)) {
-        let idPayment = $("#virement-id-payment").val();
+        let idPayment = $(paymentType=="3"?"#virement-id-payment":"#wero-id-payment").val();
         const url = root+'ajax/checkVirement';
         $.ajax({
             url: url,
             type: 'POST',
             data: { 
                 'idPayment': idPayment, 
-                'checked': (checked?"1":"0")
+                'checked': (checked?"1":"0"),
+                'paymentType': paymentType
             },
-            dataType: 'json',
             beforeSend: function () {            
                 $("#loader").show();
             },
             success: function(data) {
-                $("#loader").hide();
-                alert("Nous avons enregistré l'émission de votre virement.\nNous allons avertir le producteur afin qu'il puisse valider la réception.");
+                if (checked) {
+                    alert("Nous avons enregistré l'émission de votre virement.\nNous allons avertir le producteur afin qu'il puisse valider la réception.");
+                }
+                window.location.reload();
             }
         });
     }
     else {
-        $("#user-check-payment").prop("checked",!checked);
+       // $("#user-check-payment").prop("checked",!checked);
     }
     
 };

@@ -10,6 +10,11 @@ __IBAN__
 EUR__MONTANT__
 __REFERENCE__`;
 
+const PaymentType = {
+    VIREMENT: 3,
+    WERO: 4
+};
+
 $(document).ready(function () {
     
     $('body').on('has-changes', function () {
@@ -72,39 +77,60 @@ $(document).ready(function () {
 
     $(".virement-btn").click(e=> {
         let idPayment = e.target.dataset.idPayment;
+        let paymentType = e.target.dataset.paymentType;
+        let transferIssued = e.target.dataset.transferIssued;
+        $("#payment-"+paymentType+"-validate-btn-true").css("display", transferIssued === "false" ? "inline-block" : "none");
+        $("#payment-"+paymentType+"-validate-btn-false").css("display", transferIssued === "true" ? "inline-block" : "none");
         e.preventDefault(); 
         $.ajax({
-            url: root+"ajax/getInfoVirement/"+idPayment,
+            url: root+"ajax/getInfoVirement/"+idPayment+"/"+paymentType,
             dataType: 'json',
             beforeSend: function () {
                  $("#loader").show();
             },
-            success: function(data) {
+            success: function(data) {                
                 $("#loader").hide();                
-                $("#virement").modal("show");                    
-                $("#virement-iban").val(data.iban);
-                $("#virement-montant").val(data.montant);
-                $("#virement-reference").val(data.reference);
-                $("#virement-beneficiaire").html("("+data.beneficiaire+")");
-                $("#virement-id-payment").val(idPayment);
+                if (paymentType == PaymentType.VIREMENT) {
+                    $("#virement").modal("show");                    
+                    $("#virement-iban").val(data.iban);
+                    $("#virement-montant").val(data.montant);
+                    $("#virement-reference").val(data.reference);
+                    $("#virement-beneficiaire").html("("+data.beneficiaire+")");
+                    $("#virement-id-payment").val(idPayment);
 
-                let qrStr = sepaData
-                    .replace("__BENEFICIAIRE__", data.beneficiaire)
-                    .replace("__IBAN__", data.iban)
-                    .replace("__MONTANT__", data.montant.replace(",","."))
-                    .replace("__REFERENCE__", data.reference);
+                    let qrStr = sepaData
+                        .replace("__BENEFICIAIRE__", data.beneficiaire)
+                        .replace("__IBAN__", data.iban)
+                        .replace("__MONTANT__", data.montant.replace(",","."))
+                        .replace("__REFERENCE__", data.reference);
 
-                const qr = qrcode(0, 'M'); // niveau de correction
-                qr.addData(qrStr);
-                qr.make();
+                    const qr = qrcode(0, 'M'); // niveau de correction
+                    qr.addData(qrStr);
+                    qr.make();
 
-                $("#qr-code").html(qr.createImgTag(3, 10, "QR Code"));
+                    $("#qr-code").html(qr.createImgTag(3, 10, "QR Code"));
 
-                showLoader(false);
+                } else if (paymentType == PaymentType.WERO) {
+                    $("#wero").modal("show");     
+                    $("#wero-montant").val(data.montant);
+                    $("#wero-reference").val(data.reference);
+                    $("#wero-beneficiaire").html("("+data.beneficiaire+")");
+                    $("#wero-id-payment").val(idPayment);
+                }
             }
         });          
     
         return false;
+    });
+
+    
+    $("#validate-btn").click(function() {      
+        //TODO : vérifier que les types de paiement ont été choisis pour toutes les fermes  
+        const formData = new FormData(document.getElementById('payment_type_form'));
+        const obj = Object.fromEntries(formData);
+        $("#farm_payment_type").val(JSON.stringify(obj));            
+        $('#type-payment-choice').modal('hide');
+        $("#json_form").submit();
     });
 
 });
@@ -125,9 +151,8 @@ $("button.btn").click(function () {
   $("#json").val(JSON.stringify(notEmptyValues));
   $("#current_farm").val(getCurrentFarm());
 
-
-  if (farmPaymentTypes != null && farmPaymentTypes.some(a => a.types.length > 1)) {
-    alert("plusieurs types de paiement sont présents dans cette ferme, merci de les différencier avant de valider");
+  if (hasMultiplePaymentTypes) {
+    $('#type-payment-choice').modal('show');
     return false;
   }
   $("#json_form").submit();

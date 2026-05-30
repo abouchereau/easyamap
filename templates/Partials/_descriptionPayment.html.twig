@@ -90,7 +90,38 @@
                 </div>
             {% else %}
                 <div class="col-sm-12">
-                    <a class="btn btn-info virement-btn" href="#" data-id-payment="{{ payment.idPayment }}">Payer par virement</a>
+                    <a class="btn btn-info virement-btn" href="#" data-id-payment="{{ payment.idPayment }}" data-payment-type="{{ constant('App\\Entity\\PaymentType::VIREMENT') }}" data-transfer-issued="{{ payment.transferIssuedAt is null ? 'false':'true' }}">Payer par virement</a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+
+     {% if constant('App\\Entity\\PaymentType::WERO') in types %}
+        <div class="row mt row-virement" data-url="{{ path('validation_virements_a_valider') }}">
+            <div class="col-sm-12"><span class="glyphicon glyphicon-chevron-right"></span> <b>Wero</b></div>
+            {% if isReferentPage is defined and isReferentPage %}
+                <div class="col-sm-12">
+                    {% if payment.transferIssuedAt %}
+                        <i class="glyphicon glyphicon-ok text-success"></i>
+                    {% else %}
+                        <i class="glyphicon glyphicon-remove text-danger"></i>
+                    {% endif %} Envoyé 
+                    {% if payment.transferReceivedAt %}
+                        <i class="glyphicon glyphicon-ok text-success"></i>
+                    {% else %}
+                        <i class="glyphicon glyphicon-remove text-danger"></i>
+                    {% endif %} Reçu
+                </div>
+            {% else %}
+                <div class="col-sm-12">
+                    {% if payment.transferIssuedAt %}
+                        <i class="glyphicon glyphicon-ok text-success"></i> Envoyé <br />
+                    {% endif %}  
+                    {% if payment.transferReceivedAt %}
+                        <i class="glyphicon glyphicon-ok text-success"></i> Reçu  <br />
+                    {% endif %}
+                     <a class="btn btn-info virement-btn" href="#" data-id-payment="{{ payment.idPayment }}" data-payment-type="{{ constant('App\\Entity\\PaymentType::WERO') }}" data-transfer-issued="{{ payment.transferIssuedAt is null ? 'false':'true' }}">Payer par Wero</a>
                 </div>
             {% endif %}
         </div>

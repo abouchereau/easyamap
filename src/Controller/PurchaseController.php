@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Util\Utils;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 /**
  * Purchase controller.
  *
@@ -380,10 +381,12 @@ class PurchaseController extends AmapBaseController
     if ($v === false)
       return $this->rollback($id_contract);
     
-    $v = $em->getRepository('App\Entity\Payment')->compute($user, $contract, $ids_purchase);
+    $farm_payment_type = $request->get('farm_payment_type');    
+    $v = $em->getRepository('App\Entity\Payment')->compute($user, $contract, $ids_purchase, $farm_payment_type);
     if ($v === false)
       return $this->rollback($id_contract);
-    
+   
+        
     $this->get('session')->getFlashBag()->add('notice', 'Les données ont été mises à jour.');
     $em->getConnection()->commit();
     

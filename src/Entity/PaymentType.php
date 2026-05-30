@@ -17,6 +17,7 @@ class PaymentType
     const CHECK    = 1;
     const CASH     = 2;
     const VIREMENT = 3;
+    const WERO     = 4;
     
     
     use LabelTrait;
@@ -42,9 +43,22 @@ class PaymentType
     
     static public function getLabel($type) {
         switch ($type) {
+            case self::UNKNOWN: return "Inconnu"; break;
             case self::CHECK: return "Chèque"; break;
             case self::CASH: return "Espèces"; break;
             case self::VIREMENT: return "Virement"; break;
+            case self::WERO: return "Wero"; break;
+        }
+        return false;
+    }
+
+    static public function getPrefix($type) {
+        switch ($type) {
+            case self::UNKNOWN: return "UNK"; break;
+            case self::CHECK: return "CHK"; break;
+            case self::CASH: return "CSH"; break;
+            case self::VIREMENT: return "VIR"; break;
+            case self::WERO: return "WRO"; break;
         }
         return false;
     }

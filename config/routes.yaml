@@ -596,7 +596,7 @@ validation_virements_valides_admin:
     controller: App\Controller\PaymentController:validationVirementsValidesAdmin
 
 ajax_get_info_virement:
-    path: ajax/getInfoVirement/{idPayment}
+    path: ajax/getInfoVirement/{idPayment}/{paymentType}
     controller: App\Controller\PaymentController:getInfoVirement
 
 ajax_check_virement:

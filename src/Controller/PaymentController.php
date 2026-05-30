@@ -525,9 +525,9 @@ class PaymentController extends AmapBaseController
 
     }
 
-    public function getInfoVirement($idPayment) {        
+    public function getInfoVirement($idPayment, $paymentType) {        
         $em = $this->getDoctrine()->getManager(); 
-        $infos = $em->getRepository('App\Entity\Payment')->getInfoVirement($idPayment);
+        $infos = $em->getRepository('App\Entity\Payment')->getInfoVirement($idPayment, $paymentType);
         return new Response(json_encode($infos));        
     }
 
@@ -536,9 +536,11 @@ class PaymentController extends AmapBaseController
         $em = $this->getDoctrine()->getManager();    
         $idPayment = $request->request->get('idPayment');
         $checked = $request->request->get('checked')=="1";
+        $paymentType = $request->request->get('paymentType');
         //vérifier que le paiement est bien émis par l'adhérent
-        $curUser = $this->get('security.token_storage')->getToken()->getUser();
+        $curUser = $this->get('security.token_storage')->getToken()->getUser();        
         $payment = $em->getRepository('App\Entity\Payment')->findOneBy(["idPayment"=>$idPayment]);
+        $payment->setPaymentType(1*$paymentType);
         if ($curUser->getIdUser() != $payment->getFkUser()->getIdUser()) {
             throw new AccessDeniedException();
         }
@@ -562,7 +564,7 @@ class PaymentController extends AmapBaseController
             throw new AccessDeniedException();
         }
         else {
-            if (!in_array($paymentType, [App\Entity\PaymentType::CHECK, App\Entity\PaymentType::CASH, App\Entity\PaymentType::VIREMENT])) {
+            if (!in_array($paymentType, [App\Entity\PaymentType::CHECK, App\Entity\PaymentType::CASH, App\Entity\PaymentType::VIREMENT, App\Entity\PaymentType::WERO])) {
                 throw new AccessDeniedException();
             }
             $payment->setPaymentType($paymentType);

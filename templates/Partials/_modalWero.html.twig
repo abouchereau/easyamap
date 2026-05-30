@@ -1,0 +1,61 @@
+
+
+<div class="modal fade" id="wero">
+  <div class="modal-dialog">
+    <div class="modal-content">
+     <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Informations pour votre virement Wero</h4>
+    </div>
+      <div class="modal-body">
+
+        <div class="row">
+            <div class="col col-md-12 p-3">
+                <p>Pour effectuer un virement WERO, merci de copier exactement les informations suivantes dans votre application bancaire.</p>
+            </div>
+        </div>
+        
+        <div class="row mt-2">
+            <div class="col col-md-3 py-3">
+                <b>Référence</b>
+            </div>
+            <div class="col col-md-7 py-3">
+                <input readonly type="text" id="wero-reference" value="" class="form-control" style="font-family: 'Roboto Mono'" onclick="this.select()" />
+                <input type="hidden" id="wero-id-payment" />
+            </div>
+            <div class="col col-md-2 py-3">
+                <a class="btn btn-info" onclick="toClipboard('wero-reference')">Copier</a>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col col-md-3 py-3">
+                <b>Montant (€)</b>
+            </div>
+            <div class="col col-md-7 py-3">
+                <input readonly type="text" id="wero-montant" value="" class="form-control" style="font-family: 'Roboto Mono'" onclick="this.select()"/>
+            </div>
+            <div class="col col-md-2 py-3">
+                <a class="btn btn-info" onclick="toClipboard('wero-montant')">Copier</a>
+            </div>
+        </div>
+        <hr />
+         <div class="row mt-4">
+            <div class="col col-md-12">
+                <p>Une fois le virement effectué, merci de valider ci-dessous : le producteur sera averti et pourra valider la réception du virement.</p>
+            </div>
+        </div>
+          <div class="row py-3 my-3">
+            <div class="col col-md-12 text-center">
+            <a href="#" class="btn btn-default" id="payment-{{ constant('App\\Entity\\PaymentType::WERO') }}-cancel-btn" data-dismiss="modal" onclick="return false;">Annuler</a>
+            <a href="#" class="btn btn-success" id="payment-{{ constant('App\\Entity\\PaymentType::WERO') }}-validate-btn-true" onclick="validatePayment(true, {{ constant('App\\Entity\\PaymentType::WERO') }});return false;">J'ai effectué le virement WERO</a>
+            <a href="#" class="btn btn-warning" id="payment-{{ constant('App\\Entity\\PaymentType::WERO') }}-validate-btn-false" onclick="validatePayment(false, {{ constant('App\\Entity\\PaymentType::WERO') }});return false;">Le virement WERO n'a en fait pas été effectué</a>
+            <!--
+                <input type="checkbox" class="form-check-input" id="user-check-payment" style="position:relative;top:2px;right:5px;" onchange="changeCheckboxPayment(this.checked)" /> 
+                  <label for="user-check-payment" >J'ai effectué le virement.</label>
+                  -->
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

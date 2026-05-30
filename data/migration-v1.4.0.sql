@@ -8,3 +8,4 @@ ALTER TABLE payment ADD CONSTRAINT payment_ibfk_4 FOREIGN KEY (transfer_validate
 ALTER TABLE payment ADD COLUMN payment_type int(11) NULL DEFAULT NULL;
 
 INSERT INTO payment_type (id_payment_type, label) VALUES (0, 'Inconnu');
+INSERT INTO payment_type (id_payment_type, label) VALUES (4, 'Wero');
