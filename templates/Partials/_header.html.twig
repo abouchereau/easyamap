@@ -8,7 +8,9 @@
           {% if app is defined and app.user is not empty %}         
              <li><a href="{{ path('home') }}" data-toggle="tooltip" data-placement="bottom" title="Menu"> <span class="glyphicon glyphicon-th-large"></span> </a></li>         
          {% endif %}
+         {% if title is defined and title is not empty %}
           <li class="mobile-hide"><a class="link-disabled" href="#" onclick="return false;" style="font-size:145%;">{{ title|raw }}</a></li>
+          {% endif %}
          </ul> 
         </div>
         <div class="pull-right">

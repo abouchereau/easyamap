@@ -12,37 +12,31 @@ const toClipboard = (id) => {
     elt.select();
     const text = elt.value.replaceAll(" ","");
     navigator.clipboard.writeText(text)
-        .then(()=>alert("Texte copié dans le presse-papier"))
+        .then(()=>alert("Texte copié dans le presse-papier : \n"+text))
         .catch(console.error);
-
 }
 
-const validatePayment = (checked, paymentType) => {    
-    let messageConfirm = checked?"Confirmez-vous avoir émis le virement ?":"Souhaitez-vous vraiment annuler la validation de votre virement ?";
-    if (confirm(messageConfirm)) {
-        let idPayment = $(paymentType=="3"?"#virement-id-payment":"#wero-id-payment").val();
-        const url = root+'ajax/checkVirement';
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: { 
-                'idPayment': idPayment, 
-                'checked': (checked?"1":"0"),
-                'paymentType': paymentType
-            },
-            beforeSend: function () {            
+const validatePayment = (idPayment, checked,) => {    
+    const url = root+'ajax/checkVirement';
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: { 
+            'idPayment': idPayment, 
+            'checked': (checked?"1":"0"),
+            'currentFarm': getCurrentFarm()
+        },
+        beforeSend: function () {    
                 $("#loader").show();
-            },
-            success: function(data) {
-                if (checked) {
-                    alert("Nous avons enregistré l'émission de votre virement.\nNous allons avertir le producteur afin qu'il puisse valider la réception.");
-                }
-                window.location.reload();
-            }
-        });
-    }
-    else {
-       // $("#user-check-payment").prop("checked",!checked);
-    }
+        },
+        success: function(data) {                
+            $("#loader").hide();
+           /* if (checked) {
+                alert("Nous avons enregistré l'émission de votre virement.\nNous allons avertir le producteur afin qu'il puisse valider la réception.");
+            }*/
+            window.location.reload();
+        }
+    });
+
     
 };

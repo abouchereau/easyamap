@@ -17,7 +17,7 @@
             <td style="border:1px solid #ddd; padding:8px;font-size: 13px;">{{ virement.adherent }}</td>
             <td style="border:1px solid #ddd; padding:8px;font-size: 13px;">{{ virement.reference }}</td>
             <td style="border:1px solid #ddd; padding:8px;font-size: 13px;">{{ virement.montant }} €</td>
-            <td style="border:1px solid #ddd; padding:8px;font-size: 13px;">{{ virement.transfer_issued_at|date('d/m/Y') }}</td>
+            <td style="border:1px solid #ddd; padding:8px;font-size: 13px;">{{ virement.issued_at|date('d/m/Y') }}</td>
         </tr>
         {% endfor %}
     </tbody>

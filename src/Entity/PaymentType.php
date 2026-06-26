@@ -14,8 +14,8 @@ use App\Entity\Traits\LabelTrait;
 class PaymentType
 {
     const UNKNOWN  = 0;
-    const CHECK    = 1;
-    const CASH     = 2;
+    const CASH     = 1;
+    const CHECK    = 2;
     const VIREMENT = 3;
     const WERO     = 4;
     

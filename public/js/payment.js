@@ -47,7 +47,7 @@ $(document).ready(function() {
                 else
                     $(this).addClass('btn btn-warning');
            }
-       })
+       });
        
        //page historique des paiements
       /* $('.paiement .row-fkUser, .paiement .row-fkFarm').attr('rel','tooltip').attr('data-container','body').attr('data-placement','bottom');
@@ -59,7 +59,7 @@ $(document).ready(function() {
        */
        if (isReferentPage)
        {
-            $('.paiement .row-description, .paiement .row-amount, .paiement .row-received').attr('rel','tooltip').attr('data-container','body').attr('data-placement','bottom');
+           /* $('.paiement .row-description, .paiement .row-amount, .paiement .row-received').attr('rel','tooltip').attr('data-container','body').attr('data-placement','bottom');
             $('.paiement .row-amount').attr('data-title','Modifier le montant');
             $('.paiement .row-received').each(function () {
                 if (toNum($(this).html()) == 0)
@@ -101,7 +101,7 @@ $(document).ready(function() {
                 $(".adherent").html(user);
                 $("#modal-received").modal('show');
             });
-            
+            */
         }
 
         $('.paiement .row-virement').each(function() {       

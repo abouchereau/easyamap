@@ -154,6 +154,16 @@ class FarmRepository extends EntityRepository
         }
         return $this->payment_types[$id_farm];
     }
+
+    public function getDefaultPaymentTypeAllFarms() {
+        $em = $this->getEntityManager();
+        $conn = $em->getConnection();
+        $sql = "select fk_farm, case when count(fk_payment_type) > 1 then 0 else fk_payment_type end
+                from farm_payment_type
+                group by fk_farm";
+        $r = $conn->query($sql);
+        return $r->fetchAll(\PDO::FETCH_KEY_PAIR);
+    }
     
     protected $payment_freqs = array();
     

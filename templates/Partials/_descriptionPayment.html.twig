@@ -77,12 +77,12 @@
             <div class="col-sm-12"><span class="glyphicon glyphicon-chevron-right"></span> <b>Virement</b></div>
             {% if isReferentPage is defined and isReferentPage %}
                 <div class="col-sm-12">
-                    {% if payment.transferIssuedAt %}
+                    {% if payment.issuedAt %}
                         <i class="glyphicon glyphicon-ok text-success"></i>
                     {% else %}
                         <i class="glyphicon glyphicon-remove text-danger"></i>
                     {% endif %} Envoyé 
-                    {% if payment.transferReceivedAt %}
+                    {% if payment.receivedAt %}
                         <i class="glyphicon glyphicon-ok text-success"></i>
                     {% else %}
                         <i class="glyphicon glyphicon-remove text-danger"></i>
@@ -90,7 +90,7 @@
                 </div>
             {% else %}
                 <div class="col-sm-12">
-                    <a class="btn btn-info virement-btn" href="#" data-id-payment="{{ payment.idPayment }}" data-payment-type="{{ constant('App\\Entity\\PaymentType::VIREMENT') }}" data-transfer-issued="{{ payment.transferIssuedAt is null ? 'false':'true' }}">Payer par virement</a>
+                    <a class="btn btn-info virement-btn" href="#" data-id-payment="{{ payment.idPayment }}" data-payment-type="{{ constant('App\\Entity\\PaymentType::VIREMENT') }}" data-transfer-issued="{{ payment.issuedAt is null ? 'false':'true' }}">Payer par virement</a>
                 </div>
             {% endif %}
         </div>
@@ -102,12 +102,12 @@
             <div class="col-sm-12"><span class="glyphicon glyphicon-chevron-right"></span> <b>Wero</b></div>
             {% if isReferentPage is defined and isReferentPage %}
                 <div class="col-sm-12">
-                    {% if payment.transferIssuedAt %}
+                    {% if payment.issuedAt %}
                         <i class="glyphicon glyphicon-ok text-success"></i>
                     {% else %}
                         <i class="glyphicon glyphicon-remove text-danger"></i>
                     {% endif %} Envoyé 
-                    {% if payment.transferReceivedAt %}
+                    {% if payment.receivedAt %}
                         <i class="glyphicon glyphicon-ok text-success"></i>
                     {% else %}
                         <i class="glyphicon glyphicon-remove text-danger"></i>
@@ -115,13 +115,13 @@
                 </div>
             {% else %}
                 <div class="col-sm-12">
-                    {% if payment.transferIssuedAt %}
+                    {% if payment.issuedAt %}
                         <i class="glyphicon glyphicon-ok text-success"></i> Envoyé <br />
                     {% endif %}  
-                    {% if payment.transferReceivedAt %}
+                    {% if payment.receivedAt %}
                         <i class="glyphicon glyphicon-ok text-success"></i> Reçu  <br />
                     {% endif %}
-                     <a class="btn btn-info virement-btn" href="#" data-id-payment="{{ payment.idPayment }}" data-payment-type="{{ constant('App\\Entity\\PaymentType::WERO') }}" data-transfer-issued="{{ payment.transferIssuedAt is null ? 'false':'true' }}">Payer par Wero</a>
+                     <a class="btn btn-info virement-btn" href="#" data-id-payment="{{ payment.idPayment }}" data-payment-type="{{ constant('App\\Entity\\PaymentType::WERO') }}" data-transfer-issued="{{ payment.issuedAt is null ? 'false':'true' }}">Payer par Wero</a>
                 </div>
             {% endif %}
         </div>

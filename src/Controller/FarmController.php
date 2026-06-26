@@ -59,7 +59,7 @@ class FarmController extends AmapBaseController
             return $this->redirect($this->generateUrl('farm'));
         }
         else {
-            $this->get('session')->getFlashBag()->add('error', 'Problème lors de l\'enregistrement des données '.$form->getErrors(true, false));
+            $this->get('session')->getFlashBag()->add('error', 'Problème lors de l\'enregistrement des données<br /><b>'.$form->getErrors(true, false).'</b>');
         }
 
         return $this->render('Farm/new.html.twig', array(
@@ -182,7 +182,7 @@ class FarmController extends AmapBaseController
             return $this->redirect($this->generateUrl('farm_edit', array('id' => $id)));
         }
         else {
-          $this->get('session')->getFlashBag()->add('error', 'Problème lors de l\'enregistrement des données '.$editForm->getErrors(true, false));
+          $this->get('session')->getFlashBag()->add('error', 'Problème lors de l\'enregistrement des données<br /><b>'.$editForm->getErrors(true, false).'</b>');
         }
         
         return $this->render('Farm/edit.html.twig', array(

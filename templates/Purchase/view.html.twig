@@ -3,6 +3,8 @@
 
 {% block body %}
 
+{% include 'Partials/_waitingPayments.html.twig' with {'farmWaitingPayments': farmWaitingPayments, 'isMultiFarm': farmPaymentTypes|length > 1 } %}
+
 {% set mois = ['','Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'] %}
 {% set jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'] %}  
 
@@ -67,7 +69,7 @@
             {% for product in products %}
                 {% if product.fkFarm.idFarm != last_id_farm %}
                     {% set last_id_farm = product.fkFarm.idFarm %}
-                    <li role="presentation" class="{% if (current_farm is null and loop.first) or (current_farm == product.fkFarm.idFarm) %}active{% endif %}"><a href="#farm{{ product.fkFarm.idFarm }}" aria-controls="farm{{ product.fkFarm.idFarm }}" role="tab" data-toggle="tab">{{ product.fkFarm.productType }}</a></li>
+                    <li role="presentation"><a href="#farm{{ product.fkFarm.idFarm }}" aria-controls="farm{{ product.fkFarm.idFarm }}" role="tab" data-toggle="tab">{{ product.fkFarm.productType }}</a></li>
                 {% endif %}
             {% endfor %}
         </ul>
@@ -85,7 +87,7 @@
         {% if product.fkFarm.idFarm != last_id_farm %}
         {% set last_id_farm = product.fkFarm.idFarm %}
         {% set iterate_by_farm = 0 %}
-        {% set enable = true %}
+        {% set enable = true %}{# TODO vérifier #}
         {% if not contract.isActive %}            
           {% set enable = false %}
         {% endif %}
@@ -101,7 +103,7 @@
           
           
         
-        <div role="tabpanel" class="tab-pane fade{% if (current_farm is null and loop.first) or (current_farm == product.fkFarm.idFarm) %} in active{% endif %}" id="farm{{ product.fkFarm.idFarm }}">
+        <div role="tabpanel" class="tab-pane fade" id="farm{{ product.fkFarm.idFarm }}">
           <table class="table table-bordered table-condensed" style="margin:0 auto 70px auto;{% if not product.fkFarm.isActive %}display:none;{% endif %}">
           <tr>
             <td class="success text-center" colspan="3"><b>{{ product.fkFarm }}</b><br />({{ product.fkFarm.productType }})<br /><small>Référent{% if product.fkFarm.getReferents()|length > 1 %}s{% endif %} : 
@@ -113,6 +115,7 @@
             </tr>
           
           {% if payments[product.fkFarm.idFarm] is defined %}
+          {% set payment = payments[product.fkFarm.idFarm] %}
             {# if payments[product.fkFarm.idFarm].received>0 %}                
                 {% set farm_payment_received = farm_payment_received|merge([product.fkFarm.label ~ ' (' ~ product.fkFarm.productType ~ ')']) %}
             {% endif #}
@@ -122,19 +125,32 @@
                     Le total sera calculé en fonction du poids à la livraison.{% else %}
 
                     {% if contract.discount is not empty %}
-                        <span style="text-decoration: line-through;">{{ ((payments[product.fkFarm.idFarm].amount/(100-contract.discount))*100)|round(2)|number_format(2,',',' ')~' €' }}</span>
+                        <span style="text-decoration: line-through;">{{ ((payment.amount/(100-contract.discount))*100)|round(2)|number_format(2,',',' ')~' €' }}</span>
                     {%  endif %}
-                    {{ payments[product.fkFarm.idFarm].amount|round(2)|number_format(2,',',' ')~' €'}}
+                    {{ payment.amount|round(2)|number_format(2,',',' ')~' €'}}
 
                     {% endif %}
                 </div>
-                    <div class="payment not-first">Paiement reçu</div><div class="payment_right not-first">{% if payments[product.fkFarm.idFarm].received==0 %}non{% else %}oui{% endif %}</div>
-                    <div class="payment not-first">Règlement</div><div class="payment_right not-first"> 
-                      {% include 'Partials/_descriptionPayment.html.twig' with {'payment': payments[product.fkFarm.idFarm], 'short':false } %}
+
+
+                <div class="payment not-first">Statut</div>
+                <div class="payment_right not-first"> 
+                  {% if payment.issuedAt is null and payment.receivedAt is null %}
+                      en attente de paiement
+                  {% elseif payment.receivedAt is not null %}    
+                      paiement reçu le {{ payment.receivedAt|slice(0,10)|full_date_fr2 }}
+                  {% elseif payment.issuedAt is not null %}
+                      paiement émis le {{ payment.issuedAt|slice(0,10)|full_date_fr2 }}
+                  {% endif %}
+                </div>
+
+
+                   <div class="payment not-first">Règlement</div><div class="payment_right not-first"> 
+                      {% include 'Partials/_descriptionPaymentAdherent.html.twig' with {'payment': payment, 'short':false } %}
                     </div>
                     {% if user_list is not null and not enable %}
-                        <div class="text-danger">Ce contrat ne peut pas être édité car le paiement a déjà été reçu.<br />
-                            Si vous souhaitez l'éditer, il faut d'abord remettre la montant du paiement reçu à 0,00 € (dans "Réception des paiements")
+                        <div class="text-danger">Ce contrat ne peut pas être modifié car le paiement a déjà été reçu.<br />
+                            Si vous souhaitez le modifier, il faut d'abord remettre la montant du paiement reçu à 0,00 € (dans "Réception des paiements")
                         </div>
                     {% endif %}
             </td></tr>
@@ -239,14 +255,13 @@
     {% if user_list is not null %}
         <input type="hidden" name="id_user" value="{{ user.idUser }}" />
     {% endif %}
-    <input type="hidden" id="current_farm" name="current_farm" value="" />
     <input type="hidden" id="farm_payment_type" name="farm_payment_type" value="" />
  </form>
 
 {% include 'Purchase/_modals.html.twig' %}  
-{% include 'Partials/_modalVirement.html.twig' %}
-{% include 'Partials/_modalWero.html.twig' %}
-{% include 'Partials/_modalChoixPayment.html.twig' with {'farmPaymentTypes': farmPaymentTypes} %}
+{# include 'Partials/_modalVirement.html.twig' #}
+{# include 'Partials/_modalWero.html.twig' #}
+{# include 'Partials/_modalChoixPayment.html.twig' with {'farmPaymentTypes': farmPaymentTypes} #}
 {# if farm_payment_received|length>0 and user_list is not null %}
     {% include 'Purchase/_modal_payment_received.html.twig' with {'farm_payment_received':farm_payment_received} %}  
 {% endif #}
@@ -258,6 +273,6 @@
 var root = '{{ url('home') }}';
 let hasMultiplePaymentTypes = {{ farmPaymentTypes|filter(fpt => fpt.types|length > 1)|length > 0 ? 'true' : 'false' }};
 </script>
-<script type="text/javascript" src="{{ asset('js/purchase.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator/qrcode.js"></script>
+<script type="text/javascript" src="{{ asset('js/purchase.js') }}"></script>{#
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator/qrcode.js"></script>#}
 {% endblock %}

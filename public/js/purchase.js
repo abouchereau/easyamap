@@ -1,5 +1,5 @@
 var has_unsaved_changes = false;
-
+/*
 const sepaData = `BCD
 001
 1
@@ -9,11 +9,8 @@ __BENEFICIAIRE__
 __IBAN__
 EUR__MONTANT__
 __REFERENCE__`;
+*/
 
-const PaymentType = {
-    VIREMENT: 3,
-    WERO: 4
-};
 
 $(document).ready(function () {
     
@@ -75,6 +72,18 @@ $(document).ready(function () {
         $('#payment_received_modal').modal('show');
     }
 
+
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        sessionStorage.setItem("currentFarm", getCurrentFarm());
+    });
+
+    if (sessionStorage.getItem("currentFarm") != null) {
+        $('a[href="#farm'+sessionStorage.getItem("currentFarm")+'"]').tab('show');
+    }
+    else {
+        $('a[data-toggle="tab"]:first').tab('show');
+    }
+/*
     $(".virement-btn").click(e=> {
         let idPayment = e.target.dataset.idPayment;
         let paymentType = e.target.dataset.paymentType;
@@ -132,7 +141,7 @@ $(document).ready(function () {
         $('#type-payment-choice').modal('hide');
         $("#json_form").submit();
     });
-
+*/
 });
 
 window.onbeforeunload = function () {
@@ -149,12 +158,7 @@ $("button.btn").click(function () {
       notEmptyValues[$(this).attr('name')] = $(this).val()*1;
   });
   $("#json").val(JSON.stringify(notEmptyValues));
-  $("#current_farm").val(getCurrentFarm());
 
-  if (hasMultiplePaymentTypes) {
-    $('#type-payment-choice').modal('show');
-    return false;
-  }
   $("#json_form").submit();
 });
 

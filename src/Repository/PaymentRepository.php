@@ -48,8 +48,8 @@ class PaymentRepository extends EntityRepository
             ->addSelect('p.amount')
             ->addSelect('p.received')
             ->addSelect('p.receivedAt')
-            ->addSelect('p.transferIssuedAt')
-            ->addSelect('p.transferReceivedAt')
+            ->addSelect('p.issuedAt')
+            ->addSelect('p.paymentType')
             ->leftJoin('App\Entity\Contract','c','WITH','p.fkContract = c.idContract')
             ->leftJoin('App\Entity\Farm','f','WITH','p.fkFarm = f.idFarm')
             ->leftJoin('App\Entity\User','u','WITH','p.fkUser = u.idUser')
@@ -92,15 +92,17 @@ class PaymentRepository extends EntityRepository
     public function findForUserContract($contract, $user)
     {
        $conn = $this->getEntityManager()->getConnection();
-       $sql = "SELECT fk_farm, amount, description, received, id_payment as idPayment, transfer_issued_at as transferIssuedAt, transfer_received_at as transferReceivedAt
-         FROM payment
-         WHERE fk_contract=".$contract->getIdContract()."
-         AND fk_user=".$user->getIdUser();
-      $r = $conn->query($sql);
-      return $r->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE);
+       $sql = "SELECT p.fk_farm, f.label as farmLabel, f.product_type as productType,  p.amount, p.description, p.received, p.id_payment as idPayment, p.issued_at as issuedAt, p.received_at as receivedAt, p.payment_type as paymentType
+         FROM payment p
+         left join farm f on f.id_farm = p.fk_farm
+         WHERE p.fk_contract=:id_contract
+         AND p.fk_user=:id_user";
+      $stmt = $conn->prepare($sql);
+      $stmt->execute(array('id_user'=>$user->getIdUser(), 'id_contract'=>$contract->getIdContract()));
+      return $stmt->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE);
     }
     
-    public function compute($user, $contract, $ids_purchase_farm, $farm_payment_types = null)
+    public function compute($user, $contract, $ids_purchase_farm)
     {
       //rien à calculer : on fait rien
       if (count($ids_purchase_farm) == 0)
@@ -151,7 +153,7 @@ class PaymentRepository extends EntityRepository
                         'total_amount' => 0, 
                         'split_payments' => array(), 
                         'distri_amount' => array(),
-                        'chosen_payment' => array(),
+                        'chosen_payment' => array(),//choix de la fréquence de paiement ?
                         'has_ratio_products' => false
                         );
                     $all[$line['id_farm']]['payment_types'] = $em->getRepository('App\Entity\Farm')->getPaymentTypes($line['id_farm']);
@@ -191,16 +193,9 @@ class PaymentRepository extends EntityRepository
         }
         $payment_farm = array();
 
-        $payment_type_farm = [];
-        if (!empty($farm_payment_types)) {
-            $farm_payment_types = json_decode($farm_payment_types, true);
-            foreach ($farm_payment_types as $key => $val) {
-                $id_farm = str_replace('payment_type_', '', $key);
-                $payment_type = 1*$val;                
-                $payment_type_farm[$id_farm] = $payment_type;
-            }
-        }
-        
+
+        $payment_type_farm = $em->getRepository('App\Entity\Farm')->getDefaultPaymentTypeAllFarms();
+
         foreach ($all as $id_farm => $each) {
             if (!isset($farms[$id_farm])) {
                 try {
@@ -216,7 +211,7 @@ class PaymentRepository extends EntityRepository
 //                $this->addPayment(0,$user, $farm,$contract, $each['payment_types'],$each['split_payments'],$farm->getCheckPayableTo(),$each['chosen_payment']);
 //            }
             if ($each['total_amount']>0 || $each['has_ratio_products']) {
-                $id_payment = $this->addPayment($each['total_amount'],$user, $farms[$id_farm],$contract, $each['payment_types'],$each['split_payments'],$farms[$id_farm]->getCheckPayableTo(),$each['chosen_payment'], $payment_type_farm[$id_farm] ?? null);
+                $id_payment = $this->addPayment($each['total_amount'],$user, $farms[$id_farm],$contract, $each['payment_types'],$each['split_payments'],$farms[$id_farm]->getCheckPayableTo(),$each['chosen_payment'], $payment_type_farm[$id_farm] ?? \App\Entity\PaymentType::UNKNOWN);
                 $payment_farm[$id_farm] = $id_payment;
             }     
         }
@@ -235,7 +230,7 @@ class PaymentRepository extends EntityRepository
         }
     }
     
-    private function addPayment($amount,$user,$farm,$contract, $payment_types,$split_payments,$checkPayableTo,$chosen_payment,$payment_type = null) {
+    private function addPayment($amount,$user,$farm,$contract, $payment_types,$split_payments,$checkPayableTo,$chosen_payment,$payment_type = \App\Entity\PaymentType::UNKNOWN) {
         $em = $this->getEntityManager();
         $payment = new Payment();
         $payment->setAmount(round($amount,2));
@@ -790,7 +785,7 @@ class PaymentRepository extends EntityRepository
     public function getInfoVirement($idPayment, $paymentType) {  
         $conn = $this->getEntityManager()->getConnection();
         $params = ['id_payment' => $idPayment];
-        $sql = "select concat('EASYAMAP-".PaymentType::getPrefix($paymentType)."-".strtoupper($_SERVER['APP_ENV'])."-', LPAD(p.id_payment, 7, '0')) as reference, format(p.amount,2,'fr_FR') as montant, f.label as beneficiaire, f.iban
+        $sql = "select concat('EASYAMAP-".PaymentType::getPrefix($paymentType)."-".strtoupper($_SERVER['APP_ENV'])."-', LPAD(p.id_payment, 7, '0')) as reference, format(p.amount,2,'fr_FR') as montant, f.label as beneficiaire, f.iban, f.phone
             from payment p
             left join farm f on f.id_farm = p.fk_farm
             where p.id_payment=:id_payment";
@@ -819,7 +814,7 @@ class PaymentRepository extends EntityRepository
                 format(p.amount,2,'fr_FR') as montant, 
                 CONCAT(u_adherent.lastname, ' ', u_adherent.firstname) as adherent, 
                 f.label as beneficiaire, 
-                p.transfer_issued_at,
+                p.issued_at,
                 f.email,
                 group_concat(distinct u_referent.email separator ',') as referents_email
                 from ".$db['db'].".payment p
@@ -827,8 +822,8 @@ class PaymentRepository extends EntityRepository
                 left join ".$db['db'].".referent r on r.fk_farm = f.id_farm
                 left join ".$db['db'].".user u_referent on u_referent.id_user = r.fk_user
                 left join ".$db['db'].".user u_adherent on u_adherent.id_user = p.fk_user
-                where p.transfer_issued_at is not null
-                and p.transfer_received_at is " . ($received ? "not null" : "null");
+                where p.issued_at is not null
+                and p.received_at is " . ($received ? "not null" : "null");
                 if($emails != null) {
                     $sqlPart .= " and f.email IN (".$placeholders.")";
                     $allParameters = array_merge($allParameters, $emails);
@@ -836,7 +831,7 @@ class PaymentRepository extends EntityRepository
                 $sqlTab[] = $sqlPart;
         }
 
-        $sql = "select * from(".implode(PHP_EOL." UNION ALL ".PHP_EOL, $sqlTab).") t where id_payment is not null order by transfer_issued_at DESC";        
+        $sql = "select * from(".implode(PHP_EOL." UNION ALL ".PHP_EOL, $sqlTab).") t where id_payment is not null order by issued_at DESC";        
         $stmt = $conn->prepare($sql);
         $stmt->execute($allParameters);   
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);  

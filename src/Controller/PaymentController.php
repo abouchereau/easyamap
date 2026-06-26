@@ -8,7 +8,8 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Entity\User;
 use App\Entity\Payment;
 use App\Entity\PaymentSplit;
-use App\Form\PaymentType;
+use App\Form\PaymentNewType;
+use App\Form\PaymentEditType;
 use App\Util\Utils;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -130,7 +131,7 @@ class PaymentController extends AmapBaseController
      */
     private function createCreateForm(Payment $entity)
     {
-        $form = $this->createForm(PaymentType::class, $entity, array(
+        $form = $this->createForm(PaymentNewType::class, $entity, array(
             'action' => $this->generateUrl('payment_create'),
             'method' => 'POST',
             'user' => $this->get('security.token_storage')->getToken()->getUser()
@@ -385,25 +386,17 @@ class PaymentController extends AmapBaseController
 
     public function validationVirementsAValider() {
          
-        $this->denyAccessUnlessGranted(['ROLE_REFERENT', 'ROLE_FARMER', 'ROLE_ADMIN']);
+        $this->denyAccessUnlessGranted(['ROLE_FARMER', 'ROLE_ADMIN']);
         
         $em = $this->getDoctrine()->getManager();
         $curUser = $this->get('security.token_storage')->getToken()->getUser();
         $emails = [];
-        if ($curUser->isReferent()) {
-            $farms = $em->getRepository('App\Entity\Farm')->findForReferent($curUser);
-            foreach($farms as $farm) {
-                if ($farm->getEmail() != null) {
-                    $emails[] = $farm->getEmail();
-                }
-            }
+        
+        $farm = $em->getRepository('App\Entity\Farm')->findOneBy(["fkUser" => $curUser->getIdUser()]);
+        if ($farm != null && $farm->getEmail() != null) {
+            $emails[] = $farm->getEmail();
         }
-        else {
-            $farm = $em->getRepository('App\Entity\Farm')->findOneBy(["fkUser" => $curUser->getIdUser()]);
-            if ($farm != null && $farm->getEmail() != null) {
-                $emails[] = $farm->getEmail();
-            }
-        }
+    
 
         if (empty($emails)) {
             $virements = [];
@@ -536,20 +529,18 @@ class PaymentController extends AmapBaseController
         $em = $this->getDoctrine()->getManager();    
         $idPayment = $request->request->get('idPayment');
         $checked = $request->request->get('checked')=="1";
-        $paymentType = $request->request->get('paymentType');
         //vérifier que le paiement est bien émis par l'adhérent
         $curUser = $this->get('security.token_storage')->getToken()->getUser();        
         $payment = $em->getRepository('App\Entity\Payment')->findOneBy(["idPayment"=>$idPayment]);
-        $payment->setPaymentType(1*$paymentType);
         if ($curUser->getIdUser() != $payment->getFkUser()->getIdUser()) {
             throw new AccessDeniedException();
         }
         else {
             if ($checked) {
-                $payment->setTransferIssuedAt(new \DateTime());
+                $payment->setIssuedAt(new \DateTime());
             }
             else {
-                $payment->setTransferIssuedAt(null);
+                $payment->setIssuedAt(null);
             }            
             $em->persist($payment);
             $em->flush();
@@ -560,19 +551,148 @@ class PaymentController extends AmapBaseController
     public function setPaymentType($idPayment, $paymentType) {   
         $em = $this->getDoctrine()->getManager();    
         $payment = $em->getRepository('App\Entity\Payment')->findOneBy(["idPayment"=>$idPayment]);
-        if ($payment == null) {
+        $curUser = $this->get('security.token_storage')->getToken()->getUser();     
+        if ($payment == null || $curUser->getIdUser() != $payment->getFkUser()->getIdUser()) {
             throw new AccessDeniedException();
         }
         else {
-            if (!in_array($paymentType, [App\Entity\PaymentType::CHECK, App\Entity\PaymentType::CASH, App\Entity\PaymentType::VIREMENT, App\Entity\PaymentType::WERO])) {
+            if (!in_array($paymentType, [\App\Entity\PaymentType::CHECK, \App\Entity\PaymentType::CASH, \App\Entity\PaymentType::VIREMENT, \App\Entity\PaymentType::WERO, \App\Entity\PaymentType::UNKNOWN])) {
                 throw new AccessDeniedException();
             }
             $payment->setPaymentType($paymentType);
             $em->persist($payment);
             $em->flush();
-            return new Response('ok');
         }
 
+        return $this->redirect( $this->generateUrl('contrat_view', ["id_contract" => $payment->getFkContract()->getIdContract()]) );
     }
+
+
+    
+
+
+    /**
+     * Displays a form to edit an existing Product entity.
+     *
+     */
+    public function edit($id)
+    {
+        $this->denyAccessUnlessGranted('ROLE_REFERENT');
+        
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('App\Entity\Payment')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Product entity.');
+        }
+
+        $editForm = $this->createEditForm($entity);
+
+        return $this->render('Payment/edit.html.twig', array(
+            'entity'      => $entity,
+            'form'   => $editForm->createView()
+        ));
+    }
+
+    /**
+    * Creates a form to edit a Payment entity.
+    *
+    * @param Payment $entity The entity
+    *
+    * @return \Symfony\Component\Form\Form The form
+    */
+    private function createEditForm(Payment $entity)
+    {
+        $form = $this->createForm(PaymentEditType::class, $entity, array(
+            'action' => $this->generateUrl('payment_update', array('id' => $entity->getIdPayment())),
+            'method' => 'PUT',
+            'user' => $user = $this->get('security.token_storage')->getToken()->getUser()
+        ));
+
+        $form->add('submit', SubmitType::class, array('label' => 'Update'));
+
+        return $form;
+    }
+    /**
+     * Edits an existing Payment entity.
+     *
+     */
+    public function update(Request $request, $id)
+    {
+        $this->denyAccessUnlessGranted('ROLE_REFERENT');
+        
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('App\Entity\Payment')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Payment entity.');
+        }
+        $editForm = $this->createEditForm($entity);
+        $formName = $editForm->getName();
+        if ($request->request->has($formName)) {
+            $data = $request->request->get($formName);
+            foreach (array('amount', 'received') as $field) {
+                if (isset($data[$field])) {
+                    $data[$field] = Utils::numerize($data[$field]);
+                }
+            }
+            $request->request->set($formName, $data);
+        }
+        $editForm->handleRequest($request);
+
+        if ($editForm->isValid()) {          
+            $em->flush();
+            $this->get('session')->getFlashBag()->add('notice', 'Les données ont été mises à jour.');            
+            return $this->redirect($this->generateUrl('product_edit', array('id' => $id)));
+        }        
+        else {
+          $this->get('session')->getFlashBag()->add('error', 'Problème lors de l\'enregistrement des données '.$editForm->getErrors(true, false));
+        }
+    }
+
+    public function checkIssued(Request $request) {
+
+        $idPayment = $request->request->get('idPayment');        
+        $em = $this->getDoctrine()->getManager();    
+        //vérifier que le paiement est bien émis par l'adhérent
+        $curUser = $this->get('security.token_storage')->getToken()->getUser();        
+        $payment = $em->getRepository('App\Entity\Payment')->findOneBy(["idPayment"=>$idPayment]);
+        if ($curUser->getIdUser() == $payment->getFkUser()->getIdUser() || $curUser->isReferent() || $curUser->getIsAdmin()) {
+            if ($payment->getIssuedAt() == null) {
+                $payment->setIssuedAt(new \DateTime());
+            }
+            else {
+                $payment->setIssuedAt(null);
+            }            
+            $em->persist($payment);
+            $em->flush();
+            return new Response($payment->getIssuedAt() != null ? '1': '0');  
+        } else {
+            throw new AccessDeniedException();
+        }
+    }
+
+    public function checkReceived(Request $request) {
+        $this->denyAccessUnlessGranted(['ROLE_REFERENT', 'ROLE_ADMIN']);
+        $idPayment = $request->request->get('idPayment');        
+        $em = $this->getDoctrine()->getManager();    
+        //vérifier que le paiement est bien émis par l'adhérent
+        $curUser = $this->get('security.token_storage')->getToken()->getUser();        
+        $payment = $em->getRepository('App\Entity\Payment')->findOneBy(["idPayment"=>$idPayment]);
+        if ($payment->getReceivedAt() == null) {
+            $payment->setReceivedAt(new \DateTime());
+            $payment->setReceivedEqualAmount();
+            $payment->setValidatedBy($curUser);
+        }
+        else {
+            $payment->setReceivedAt(null);
+            $payment->setReceived(0);
+            $payment->setValidatedBy(null);
+        }            
+        $em->persist($payment);
+        $em->flush();
+        return new Response($payment->getReceivedAt() != null ? '1': '0');     
+    }
+
 
 }

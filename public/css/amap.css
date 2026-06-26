@@ -422,10 +422,6 @@ a.plus, a.minus {
 .paiement .row-received, .paiement .row-amount {
     white-space: nowrap;
 }
-.paiement .row-fkContract:hover, .paiement .row-fkUser:hover, .paiement .row-fkFarm:hover {
-    text-decoration: underline;
-    cursor: pointer;
-}
 /** tablesorter  */
 .sorttable th {
     cursor:pointer;
@@ -443,8 +439,18 @@ a.plus, a.minus {
 .payment_description ul {
     font-size:85%;
 }
+.payment_description ul.nav {
+    font-size:100%;
+}
 .payment_description ul li {
     list-style-type: none;
+}
+.payment_description ul.nav li{
+    margin-right:15px;
+    font-weight: bold;
+}
+.payment_description ul.nav a:hover{
+    background-color:#666;
 }
 .payment_description dt {
     font-weight:normal;
@@ -670,3 +676,11 @@ td.newyear, th.newyear {
 .pl-5 { padding-left:3rem!important; }  
 .px-5 { padding-right:3rem!important;padding-left:3rem!important; }
 .py-5 { padding-top:3rem!important;padding-bottom:3rem!important; }
+
+.row-flex {    
+    display: flex;
+}
+.vertical-center {
+    display: flex;
+    align-items: center;
+}

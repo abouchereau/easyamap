@@ -112,7 +112,15 @@ payment_create:
     path: /payment/create
     controller: App\Controller\PaymentController:create
     methods: POST
-    
+
+payment_edit:
+    path: /payment/{id}/edit
+    controller: App\Controller\PaymentController:edit
+
+payment_update:
+    path: /payment/update
+    controller: App\Controller\PaymentController:update
+
 product:
     path: /product
     controller: App\Controller\ProductController:index
@@ -599,11 +607,15 @@ ajax_get_info_virement:
     path: ajax/getInfoVirement/{idPayment}/{paymentType}
     controller: App\Controller\PaymentController:getInfoVirement
 
-ajax_check_virement:
-    path: ajax/checkVirement
-    controller: App\Controller\PaymentController:checkVirementAdherent
+ajax_check_issued:
+    path: ajax/checkIssued
+    controller: App\Controller\PaymentController:checkIssued
     methods: POST
 
+ajax_check_received:
+    path: ajax/checkReceived
+    controller: App\Controller\PaymentController:checkReceived
+    methods: POST
 
 set_payment_type:
     path: set_payment_type/{idPayment}/{paymentType}

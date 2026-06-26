@@ -54,24 +54,19 @@ class Payment
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="transfer_issued_at", type="datetime", nullable=true)
+     * @ORM\Column(name="issued_at", type="date", nullable=true)
      */
-    private $transferIssuedAt;
+    private $issuedAt;
     
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="transfer_received_at", type="datetime", nullable=true)
-     */
-    private $transferReceivedAt;
+
 
     /**
      * @var \App\Entity\User
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(name="transfer_validated_by", referencedColumnName="id_user", nullable=true)
+     * @ORM\JoinColumn(name="validated_by", referencedColumnName="id_user", nullable=true)
      */
-    private $transferValidatedBy;
+    private $validatedBy;
 
     /**
      * @var integer
@@ -144,51 +139,28 @@ class Payment
     }
 
         /**
-     * Set transferIssuedAt
+     * Set issuedAt
      *
-     * @param \DateTime $transferIssuedAt
+     * @param \DateTime issuedAt
      * @return Payment
      */
-    public function setTransferIssuedAt($transferIssuedAt)
+    public function setIssuedAt($issuedAt)
     {
-        $this->transferIssuedAt = $transferIssuedAt;
+        $this->issuedAt = $issuedAt;
 
         return $this;
     }
 
     /**
-     * Get transferIssuedAt
+     * Get issuedAt
      *
      * @return \DateTime 
      */
-    public function getTransferIssuedAt()
+    public function getIssuedAt()
     {
-        return $this->transferIssuedAt;
+        return $this->issuedAt;
     }
 
-    
-        /**
-     * Set transferReceivedAt
-     *
-     * @param \DateTime $transferReceivedAt
-     * @return Payment
-     */
-    public function setTransferReceivedAt($transferReceivedAt)
-    {
-        $this->transferReceivedAt = $transferReceivedAt;
-
-        return $this;
-    }
-
-    /**
-     * Get transferReceivedAt
-     *
-     * @return \DateTime 
-     */
-    public function getTransferReceivedAt()
-    {
-        return $this->transferReceivedAt;
-    }
 
     /**
      * Set transferValidatedBy
@@ -196,8 +168,8 @@ class Payment
      * @param \App\Entity\User $transferValidatedBy
      * @return Payment
      */
-    public function setTransferValidatedBy(\App\Entity\User $transferValidatedBy = null) {
-        $this->transferValidatedBy = $transferValidatedBy;
+    public function setValidatedBy(\App\Entity\User $validatedBy = null) {
+        $this->validatedBy = $validatedBy;
 
         return $this;
     }
@@ -207,8 +179,8 @@ class Payment
      *
      * @return \App\Entity\User 
      */    
-    public function getTransferValidatedBy() {
-        return $this->transferValidatedBy;
+    public function getValidatedBy() {
+        return $this->validatedBy;
     }
 
     public function getPaymentType() {
@@ -218,5 +190,9 @@ class Payment
     public function setPaymentType($paymentType) {
         $this->paymentType = $paymentType;
         return $this;   
+    }
+
+    public function getPaymentTypeLabel()  {
+        return PaymentType::getLabel($this->paymentType);
     }
 }

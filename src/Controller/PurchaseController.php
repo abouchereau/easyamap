@@ -95,15 +95,13 @@ class PurchaseController extends AmapBaseController
     $purchase = $em->getRepository('App\Entity\Purchase')->getPurchase(array_keys($distributions), $user->getIdUser(),$contract);
     $remaining = $em->getRepository('App\Entity\ProductDistribution')->getRemaining($id_contract);
     $commandesExistantes = $em->getRepository('App\Entity\Contract')->getCommandesExistantes($id_contract,$user->getIdUser());
-    
-    //on retrouve l'onglet courant
-    $current_farm = $this->getCurrentFarm();
-    
+       
     //comptage des produits depuis une date
     $purchaseSince = [];
     if ($contract->getCountPurchaseSince() != null) {
         $purchaseSince = $em->getRepository('App\Entity\Purchase')->getPurchaseCountSince($contract->getCountPurchaseSince(), $products, $user);
     }
+
 
     $lastIdFarm = 0;
     $farmPaymentTypes = [];
@@ -111,6 +109,13 @@ class PurchaseController extends AmapBaseController
         if ($product->getFkFarm()->getIdFarm() != $lastIdFarm) {
             $farmPaymentTypes[] = ['farm' => ['id_farm' =>$product->getFkFarm()->getIdFarm(), 'label' => $product->getFkFarm()->getLabel()], 'types' => $product->getFkFarm()->getPaymentTypes()];
             $lastIdFarm = $product->getFkFarm()->getIdFarm();
+        }
+    }
+
+    $farmWaitingPayments = [];
+    foreach($payments as $fk_farm => $payment) {
+        if ($payment['issuedAt'] == null && !in_array($fk_farm, $farmWaitingPayments)) {
+            $farmWaitingPayments []= $payment['productType'];
         }
     }
     
@@ -124,25 +129,16 @@ class PurchaseController extends AmapBaseController
           'purchase'      => $purchase,
           'payments'      => $payments,
           'remaining'     => $remaining,
-          'current_farm'  => $current_farm,
           'user_list'     => $user_list,
           'user'          => $user,
           'purchaseSince' => $purchaseSince,
           'commandesExistantes' => $commandesExistantes,
-          'farmPaymentTypes' => $farmPaymentTypes
+          'farmPaymentTypes' => $farmPaymentTypes,
+          'farmWaitingPayments' => $farmWaitingPayments
         ));
   }
   
-  private function getCurrentFarm() {
-    $session = new Session();
-    $current_farm = null;
-    if ($session->has('current_farm')) {
-        $current_farm = $session->get('current_farm');
-        $session->remove('current_farm');
-    }
-    return $current_farm;
-  }
-  
+
   public function getProductsNextDistribution($date = null, $nb = 4)
   {
       $this->denyAccessUnlessGranted('ROLE_ADHERENT');
@@ -381,8 +377,7 @@ class PurchaseController extends AmapBaseController
     if ($v === false)
       return $this->rollback($id_contract);
     
-    $farm_payment_type = $request->get('farm_payment_type');    
-    $v = $em->getRepository('App\Entity\Payment')->compute($user, $contract, $ids_purchase, $farm_payment_type);
+    $v = $em->getRepository('App\Entity\Payment')->compute($user, $contract, $ids_purchase);
     if ($v === false)
       return $this->rollback($id_contract);
    

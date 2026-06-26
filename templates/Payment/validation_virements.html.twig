@@ -24,7 +24,7 @@
                             <h3 class="list-group-item-text mt-0">{{virement.montant}} €</h3>
                             <p class="list-group-item-text"><b>{{virement.reference}}</b></p>
                             <p class="list-group-item-text">{{virement.adherent}}</p>
-                            <p class="list-group-item-text"><i>{{virement.transfer_issued_at|date('d/m/Y')}}</i></p>
+                            <p class="list-group-item-text"><i>{{virement.issued_at|date('d/m/Y')}}</i></p>
                         </td>
                         <td>
                             {% if received is defined and not received %} 

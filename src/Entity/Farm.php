@@ -13,6 +13,10 @@ use App\Entity\Traits\SequenceTrait;
 use App\Entity\Traits\EmailTrait;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\PaymentType;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+
+
 
 /**
  * Farm
@@ -61,6 +65,13 @@ class Farm
      * @ORM\Column(name="iban", type="string", length=255, nullable=true)
      */
     private $iban;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="phone", type="string", length=255, nullable=true)
+     */
+    private $phone;
 
     /**
      * @var string
@@ -245,6 +256,31 @@ class Farm
     {
         return $this->iban;
     }
+
+
+       /**
+     * Set phone
+     *
+     * @param string $phone
+     * @return Farm
+     */
+    public function setPhone($phone)
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * Get iban
+     *
+     * @return string 
+     */
+    public function getPhone()
+    {
+        return $this->phone;
+    }
+
     /**
      * Set link
      *
@@ -307,5 +343,47 @@ class Farm
     public function __toString()
     {
       return $this->label;
+    }
+
+
+
+    /**
+     * @Assert\Callback
+     */
+    public function validate(ExecutionContextInterface $context)
+    {
+        $virement = false;
+        $wero = false;
+        $cheque = false;
+
+        foreach ($this->getPaymentTypes() as $paymentType) {
+            if ($paymentType->getIdPaymentType() == PaymentType::VIREMENT) {
+                $virement = true;
+            }
+            if ($paymentType->getIdPaymentType() == PaymentType::WERO) {
+                $wero = true;
+            }
+            if ($paymentType->getIdPaymentType() == PaymentType::CHECK) {
+                $cheque = true;
+            }
+        }
+
+        if ($virement && empty($this->getIban())) {
+            $context->buildViolation('L\'IBAN est obligatoire pour le paiement par virement.')
+                ->atPath('iban')
+                ->addViolation();
+        }
+
+        if ($wero && empty($this->getPhone())) {
+            $context->buildViolation('Le numéro de téléphone est obligatoire pour le paiement par Wero.')
+                ->atPath('wero')
+                ->addViolation();
+        }
+
+        if ($cheque && empty($this->getCheckPayableTo())) {
+            $context->buildViolation('Le champ "Chèques à l\'ordre de"  est obligatoire pour le paiement par Chèques.')
+                ->atPath('check_payable_to')
+                ->addViolation();
+        }
     }
 }

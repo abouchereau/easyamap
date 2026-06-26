@@ -4,7 +4,8 @@
         Paiements
     {% else %}
         Réception des paiements
-    {% endif %}   {% endblock %}
+    {% endif %}   
+{% endblock %}
 
 {% block body %}
     
@@ -13,21 +14,65 @@
 <div class="row paiement">
    <div class="col-md-12 text-center">
        
-       {% include 'Partials/_pagination.html.twig' with {'pagination': pagination, 'route':isReferentPage?'paiements_referent':'paiements_adherent' } %}
+   {% include 'Partials/_pagination.html.twig' with {'pagination': pagination, 'route':isReferentPage?'paiements_referent':'paiements_adherent' } %}
    </div>
    <div class="col-md-12">
-       <table class="table table-bordered table-striped table-condensed">
-           <tr><th>Contrat</th>{% if isReferentPage %}<th>Adhérent</th>{% endif %}<th>Producteur</th><th>Description</th><th>Montant</th><th>Reçu</th><th style="display:none;"></th></tr>
+        <table class="table table-bordered table-striped table-condensed">
+            <thead>
+                <tr>
+                    <th>Contrat</th>
+                    {% if isReferentPage %}<th>Adhérent</th>{% endif %}
+                    <th>Producteur</th>
+                    <th>Type de paiement</th>
+                    <th>Montant</th>
+                    <th>Emis</th>
+                    <th>Reçu</th>
+                </tr>
+            </thead>
+            <tbody>
             {% for payment in payments %}
                 <tr>
                     <td>{{ payment.contract }}</td>
                     {% if isReferentPage %}<td class="row-fkUser">{{ payment.adherent }}</td>{% endif %}
                     <td>{{ payment.farm }}</td>
-                    <td>{% include 'Partials/_descriptionPayment.html.twig' with {'description': payment.description, 'short':true, 'isReferentPage': isReferentPage, 'idPayment':payment.idPayment } %}</td>
-                    <td class="row-amount" objectid="{{ payment.idPayment }}">{{ payment.amount|price_fr }}</td>
-                    <td class="row-received" objectid="{{ payment.idPayment }}">{{ payment.received|price_fr }}</td>
-                    <td class="row-receivedAt">{{ payment.receivedAt|date("Y-m-d") }}</td>
+                    <td>
+                    {% if isReferentPage %}<a href="{{ path('payment_edit', {'id': payment.idPayment}) }}">{% endif %}
+                        {{ payment.paymentType|paymentLabel }}
+                    {% if isReferentPage %}</a>{% endif %}            
+
+                    <td>
+                        {% if isReferentPage %}<a data-toggle="tooltip" data-placement="bottom" title="Détails du paiement" href="{{ path('payment_edit', {'id': payment.idPayment}) }}">{% endif %}
+                            {{ payment.amount|price_fr }}                        
+                        {% if isReferentPage %}</a>{% endif %}                        
+                    <td>
+                        <a id="issued-{{ payment.idPayment }}" data-toggle="tooltip" data-placement="bottom" title="Valider/invalider" 
+                        class="btn btn-default" style="padding:0 12px;" href="#" 
+                        onclick="changeIssuedAt({{payment.idPayment}});return false;">
+                            {% if payment.issuedAt %}
+                                <i class="glyphicon glyphicon-ok text-success"></i>
+                            {% else %}
+                                <i class="glyphicon glyphicon-remove text-danger"></i>
+                            {% endif %}
+                        </a>
+                    </td>
+                    <td>
+                        {% if isReferentPage %}
+                            <a id="received-{{ payment.idPayment }}" data-toggle="tooltip" data-placement="bottom" title="Valider/invalider" 
+                                class="btn btn-default" style="padding:0 12px;" href="#" 
+                                onclick="changeReceivedAt({{payment.idPayment}});return false;">
+                        {% endif %}
+                        {% if payment.receivedAt %}
+                            <i class="glyphicon glyphicon-ok text-success"></i>
+                        {% else %}
+                            <i class="glyphicon glyphicon-remove text-danger"></i>
+                        {% endif %}
+                        {% if isReferentPage %}
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
             {% endfor %}
+            </tbody>
        </table>
        <div class="col-md-12 text-center">
             {% include 'Partials/_pagination.html.twig' with {'pagination': pagination, 'route':isReferentPage?'paiements_referent':'paiements_adherent' } %}
@@ -38,8 +83,59 @@
 {% endblock %}
 {% block footer_js %}
 <script>
-    var root='{{ url('home') }}';
-    var isReferentPage = {{ isReferentPage?'true':'false' }};
+var root='{{ url('home') }}';
+var isReferentPage = {{ isReferentPage?'true':'false' }};
+
+const changeIssuedAt = (idPayment) =>{
+ const url = root+'ajax/checkIssued';
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: {
+            'idPayment': idPayment
+        },
+        beforeSend: function () {    
+            showSpinner();
+        },
+        success: function(data) {     
+            let html = "";
+            if (data == "1") {
+                html = '<i class="glyphicon glyphicon-ok text-success"></i>';
+            }     
+            else {
+                html = '<i class="glyphicon glyphicon-remove text-danger"></i>';
+            }
+            $('#issued-'+idPayment).html(html);            
+            hideSpinner();      
+        }
+    });
+}
+
+
+const changeReceivedAt = (idPayment) =>{
+ const url = root+'ajax/checkReceived';
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: {
+            'idPayment': idPayment
+        },
+        beforeSend: function () {    
+            showSpinner();
+        },
+        success: function(data) {   
+            let html = "";
+            if (data == "1") {
+                html = '<i class="glyphicon glyphicon-ok text-success"></i>';
+            }     
+            else {
+                html = '<i class="glyphicon glyphicon-remove text-danger"></i>';
+            }
+            $('#received-'+idPayment).html(html);              
+            hideSpinner();      
+        }
+    });
+}
 </script>
 <script type="text/javascript" src="{{ asset('js/payment.js') }}"></script>
 {% endblock %}

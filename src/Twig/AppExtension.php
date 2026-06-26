@@ -34,6 +34,7 @@ class AppExtension extends AbstractExtension
             new TwigFilter('addslashes', 'addslashes'),
             new TwigFilter('mois', array($this, 'mois')),
             new TwigFilter('encodeMail', array($this, 'encodeMail')),
+            new TwigFilter('paymentLabel', array($this, 'paymentLabel')),
         );
     }
     
@@ -168,6 +169,11 @@ class AppExtension extends AbstractExtension
           $encoded_text .= '&#'.ord($char).';';
       }
       return $encoded_text;
+    }
+
+
+    public static function paymentLabel($type)     {
+        return PaymentType::getLabel($type);
     }
     
     

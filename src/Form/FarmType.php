@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Doctrine\ORM\EntityRepository;
 
 class FarmType extends AbstractType
 {
@@ -21,10 +22,17 @@ class FarmType extends AbstractType
         $builder
             ->add('label',TextType::class,          array('label' => 'Nom *',     'required' => true))
             ->add('productType',TextType::class,    array('label' => 'Type de produits * (ex : produits laitiers)','required' => true))
-            ->add('checkPayableTo',TextType::class, array('label' => 'Chèques à l\'ordre de *','required' => false))
+            ->add('checkPayableTo',TextType::class, array('label' => 'Chèques à l\'ordre de','required' => false))
             ->add('iban',TextType::class, array('label' => 'IBAN','required' => false))
             ->add('email',TextType::class, array('label' => 'Email','required' => false))
-            ->add('paymentTypes',EntityType::class, array('class' => 'App\Entity\PaymentType','label' => 'Types de paiements acceptés','multiple'=>true,'expanded' => true,'required' => true))
+            ->add('phone',TextType::class, array('label' => 'Téléphone','required' => false))
+            ->add('paymentTypes',EntityType::class, array('class' => 'App\Entity\PaymentType','label' => 'Types de paiements acceptés','multiple'=>true,'expanded' => true,'required' => true, 'query_builder' => function (EntityRepository $er) {
+                        return $er->createQueryBuilder('pt')
+                            ->where('pt.idPaymentType NOT IN (:id_payment_type)')
+                            ->setParameter('id_payment_type', [0]);
+                    },     'choice_label' => function ($paymentType) {
+                                return \App\Entity\PaymentType::getLabel($paymentType->getIdPaymentType()).($paymentType->getIdPaymentType()>2?' <span class="label label-primary" style="border-radius:50px;">Nouveau</span>'.($paymentType->getIdPaymentType()>3?'</label><blockquote style="font-size:85%;margin-bottom:0"><i class="glyphicon glyphicon-alert"></i> Virement / Wero : s\'assurer que le producteur peut vérifier lui-même la réception des paiements (avec son application bancaire).</blockquote><label>':''):'');
+                            }))
             ->add('paymentFreqs',EntityType::class, array('class' => 'App\Entity\PaymentFreq','label' => 'Fréquences de paiements acceptées','multiple'=>true,'expanded' => true,'required' => true))
             ->add('equitable',CheckboxType::class,  array('label' => 'Lissage des paiements','required' => false))
             ->add('description',TextareaType::class,array('label' => 'Description','required' => false))
