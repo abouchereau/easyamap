@@ -1,0 +1,14 @@
+{% if farmWaitingPayments|length > 0 %}
+<blockquote style="background-color:#F3F3F3;">
+<span class="label label-primary" style="border-radius:50px;">Nouveau</span>
+Une fois votre paiement effectué, merci de l'indiquer ci-dessous afin d'en faciliter le suivi.<br /><br />
+    {% if isMultiFarm %}
+        <ul style="font-size:85%;">
+        {% for farm in farmWaitingPayments %}
+            <li>{{ farm }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    <p style="font-size:75%;">(Possible aussi dans la page "Paiements")</p>
+</blockquote>
+{% endif %}

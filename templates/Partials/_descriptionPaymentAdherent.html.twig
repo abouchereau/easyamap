@@ -1,0 +1,219 @@
+
+<div style="display:none;">{{ payment.idPayment }}</div>
+<div class="payment_description">
+
+{% set tab = payment.description|json_decode() %}
+{% set types = tab[0] %}
+{% set payments = tab[1] %}{# = splitpayments #}
+{% set payment_info = tab[2] %}    
+{% set chosen_payment = tab[3] %}
+
+
+{# si plusieurs paiements acceptés et paiement pas encor choisi => choix du mode de paiement #}
+
+{% if types|length > 1 and payment.paymentType == constant('App\\Entity\\PaymentType::UNKNOWN') %}
+ 
+    <div><span class="glyphicon glyphicon-question-sign" style="font-size:150%"></span> Merci de choisir un mode de paiement : </div>
+    <br />
+    <ul class="nav nav-pills">
+     {% if constant('App\\Entity\\PaymentType::CASH') in types %}<li class="active"><a href="{{ path('set_payment_type', {'idPayment': payment.idPayment, 'paymentType': constant('App\\Entity\\PaymentType::CASH') }) }}">Espèce</a></li>{% endif %}
+     {% if constant('App\\Entity\\PaymentType::CHECK') in types %}<li class="active"><a href="{{ path('set_payment_type', {'idPayment': payment.idPayment, 'paymentType': constant('App\\Entity\\PaymentType::CHECK') }) }}">Chèque</a></li>{% endif %}
+     {% if constant('App\\Entity\\PaymentType::VIREMENT') in types %}<li class="active"><a href="{{ path('set_payment_type', {'idPayment': payment.idPayment, 'paymentType': constant('App\\Entity\\PaymentType::VIREMENT') }) }}">Virement</a></li>{% endif %}
+     {% if constant('App\\Entity\\PaymentType::WERO') in types %}<li class="active"><a href="{{ path('set_payment_type', {'idPayment': payment.idPayment, 'paymentType': constant('App\\Entity\\PaymentType::WERO') }) }}">Wero</a></li>{% endif %}
+    </ul>
+
+{% endif %}
+
+{# si un paiement accepté ou paiement choisi #}
+
+{% if types|length == 1 or payment.paymentType != constant('App\\Entity\\PaymentType::UNKNOWN') %}
+
+    {% if types|length == 1 %}
+        {% set paymentType = types %}
+    {% else %}
+        {% set paymentType = payment.paymentType %}
+    {% endif %}
+
+    {% if not payment.issuedAt %}
+        {% if payment.paymentType == constant('App\\Entity\\PaymentType::CASH') %}
+            {% include 'Partials/_infoPaymentCash.html.twig' with {'payment': payment, 'payments': payments, 'chosen_payment': chosen_payment } %}
+        {% elseif payment.paymentType == constant('App\\Entity\\PaymentType::CHECK') %}
+            {% include 'Partials/_infoPaymentCheck.html.twig' with {'payment': payment, 'payments': payments, 'chosen_payment': chosen_payment }  %}
+        {% elseif payment.paymentType == constant('App\\Entity\\PaymentType::VIREMENT') %}
+            {% include 'Partials/_infoPaymentVirement.html.twig' with {'payment': payment, 'payments': payments }  %}
+        {% elseif payment.paymentType == constant('App\\Entity\\PaymentType::WERO') %}
+            {% include 'Partials/_infoPaymentWero.html.twig' with {'payment': payment, 'payments': payments }  %}
+        {% endif %}
+        <div class="mt-5">
+            <a href="#" class="btn btn-success" onclick="validatePayment({{ payment.idPayment}}, true);return false;"><i class="glyphicon glyphicon-ok"></i> Je confirme avoir effectué le règlement</a>
+        </div>
+        <div class="mt-5">    
+            <a href="{{ path('set_payment_type', {'idPayment': payment.idPayment, 'paymentType': constant('App\\Entity\\PaymentType::UNKNOWN') }) }}"><i class="glyphicon glyphicon-refresh"></i> Changer de mode de paiement</a>
+        </div>
+    {% else %}
+        {% if payment.receivedAt is null %}
+            <a href="#" onclick="validatePayment({{ payment.idPayment}}, false);return false;"><i class="glyphicon glyphicon-remove"></i> Annuler : je n'ai pas effectué le règlement</a>
+        {% endif %}
+
+
+    {% endif %}
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% if false %}
+
+    {% if constant('App\\Entity\\PaymentType::CHECK') in types %}
+        <div class="row">
+            <div class="col-sm-4"><span class="glyphicon glyphicon-chevron-right"></span> <b>Chèque</b></div>
+            <div class="col-sm-8">
+        {% for i,choices in payments %}            
+            <div class="enum"><span class="glyphicon glyphicon-{% if chosen_payment[i] %}check{% else %}unchecked{% endif %}"></span> {% if not loop.first %}ou {% endif %}<b>{{ choices|length }}</b> 
+            {% if constant('App\\Entity\\PaymentType::CHECK') in types %}chèque{% else %}paiement{% endif %}{% if choices|length > 1 %}s{% endif %} :</div>
+            <span class="repartition">{% for choice in choices %}
+                    {% if choice[2] == 1 %}{#
+                        #}<b>?</b> € <small>(selon livraison)</small>{#
+                        #}{% if not loop.last %} + {% endif %}
+                        {% else %}
+                    {{ choice[1]|price_fr }}{#
+                    #}{% if not loop.last %} + {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </span><small>({% for choice in choices %}{#
+                    #}{% if choice[3] > 0 %}{# mensuel #}{#
+                    #}{{ choice[0]|creneau(choice[3]) }}{#
+                    #}{% else %}{#
+                        #}{{ choice[0]|date_fr }}{#
+                    #}{% endif %}{#
+                    #}{% if not loop.last %} / {% endif %}{#
+                
+                #}{% endfor %})</small>
+        {% endfor %}
+        <div class="small">Chèques à l'ordre de "<i>{{ payment_info[0] }}</i>"</div>
+        </div>
+        </div>
+    {% endif %}
+
+    {% if constant('App\\Entity\\PaymentType::CASH') in types %}
+        <div class="row mt">
+            <div class="col-sm-2"><span class="glyphicon glyphicon-chevron-right"></span> <b>Espèces</b></div>
+        <div class="col-sm-8">
+        
+        {% for i,choices in payments %}
+            <div class="enum"><span class="glyphicon glyphicon-{% if chosen_payment[i] %}check{% else %}unchecked{% endif %}"></span> {% if not loop.first %}ou {% endif %}<b>{{ choices|length }}</b> 
+            {% if constant('App\\Entity\\PaymentType::CHECK') in types %}chèque{% else %}paiement{% endif %}{% if choices|length > 1 %}s{% endif %} :</div>
+            <span class="repartition">{% for choice in choices %}
+                    {% if choice[2] == 1 %}{#
+                        #}<b>?</b> € <small>(selon livraison)</small>{#
+                        #}{% if not loop.last %} + {% endif %}
+                        {% else %}
+                    {{ choice[1]|price_fr }}{#
+                    #}{% if not loop.last %} + {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </span><small>({% for choice in choices %}{#
+                    #}{% if choice[3] > 0 %}{# mensuel #}{#
+                    #}{{ choice[0]|creneau(choice[3]) }}{#
+                    #}{% else %}{#
+                        #}{{ choice[0]|date_fr }}{#
+                    #}{% endif %}{#
+                    #}{% if not loop.last %} / {% endif %}{#
+                
+                #}{% endfor %})</small>
+        
+        {% endfor %}
+        
+        </div>
+        </div>
+    {% endif %}
+
+    {% if constant('App\\Entity\\PaymentType::VIREMENT') in types %}
+        <div class="row mt row-virement" data-url="{{ path('validation_virements_a_valider') }}">
+            <div class="col-sm-12"><span class="glyphicon glyphicon-chevron-right"></span> <b>Virement</b></div>
+            {% if isReferentPage is defined and isReferentPage %}
+                <div class="col-sm-12">
+                    {% if payment.issuedAt %}
+                        <i class="glyphicon glyphicon-ok text-success"></i>
+                    {% else %}
+                        <i class="glyphicon glyphicon-remove text-danger"></i>
+                    {% endif %} Envoyé 
+                    {% if payment.receivedAt %}
+                        <i class="glyphicon glyphicon-ok text-success"></i>
+                    {% else %}
+                        <i class="glyphicon glyphicon-remove text-danger"></i>
+                    {% endif %} Reçu
+                </div>
+            {% else %}
+                <div class="col-sm-12">
+                    <a class="btn btn-info virement-btn" href="#" data-id-payment="{{ payment.idPayment }}" data-payment-type="{{ constant('App\\Entity\\PaymentType::VIREMENT') }}" data-transfer-issued="{{ payment.issuedAt is null ? 'false':'true' }}">Payer par virement</a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+
+        {% if constant('App\\Entity\\PaymentType::WERO') in types %}
+        <div class="row mt row-virement" data-url="{{ path('validation_virements_a_valider') }}">
+            <div class="col-sm-12"><span class="glyphicon glyphicon-chevron-right"></span> <b>Wero</b></div>
+            {% if isReferentPage is defined and isReferentPage %}
+                <div class="col-sm-12">
+                    {% if payment.issuedAt %}
+                        <i class="glyphicon glyphicon-ok text-success"></i>
+                    {% else %}
+                        <i class="glyphicon glyphicon-remove text-danger"></i>
+                    {% endif %} Envoyé 
+                    {% if payment.receivedAt %}
+                        <i class="glyphicon glyphicon-ok text-success"></i>
+                    {% else %}
+                        <i class="glyphicon glyphicon-remove text-danger"></i>
+                    {% endif %} Reçu
+                </div>
+            {% else %}
+                <div class="col-sm-12">
+                    {% if payment.issuedAt %}
+                        <i class="glyphicon glyphicon-ok text-success"></i> Envoyé <br />
+                    {% endif %}  
+                    {% if payment.receivedAt %}
+                        <i class="glyphicon glyphicon-ok text-success"></i> Reçu  <br />
+                    {% endif %}
+
+                    <a class="btn btn-info virement-btn" href="#" data-id-payment="{{ payment.idPayment }}" data-payment-type="{{ constant('App\\Entity\\PaymentType::WERO') }}" data-transfer-issued="{{ paymentissuedAt is null ? 'false':'true' }}">Payer par Wero</a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+
+{% endif %}
+
+</div>
+

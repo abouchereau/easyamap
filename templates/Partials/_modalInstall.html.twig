@@ -1,0 +1,97 @@
+
+<div>
+Nouveau !
+<br />
+<button class="btn btn-success" onclick="openModalInstall()">Installer l'application</button>
+</div>
+
+
+<div class="modal fade" tabindex="-1" id="modal-install">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h5 class="modal-title">Installer l'application</h5>                
+            </div>
+            <div class="modal-body">   
+                <p>Pour accéder plus facilement à l’application, vous pouvez l’installer sur votre écran d’accueil.</p>
+                <div class="blockquote displayAndroid">
+                    <div class="badge bg-info">Android</div>
+                    <ol>
+                        <li class="my-2">Appuyez sur le bouton <button class="btn btn-light py-0">⋮</button> en haut à droite du navigateur</li>
+                        <li class="my-2">Choisissez “Ajouter à l’écran d’accueil”</li>
+                        <li class="my-2">Validez l’installation</li>
+                    </ol>
+                </div>
+                <div class="blockquote displayIOs">
+                    <div class="badge bg-info">IPhone</div>
+                    <ol>
+                        <li class="my-2">Appuyez sur le bouton Partager (le carré avec la flèche ⬆️)</li>
+                        <li class="my-2">Faites défiler puis choisissez “Ajouter à l’écran d’accueil”</li>
+                        <li class="my-2">Validez</li>
+                    </ol>
+                </div>
+                <div class="blockquote displayChromiumBased">
+                    <div class="badge bg-info">Chrome</div>
+                    <ol>
+                        <li class="my-2">Appuyez sur le bouton <button class="btn btn-light py-0">⋮</button> en haut à droite du navigateur</li>
+                        <li class="my-2">Choisissez “Enregistrer et partager”</li>
+                        <li class="my-2">Choisissez “Installer Easyamap” (ou "Installer la page en tant qu'appli")</li>
+                        <li class="my-2">Validez</li>
+                    </ol>
+                </div>
+
+                <p>Une fois installée, l’application apparaîtra comme une app classique sur votre téléphone / PC / tablette.</p>
+                <div class="border border-danger p-2 displayNotChromiumBased">
+                    <p><i class="glyphicon glyphicon-exclamation-sign text-danger"></i></p>
+                    <p>Pour effectuer l'installation, il est nécessaire d'utiliser un navigateur <b>Chrome</b> (ou un autre navigateur basé sur Chromium). Merci d'ouvrir cette page dans une autre navigateur.</p>                        
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+class Utils {
+  static isIOs() {
+        return /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+  }
+
+  static isAndroid() {
+        return /android/.test(navigator.userAgent.toLowerCase());
+  }
+
+  static isMobile() {
+    return Utils.isAndroid() || Utils.isIOs();
+  }
+
+  static isChromiumBased() {
+    return /chrome|crios|crmo|edg|opr|brave\//.test(navigator.userAgent.toLowerCase())
+    }
+}
+document.addEventListener("DOMContentLoaded", (event) => {
+        $(".displayAndroid, .displayIOs, .displayNotAndroid, .displayNotIOs, .displayChromiumBased, .displayNotChromiumBased").hide();
+        if (Utils.isAndroid()) {
+            $(".displayAndroid").show();
+        }
+        if (Utils.isIOs()) {
+            $(".displayIOs").show();
+        }
+        if (Utils.isChromiumBased()) {
+            $(".displayChromiumBased").show();
+        }
+        else {
+            $(".displayNotChromiumBased").show();
+        }
+
+});
+  
+const openModalInstall = () => {
+    $("#modal-install").modal("show");
+}
+</script>
+

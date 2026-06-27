@@ -1,0 +1,25 @@
+ 
+{% for i,choices in payments %}    
+ 
+ <div class="enum"><span class="glyphicon glyphicon-{% if chosen_payment[i] %}check{% else %}unchecked{% endif %}"></span> {% if not loop.first %}ou {% endif %}<b>{{ choices|length }}</b> 
+chèque{% if choices|length > 1 %}s{% endif %} :</div>
+<span class="repartition">{% for choice in choices %}
+        {% if choice[2] == 1 %}{#
+            #}<b>?</b> € <small>(selon livraison)</small>{#
+            #}{% if not loop.last %} + {% endif %}
+            {% else %}
+        {{ choice[1]|price_fr }}{#
+        #}{% if not loop.last %} + {% endif %}
+        {% endif %}
+    {% endfor %}
+</span><small>({% for choice in choices %}{#
+        #}{% if choice[3] > 0 %}{# mensuel #}{#
+        #}{{ choice[0]|creneau(choice[3]) }}{#
+        #}{% else %}{#
+            #}{{ choice[0]|date_fr }}{#
+        #}{% endif %}{#
+        #}{% if not loop.last %} / {% endif %}{#
+    
+    #}{% endfor %})</small>
+        
+{% endfor %}

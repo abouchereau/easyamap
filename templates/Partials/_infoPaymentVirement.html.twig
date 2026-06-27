@@ -1,0 +1,62 @@
+  <div class="row">
+    <div class="col col-md-7">
+        <div class="row">
+            <div class="col col-md-12">
+                <p>Pour effectuer un virement, merci de copier exactement les informations suivantes dans votre application bancaire.</p>
+            </div>
+        </div>
+        <div class="row row-flex mt-4">
+            <div class="col col-md-3 py-2 vertical-center">
+                <b>IBAN</b>
+            </div>
+            <div class="col col-md-7 py-2">
+                <input readonly type="text" id="virement-iban" value="" class="form-control" style="font-family: 'Roboto Mono'" onclick="this.select()"/>
+            </div>
+            <div class="col col-md-2 py-2">
+                <a class="btn btn-info" onclick="toClipboard('virement-iban')">Copier</a>
+            </div>
+        </div>
+        <div class="row row-flex mt-2">
+            <div class="col col-md-3 py-2 vertical-center">
+                <b>Référence</b>
+            </div>
+            <div class="col col-md-7 py-2">
+                <input readonly type="text" id="virement-reference" value="" class="form-control" style="font-family: 'Roboto Mono'" onclick="this.select()" />
+                <input type="hidden" id="virement-id-payment" value="{{ payment.idPayment }}" />
+            </div>
+            <div class="col col-md-2 py-2">
+                <a class="btn btn-info" onclick="toClipboard('virement-reference')">Copier</a>
+            </div>
+        </div>
+        <div class="row row-flex mt-2">
+            <div class="col col-md-3 py-2 vertical-center">
+                <b>Montant (€)</b>
+            </div>
+            <div class="col col-md-7 py-2">
+                <input readonly type="text" id="virement-montant" value="" class="form-control" style="font-family: 'Roboto Mono'" onclick="this.select()"/>
+            </div>
+            <div class="col col-md-2 py-2">
+                <a class="btn btn-info" onclick="toClipboard('virement-montant')">Copier</a>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', ()=>{
+    $.ajax({
+        url: root+"ajax/getInfoVirement/{{ payment.idPayment }}/{{ constant('App\\Entity\\PaymentType::VIREMENT') }}",
+        dataType: 'json',
+        beforeSend: function () {
+            $("#loader").show();
+        },
+        success: function(data) {                
+            $("#loader").hide();                            
+            $("#virement-iban").val(data.iban);
+            $("#virement-montant").val(data.montant);
+            $("#virement-reference").val(data.reference);
+          
+        }
+    });    
+}, false);
+</script>
