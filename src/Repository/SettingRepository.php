@@ -57,7 +57,7 @@ class SettingRepository extends EntityRepository
         $path = $this->manifestpath($env);
         if(!file_exists($path) || $force) {
             $json = '{
-  "id": "https://'.$url.'"
+  "id": "https://'.$url.'",
   "short_name": "Easyamap",
   "name": "Easyamap - '.$setting['name'].'",
   "description": "Logiciel de commandes pour l\'AMAP : '.$setting['name'].'",
