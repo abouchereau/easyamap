@@ -1,5 +1,5 @@
 <div id="pwa-install" class="text-right">
-    <a href="#" onclick="installApp()"><span class="badge badge-info">Nouveau !</span> Installer l'application</a>
+    <a href="#" onclick="installApp();return false;"><span class="badge badge-info">Nouveau !</span> Installer l'application</a>
 </div>
 
 
@@ -12,14 +12,6 @@
             </div>
             <div class="modal-body">   
                 <p>Pour accéder plus facilement à l’application, vous pouvez l’installer sur votre écran d’accueil.</p>
-                <div class="blockquote displayAndroid">
-                    <div class="badge bg-info">Android</div>
-                    <ol>
-                        <li class="my-2">Appuyez sur le bouton <button class="btn btn-light py-0">⋮</button> en haut à droite du navigateur</li>
-                        <li class="my-2">Choisissez “Ajouter à l’écran d’accueil”</li>
-                        <li class="my-2">Validez l’installation</li>
-                    </ol>
-                </div>
                 <div class="blockquote displayIOs">
                     <div class="badge bg-info">IPhone</div>
                     <ol>
@@ -67,14 +59,6 @@ class Utils {
         return /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
   }
 
-  static isAndroid() {
-        return /android/.test(navigator.userAgent.toLowerCase());
-  }
-
-  static isMobile() {
-    return Utils.isAndroid() || Utils.isIOs();
-  }
-
   static isChromiumBased() {
     return /chrome|crios|crmo|edg|opr|brave\//.test(navigator.userAgent.toLowerCase())
     }
@@ -118,24 +102,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
   
 const installApp = ()=>{
     if (deferredPrompt) {  
-        alert('PROMPT');
         try {
-            deferredPrompt.prompt();
-            
-        alert('PROMPT 2');
+            deferredPrompt.prompt(); 
             deferredPrompt.userChoice.then((choice) => {
-                if (choice.outcome === 'accepted') {
-                    console.log('Installée');
-                } else {
-                    console.log('Refusée');
-                }
-
                 deferredPrompt = null;
             });
         } catch(e) {
             $("#modal-install").modal("show");
         }
-
         return ;
     }
     $("#modal-install").modal("show");
