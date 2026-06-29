@@ -121,6 +121,8 @@ const installApp = ()=>{
         alert('PROMPT');
         try {
             deferredPrompt.prompt();
+            
+        alert('PROMPT 2');
             deferredPrompt.userChoice.then((choice) => {
                 if (choice.outcome === 'accepted') {
                     console.log('Installée');
