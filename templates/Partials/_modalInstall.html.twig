@@ -145,13 +145,13 @@ navigator.serviceWorker.addEventListener("message", (event) => {
 });
 
 
-window.addEventListener("error", (event) => {
-    alert(
-        "JS ERROR:\n" +
-        event.message +
-        "\nLine: " + event.lineno +
-        "\nFile: " + event.filename
-    );
-});
+const originalError = console.error;
+
+console.error = function (...args) {
+    originalError.apply(console, args);
+
+    // ton interception
+    alert("console.error: " + args.join(" "));
+};
 </script>
 
