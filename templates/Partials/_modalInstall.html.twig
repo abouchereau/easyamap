@@ -78,13 +78,21 @@ class Utils {
   static isChromiumBased() {
     return /chrome|crios|crmo|edg|opr|brave\//.test(navigator.userAgent.toLowerCase())
     }
+
+    static isPwaInstalled() {
+        return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true || window.Capacitor?.isNativePlatform()
+    }
 }
+
+
+
+
 document.addEventListener("DOMContentLoaded", (event) => {
         $("#pwa-install").hide();
         window.addEventListener('appinstalled', () => {
             $("#pwa-install").hide();
         })
-        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true || window.Capacitor?.isNativePlatform()) {
+        if (Utils.isPwaInstalled()) {
             $("#pwa-install").hide();
         }
         else {
@@ -108,11 +116,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
 });
   
-const installApp = ()=>{       
-    if (!deferredPrompt) {        
-        $("#modal-install").modal("show");
-    }
-    else {
+const installApp = ()=>{
+    if (deferredPrompt) {  
         alert('PROMPT');
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then((choice) => {
@@ -124,8 +129,10 @@ const installApp = ()=>{
 
             deferredPrompt = null;
         });
+        return ;
     }
-    return false;
+    $("#modal-install").modal("show");
+
 };
 </script>
 
