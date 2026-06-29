@@ -84,10 +84,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         }
 
 
-        $(".displayAndroid, .displayIOs, .displayNotAndroid, .displayNotIOs, .displayChromiumBased, .displayNotChromiumBased").hide();
-        if (Utils.isAndroid() && ! Utils.isChromiumBased()) {
-            $(".displayAndroid").show();
-        }
+        $(".displayIOs, .displayNotIOs, .displayChromiumBased, .displayNotChromiumBased").hide();
         if (Utils.isIOs()) {
             $(".displayIOs").show();
         }
