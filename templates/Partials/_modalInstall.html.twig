@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
 
         $(".displayAndroid, .displayIOs, .displayNotAndroid, .displayNotIOs, .displayChromiumBased, .displayNotChromiumBased").hide();
-        if (Utils.isAndroid()) {
+        if (Utils.isAndroid() && ! Utils.isChromiumBased()) {
             $(".displayAndroid").show();
         }
         if (Utils.isIOs()) {

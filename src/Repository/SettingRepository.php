@@ -59,7 +59,7 @@ class SettingRepository extends EntityRepository
             $json = '{
   "id": "https://'.$url.'"
   "short_name": "Easyamap",
-  "name": "Easyamap - '.$setting['name'].',
+  "name": "Easyamap - '.$setting['name'].'",
   "description": "Logiciel de commandes pour l\'AMAP : '.$setting['name'].'",
     "icons": [
     {
