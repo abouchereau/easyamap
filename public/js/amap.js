@@ -43,7 +43,7 @@ const validatePayment = (idPayment, checked,) => {
 
 (async () => {
     if ('serviceWorker' in navigator && window.location.href.indexOf("localhost") == -1) {
-        navigator.serviceWorker.register('service-worker-v1.1.js');
+        navigator.serviceWorker.register('service-worker-v1.2.js');
     }
 })();
 
