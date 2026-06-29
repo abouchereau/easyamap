@@ -34,3 +34,8 @@ self.addEventListener('install', function(event) {
         })
     );
 });
+
+
+self.addEventListener("error", (e) => {
+    console.log("SW ERROR", e);
+});

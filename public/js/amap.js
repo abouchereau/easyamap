@@ -46,3 +46,4 @@ const validatePayment = (idPayment, checked,) => {
         navigator.serviceWorker.register('service-worker-v1.1.js');
     }
 })();
+

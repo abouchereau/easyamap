@@ -139,5 +139,45 @@ const installApp = ()=>{
     $("#modal-install").modal("show");
 
 };
+
+navigator.serviceWorker.addEventListener("message", (event) => {
+    alert("SW MESSAGE: " + JSON.stringify(event.data));
+});
+
+
+
+function debugLog(msg) {
+    let box = document.getElementById("debug-box");
+
+    if (!box) {
+        box = document.createElement("div");
+        box.id = "debug-box";
+        box.style.cssText = `
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-height: 40%;
+            overflow: auto;
+            background: black;
+            color: lime;
+            font-size: 12px;
+            z-index: 999999;
+            padding: 10px;
+        `;
+        document.body.appendChild(box);
+    }
+
+    box.innerText += msg + "\n";
+}
+
+
+window.addEventListener("error", (e) => {
+    debugLog("ERROR: " + e.message);
+});
+
+window.addEventListener("unhandledrejection", (e) => {
+    debugLog("PROMISE: " + e.reason);
+});
 </script>
 
