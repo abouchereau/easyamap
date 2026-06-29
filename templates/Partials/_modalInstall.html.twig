@@ -98,11 +98,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
 });
   
 const installApp = ()=>{
+    showSpinner();
     if (deferredPrompt) {  
         try {
 
             const timeout = setTimeout(() => {
                 if (deferredPrompt) {
+                    hideSpinner();
                     $("#modal-install").modal("show");
                 }
             }, 5000);
@@ -111,12 +113,15 @@ const installApp = ()=>{
             deferredPrompt.userChoice.then((choice) => {
                 deferredPrompt = null;
                 clearTimeout(timeout);
+                hideSpinner();
             });
         } catch(e) {
+            hideSpinner();
             $("#modal-install").modal("show");
         }
         return ;
     }
+    hideSpinner();
     $("#modal-install").modal("show");
 
 };
