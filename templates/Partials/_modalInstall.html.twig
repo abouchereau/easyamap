@@ -113,6 +113,7 @@ const installApp = ()=>{
         $("#modal-install").modal("show");
     }
     else {
+        alert('PROMPT');
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then((choice) => {
             if (choice.outcome === 'accepted') {
