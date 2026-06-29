@@ -3,9 +3,17 @@
 {% block header_title %}Menu{% endblock %}
 {% block body %}
 
-{% if menu.farmer is defined %}
+
+
 <div class="row">
   <div class="col-md-12">
+{% include 'Partials/_modalInstall.html.twig' %} 
+</div>
+</div>
+
+
+{% if menu.farmer is defined %}
+
     <h4 class="page-header">Producteur</h4>
   </div>
 </div>
@@ -81,7 +89,5 @@
 {% endif %}
 
 
-
-{% include 'Partials/_modalInstall.html.twig' %} 
 
 {% endblock %}

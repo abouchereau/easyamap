@@ -1,8 +1,5 @@
-
-<div>
-Nouveau !
-<br />
-<button class="btn btn-success" onclick="openModalInstall()">Installer l'application</button>
+<div id="pwa-install" class="text-right">
+    <a href="#" onclick="installApp()"><span class="badge badge-info">Nouveau !</span> Installer l'application</a>
 </div>
 
 
@@ -44,7 +41,7 @@ Nouveau !
                 <p>Une fois installée, l’application apparaîtra comme une app classique sur votre téléphone / PC / tablette.</p>
                 <div class="border border-danger p-2 displayNotChromiumBased">
                     <p><i class="glyphicon glyphicon-exclamation-sign text-danger"></i></p>
-                    <p>Pour effectuer l'installation, il est nécessaire d'utiliser un navigateur <b>Chrome</b> (ou un autre navigateur basé sur Chromium). Merci d'ouvrir cette page dans une autre navigateur.</p>                        
+                    <p>Pour effectuer l'installation, il est nécessaire d'utiliser un navigateur <b>Chrome</b> (ou un autre navigateur basé sur Chromium). Merci d'ouvrir cette page dans une autre navigateur pour continuer.</p>                        
                 </div>
             </div>
             <div class="modal-footer">
@@ -56,6 +53,15 @@ Nouveau !
 
 
 <script>
+let isAppInstalled = true;
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); 
+    deferredPrompt = e;
+});
+
+
+
 class Utils {
   static isIOs() {
         return /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
@@ -74,6 +80,18 @@ class Utils {
     }
 }
 document.addEventListener("DOMContentLoaded", (event) => {
+        $("#pwa-install").hide();
+        window.addEventListener('appinstalled', () => {
+            $("#pwa-install").hide();
+        })
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true || window.Capacitor?.isNativePlatform()) {
+            $("#pwa-install").hide();
+        }
+        else {
+            $("#pwa-install").show();
+        }
+
+
         $(".displayAndroid, .displayIOs, .displayNotAndroid, .displayNotIOs, .displayChromiumBased, .displayNotChromiumBased").hide();
         if (Utils.isAndroid()) {
             $(".displayAndroid").show();
@@ -90,8 +108,22 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
 });
   
-const openModalInstall = () => {
-    $("#modal-install").modal("show");
-}
+const installApp = ()=>{       
+    if (!deferredPrompt) {        
+        $("#modal-install").modal("show");
+    }
+    else {
+        deferredPrompt.userChoice.then((choice) => {
+            if (choice.outcome === 'accepted') {
+                console.log('Installée');
+            } else {
+                console.log('Refusée');
+            }
+
+            deferredPrompt = null;
+        });
+    }
+    return false;
+};
 </script>
 
