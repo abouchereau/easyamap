@@ -119,16 +119,21 @@ document.addEventListener("DOMContentLoaded", (event) => {
 const installApp = ()=>{
     if (deferredPrompt) {  
         alert('PROMPT');
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choice) => {
-            if (choice.outcome === 'accepted') {
-                console.log('Installée');
-            } else {
-                console.log('Refusée');
-            }
+        try {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choice) => {
+                if (choice.outcome === 'accepted') {
+                    console.log('Installée');
+                } else {
+                    console.log('Refusée');
+                }
 
-            deferredPrompt = null;
-        });
+                deferredPrompt = null;
+            });
+        } catch(e) {
+            $("#modal-install").modal("show");
+        }
+
         return ;
     }
     $("#modal-install").modal("show");
