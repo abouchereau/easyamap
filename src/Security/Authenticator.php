@@ -108,4 +108,9 @@ class Authenticator extends AbstractFormLoginAuthenticator
     {
         return $this->urlGenerator->generate('app_login');
     }
+
+    public function supportsRememberMe()
+    {
+        return true;
+    }
 }

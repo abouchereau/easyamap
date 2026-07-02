@@ -16,7 +16,8 @@ security:
             anonymous: lazy
             remember_me:
                 secret: '%kernel.secret%'
-                lifetime: 604800 
+                lifetime: 604800                 
+                always_remember_me: true
             guard:
                 authenticators:
                     - App\Security\Authenticator
