@@ -1,0 +1,40 @@
+{% extends 'layout.html.twig' %}
+{% block header_css %}{% endblock %}
+{% set page_title = 'FAQ' %}
+{% block body %}
+    <h1>FAQ</h1>
+    <p>FAQ en cours de rédaction...</p>
+
+
+
+
+    <div class="panel-group" id="faqAccordion">
+        {% for faq in faqs %}
+            <div class="panel panel-default">
+
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse"
+                        data-parent="#faqAccordion"
+                        href="#faq-{{ faq.id }}">
+                            {{ faq.question }}
+                        </a>
+                    </h4>
+                </div>
+
+                <div id="faq-{{ faq.id }}"
+                    class="panel-collapse collapse {% if loop.first %}in{% endif %}">
+                    <div class="panel-body">
+                        {{ faq.answer|raw }}
+                    </div>
+                </div>
+
+            </div>
+        {% endfor %}
+    </div>
+
+
+
+
+    
+{% endblock %}

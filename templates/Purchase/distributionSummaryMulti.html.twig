@@ -1,5 +1,5 @@
 {% extends 'layout.html.twig' %}
-{% block header_title %}Liste distribution par {{ group_by=='farm'?'producteur':'adhérent' }}{% endblock %}
+{% set page_title %}Liste distribution par {{ group_by=='farm'?'producteur':'adhérent' }}{% endset %}
 {% block header_css %}
 <link href="{{  asset('jquery-ui/jquery-ui.min.css') }}" rel="stylesheet" />
 {% endblock %}

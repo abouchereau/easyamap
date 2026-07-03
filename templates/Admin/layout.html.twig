@@ -18,13 +18,13 @@
 {% endif %}
 {% endblock %}
 
-{% block header_title %}
+{% set page_title %}
     {% if not isReferentPage %}
         Paiements
     {% else %}
         Réception des paiements
     {% endif %}        
-{% endblock %}
+{% endset %}
 
 
 {% block body %}

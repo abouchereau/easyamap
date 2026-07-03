@@ -1,5 +1,5 @@
 {% extends 'layout.html.twig' %}
-{% block header_title %}Liste des tâches{% endblock %}
+{% set page_title = 'Liste des tâches' %}
 {% block header_css %}<link href="{{ asset('datatables/datatables.min.css') }}" rel="stylesheet" />{% endblock %}
 {% block body %}
 {% include 'Parameters/_menu.html.twig' %}  

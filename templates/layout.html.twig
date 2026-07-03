@@ -6,19 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="{{ path('home') }}manifest/{{ render(controller('App\\Controller\\HomeController:environment')) }}.json">
     <link rel="icon" type="image/png" href="{{ asset('images/logo-easy-amap-icon.png') }}" />
-    <title>{% block header_title %}{% endblock %} - {{ app_title }} - {{ render(controller('App\\Controller\\HomeController:town')) }} </title>
+    <title>{{ page_title|default('') }} - {{ app_title }} - {{ render(controller('App\\Controller\\HomeController:town')) }} </title>
     <link href="{{  asset('bootstrap/css/bootstrap-yeti.min.css') }}" rel="stylesheet" />
     {% block header_css %}{% endblock %}
     <link href="{{  asset('css/amap.css') }}" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css?family=Boogaloo" rel="stylesheet">
     <link href="{{  asset('css/portal.css') }}" rel="stylesheet" />
     <link href="{{  asset('css/print.css') }}" rel="stylesheet" media="print" />
     <link href="{{  asset('css/select2.css') }}" rel="stylesheet" />
-    {# include 'Partials/_analytics.html.twig' #} 
   </head>
   <body>
     {% include 'Partials/_spinner.html.twig' %} 
-    {% include 'Partials/_header.html.twig' with {'title':  block('header_title')} %}  
+    {% include 'Partials/_header.html.twig'  %}  
       <div class="container">  
       {% include 'Partials/_flashMessage.html.twig' %}      
           
@@ -27,11 +25,10 @@
       {{ render(controller('App\\Controller\\HomeController:footer')) }}         
       {% include 'Partials/_header.html.twig' %}   
       <script type="text/javascript" src="{{ asset('js/jquery-1.11.2.min.js') }}"></script>
-<script src="{{ asset('js/select2.js') }}"></script>
-{% block footer_js_before %}{# especially for datatable #}{% endblock %}
-
-<script type="text/javascript" src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('js/amap.js') }}"></script>
+      <script src="{{ asset('js/select2.js') }}"></script>
+      {% block footer_js_before %}{# especially for datatable #}{% endblock %}
+      <script type="text/javascript" src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
+      <script type="text/javascript" src="{{ asset('js/amap.js') }}"></script>
 {% block footer_js %}{% endblock %}
   </body>
 </html>

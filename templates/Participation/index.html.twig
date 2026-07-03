@@ -1,5 +1,5 @@
 {% extends 'layout.html.twig' %}
-{% block header_title %}Inscriptions aux distributions {% if admin %}(Administration){% endif %}{% endblock %}
+{% set page_title %}Inscriptions aux distributions {% if admin %}(Administration){% endif %}{% endset %}
 {% block body %}
     
 {% set mois = ['','Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'] %}

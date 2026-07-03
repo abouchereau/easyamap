@@ -1,11 +1,10 @@
 {% extends 'layout.html.twig' %}
-{% block header_title %}    
-    {% if not isReferentPage %}
-        Paiements
-    {% else %}
-        Réception des paiements
-    {% endif %}   
-{% endblock %}
+{% if not isReferentPage %}
+    {% set page_title = 'Paiements' %}    
+{% else %}
+    {% set page_title = 'Réception des paiements' %}
+{% endif %}   
+
 
 {% block body %}
     

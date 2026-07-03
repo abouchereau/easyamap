@@ -1,24 +1,25 @@
 {% extends 'layout.html.twig' %}
 {% block header_css %}{% endblock %}
-{% block header_title %}Menu{% endblock %}
+{% set page_title = 'Menu' %}
 {% block body %}
 
 
 
 <div class="row">
   <div class="col-md-12">
-{% include 'Partials/_modalInstall.html.twig' %} 
-</div>
+  {% include 'Partials/_modalInstall.html.twig' %} 
+  </div>
 </div>
 
 
 {% if menu.farmer is defined %}
-
+<div class="row">
+  <div class="col-md-12">
     <h4 class="page-header">Producteur</h4>
   </div>
 </div>
 
-<div class="row">  
+<div class="row vignettes">  
 {% for bloc in menu.farmer %}
   <div class="col-md-3">    
     <div class="panel panel-info" onclick="window.location.href='{{ bloc[0] }}';">
@@ -39,7 +40,7 @@
   </div>
 </div>
 
-<div class="row">  
+<div class="row vignettes">  
 {% for bloc in menu.adherent %}
   <div class="col-md-3">    
     <div class="panel panel-success" onclick="window.location.href='{{ bloc[0] }}';">
@@ -58,7 +59,7 @@
     <h4 class="page-header">Référent</h4>
   </div>
 </div>
-<div class="row">  
+<div class="row vignettes">  
 {% for bloc in menu.referent %}
   <div class="col-md-3">    
     <div class="panel panel-warning" onclick="window.location.href='{{ bloc[0] }}';">
@@ -76,7 +77,7 @@
     <h4 class="page-header">Administrateur</h4>
   </div>
 </div>
-<div class="row">  
+<div class="row vignettes">  
 {% for bloc in menu.admin %}
   <div class="col-md-3">    
     <div class="panel panel-primary" onclick="window.location.href='{{ bloc[0] }}';">

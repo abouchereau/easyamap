@@ -1,6 +1,0 @@
-<?php
-$url2env = [
-    'localhost' => ['local', true],
-//    'www.nomdedomaine.com.fr' => ['monamap', false],//ajouter un dossier "monamap" dans config/packages
-];
-

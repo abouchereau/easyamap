@@ -336,4 +336,27 @@ class HomeController extends AmapBaseController
         readfile($path);
         exit;
     }
+
+    public function faq() {
+        $faqs = [
+            [
+                "id"=>"q1",
+                "question"=>"Comment installer l'application sur mon téléphone ?",
+                "answer"=>'Voir cette présentation : <a href="https://docs.google.com/presentation/d/e/2PACX-1vRKupX6VL7PR6YCqF9OU2n-txBpIapmVAGDvX4-Tt-SBREwrN3hSHeEoq458le19TNXbMPQR9QIZhLA/pub?start=false&loop=false&delayms=60000" target="_blank">Diaporama</a>'
+            ]  
+            , 
+            [
+                "id"=>"q2",
+                "question"=>"Comment fonctionne le paiement par virement / Wero ?",
+                "answer"=>'Voir cette présentation : <a href="https://docs.google.com/presentation/d/e/2PACX-1vQdJopXoEkQa3wXomY0swQYK3zK55kzlClvgCzGM7N47urNrGD92W0bOs9th-z9LcjoHQlVGlbPzMo8/pub?start=false&loop=false&delayms=60000" target="_blank">Diaporama</a>'
+            ] 
+            ,            
+            [
+                "id"=>"q3",
+                "question"=>"Documentaion",
+                "answer"=>'<a href="https://cdn1.easyamap.fr/docs/documentation.pdf" target="_blank">Documentation</a>'
+            ] 
+        ];
+        return $this->render('Home/faq.html.twig', ['faqs'=>$faqs]);
+    }
 }
