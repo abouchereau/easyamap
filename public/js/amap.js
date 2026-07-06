@@ -17,28 +17,19 @@ const toClipboard = (id) => {
 }
 
 const validatePayment = (idPayment, checked,) => {    
-    const url = root+'ajax/checkVirement';
+    const url = root+'ajax/checkIssued';
     $.ajax({
         url: url,
         type: 'POST',
-        data: { 
-            'idPayment': idPayment, 
-            'checked': (checked?"1":"0"),
-            'currentFarm': getCurrentFarm()
-        },
+        data: {'idPayment': idPayment},
         beforeSend: function () {    
-                $("#loader").show();
+            showSpinner();
         },
         success: function(data) {                
-            $("#loader").hide();
-           /* if (checked) {
-                alert("Nous avons enregistré l'émission de votre virement.\nNous allons avertir le producteur afin qu'il puisse valider la réception.");
-            }*/
+            hideSpinner();
             window.location.reload();
         }
-    });
-
-    
+    });    
 };
 
 (async () => {

@@ -69,7 +69,15 @@
             {% for product in products %}
                 {% if product.fkFarm.idFarm != last_id_farm %}
                     {% set last_id_farm = product.fkFarm.idFarm %}
-                    <li role="presentation"><a href="#farm{{ product.fkFarm.idFarm }}" aria-controls="farm{{ product.fkFarm.idFarm }}" role="tab" data-toggle="tab">{{ product.fkFarm.productType }}</a></li>
+                    <li role="presentation">
+                      <a href="#farm{{ product.fkFarm.idFarm }}" aria-controls="farm{{ product.fkFarm.idFarm }}" role="tab" data-toggle="tab">
+                      {% for waitingPayment in farmWaitingPayments %}
+                        {% if waitingPayment.idFarm == product.fkFarm.idFarm %}
+                            <span class="glyphicon glyphicon-bookmark text-warning" data-toggle="tooltip" data-placement="bottom" title="Paiement en attente"></span>
+                        {% endif %}
+                      {% endfor %}                      
+                      {{ product.fkFarm.productType }}</a>
+                    </li>
                 {% endif %}
             {% endfor %}
         </ul>

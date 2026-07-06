@@ -115,10 +115,9 @@ class PurchaseController extends AmapBaseController
     $farmWaitingPayments = [];
     foreach($payments as $fk_farm => $payment) {
         if ($payment['issuedAt'] == null && !in_array($fk_farm, $farmWaitingPayments)) {
-            $farmWaitingPayments []= $payment['productType'];
+            $farmWaitingPayments []= ["productType"=>$payment['productType'], "idFarm"=>$fk_farm];
         }
     }
-    
     return $this->render('Purchase/view.html.twig', array(
           'contract'      => $contract,
           'distributions' => $distributions,

@@ -1,6 +1,9 @@
 <div id="overlay">
-    <div id="spinner">
-        <span class="spin glyphicon glyphicon-off"></span>
+    <div id="spinner" class="spin">
+        <svg width="80px" height="80px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.8 12A10.8 10.8 0 1 1 10 1.393v1.014a9.8 9.8 0 1 0 4 0V1.393A10.812 10.812 0 0 1 22.8 12z"/>
+            <path fill="none" d="M0 0h24v24H0z"/>
+        </svg>
     </div>
 </div>
 <style>
@@ -10,7 +13,7 @@
         position:fixed;
         top:0;
         left:0;
-        background-color:rgba(0,0,0,0.4);
+        background-color:rgba(0,0,0,0.1);
         width: 100vw;
         height:100vh;
     }
@@ -22,13 +25,9 @@
         left: calc(50vw - 40px);
     }
     .spin {
-        font-size:80px;
-        color:#FFF;
-        animation: spin infinite 2s linear;
-        height: 80px;
-        opacity:1;
+        animation: spin infinite 1.5s cubic-bezier(.45, .05, .55, .95);
+        opacity:0.3;
     }
-
     @keyframes spin {
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
@@ -37,13 +36,6 @@
 <script>
     const showSpinner = ()=>{document.getElementById('overlay').style.display = "block";}
     const hideSpinner = ()=>{document.getElementById('overlay').style.display = "none";}
-    window.addEventListener("beforeunload", e=>{
-        showSpinner();
-        return undefined;
-    });
-    window.addEventListener('pageshow', e=>{
-        if (e.persisted) { // Vérifie si la page est chargée depuis le cache BFCache
-            hideSpinner();
-        }
-    });
+    window.addEventListener("beforeunload", e=>{showSpinner();return undefined;});
+    window.addEventListener('pageshow', e=>{if (e.persisted) {hideSpinner();}});
 </script>

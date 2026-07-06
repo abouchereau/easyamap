@@ -4,8 +4,8 @@
 Une fois votre paiement effectué, merci de l'indiquer ci-dessous afin d'en faciliter le suivi.<br /><br />
     {% if isMultiFarm %}
         <ul style="font-size:85%;">
-        {% for farm in farmWaitingPayments %}
-            <li>{{ farm }}</li>
+        {% for item in farmWaitingPayments %}
+            <li>{{ item.productType }}</li>
         {% endfor %}
         </ul>
     {% endif %}
