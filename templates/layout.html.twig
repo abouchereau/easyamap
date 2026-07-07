@@ -28,6 +28,7 @@
       {% block footer_js_before %}{# especially for datatable #}{% endblock %}
       <script type="text/javascript" src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
       <script type="text/javascript" src="{{ asset('js/amap.js') }}"></script>
+      <script>(async ()=>{if ('serviceWorker' in navigator && window.location.href.indexOf("localhost")==-1) {navigator.serviceWorker.register('service-worker-v1.3.js');}})();</script>
 {% block footer_js %}{% endblock %}
   </body>
 </html>

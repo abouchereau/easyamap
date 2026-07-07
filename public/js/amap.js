@@ -32,12 +32,6 @@ const validatePayment = (idPayment, checked,) => {
     });    
 };
 
-(async () => {
-    if ('serviceWorker' in navigator && window.location.href.indexOf("localhost") == -1) {
-        navigator.serviceWorker.register('service-worker-v1.2.js');
-    }
-})();
-
 const showSpinner = ()=>{document.getElementById('overlay').style.display = "block";}
 const hideSpinner = ()=>{document.getElementById('overlay').style.display = "none";}
 window.addEventListener("beforeunload", e=>{showSpinner();return undefined;});
