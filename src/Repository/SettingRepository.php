@@ -77,7 +77,7 @@ class SettingRepository extends EntityRepository
   "background_color": "#FFFFFF",
   "display": "standalone",
   "scope": "/",
-  "theme_color": "#222222",
+  "theme_color": "#333333",
   "orientation":"any",    
   "form_factors": ["phone", "desktop"],
   "screenshots": [
