@@ -700,3 +700,32 @@ td.newyear, th.newyear {
     height:100%;
     padding: 10px 15px;
 }
+
+#overlay {
+    z-index:1500;
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    background-color:rgba(0,0,0,0.1);
+    width: 100vw;
+    height:100vh;
+}
+#spinner {
+    height:80px;
+    width:80px;
+    position: fixed;
+    top: calc(50vh - 40px);
+    left: calc(50vw - 40px);
+}
+.spin {
+    animation: spin infinite 1.5s cubic-bezier(.45, .05, .55, .95);
+    opacity:0.3;
+}
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.cursor-default {
+    cursor: default;
+}

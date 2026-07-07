@@ -55,12 +55,15 @@
                                 {% for product in infos[date|date('Y-m-d')] %}
                                     {% if product.is_shift == 0 %}
                                         <div class="product">
-                                            {% if product.date_shift is not null %}<del>{% endif %}<div class="product-quantity">{{ product.nb }}</div> {{ product.produit }} {% if product.date_shift is not null %}</del><br />&nbsp; &nbsp; &nbsp; <span class="label label-warning">⮀ {{ product.date_shift|date_small }}</span>{% endif %}
+                                            {% if product.date_shift is not null %}<del>{% endif %}<div class="product-quantity">{{ product.nb }}</div> {{ product.produit }} 
+                                            {% if product.date_shift is not null %}</del><br />&nbsp; &nbsp; &nbsp; <span class="label label-warning">⮀ {{ product.date_shift|date_small }}</span>{% endif %} 
+                                            {% if product.paiement_recu == 0 %} <span data-toggle="tooltip" data-placement="bottom" title="Paiement non reçu" class="text-warning cursor-default">⦸</span> {% endif %}
                                         </div>
                                     {% endif %}
                                     {% if product.is_shift == 1 %}
                                         <div class="product">
                                             <div class="product-quantity">{{ product.nb }}</div> {{ product.produit }}<br />&nbsp; &nbsp; &nbsp; <span class="label label-success">⮀ {{ product.date_shift|date_small }}</span>
+                                            {% if product.paiement_recu == 0 %} <span data-toggle="tooltip" data-placement="bottom" title="Paiement non reçu" class="text-warning cursor-default">⦸</span> { {% endif %}
                                         </div>
                                     {% endif %}
                                 {% endfor %}

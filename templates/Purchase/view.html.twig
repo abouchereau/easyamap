@@ -44,7 +44,7 @@
            {% endfor %}
       </table>
 
-{% endif %}
+      {% endif %}
     </div>
       
    <div class="col-md-3">
@@ -60,7 +60,6 @@
 
 
 {% endif %}
-
 {% if nb_per_farm|length > 1 %}
 <div class="row top-buffer">
     <div class="col-md-12">
@@ -84,8 +83,6 @@
     </div>
 </div>
 {% endif %}    
-
-
 
 <div class="row top-buffer" id="purchase">
   <div class="col-md-12">
@@ -111,7 +108,7 @@
           
           
         
-        <div role="tabpanel" class="tab-pane fade" id="farm{{ product.fkFarm.idFarm }}">
+        <div {% if nb_per_farm|length > 1 %}role="tabpanel" class="tab-pane fade" {% endif %}id="farm{{ product.fkFarm.idFarm }}">
           <table class="table table-bordered table-condensed" style="margin:0 auto 70px auto;{% if not product.fkFarm.isActive %}display:none;{% endif %}">
           <tr>
             <td class="success text-center" colspan="3"><b>{{ product.fkFarm }}</b><br />({{ product.fkFarm.productType }})<br /><small>Référent{% if product.fkFarm.getReferents()|length > 1 %}s{% endif %} : 

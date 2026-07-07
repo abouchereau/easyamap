@@ -181,13 +181,15 @@ concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit,
 f.sequence as f_seq, 
 pr.sequence as pr_seq,
 d2.date AS date_shift,
-0 is_shift
+0 is_shift,	
+p.received_at IS NOT NULL AS paiement_recu 
 from purchase pu 
 left join product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
 left join distribution d on d.id_distribution = pd.fk_distribution 
 left join product pr on pr.id_product = pd.fk_product 
 left join farm f on f.id_farm = pr.fk_farm
 left join distribution d2 ON d2.id_distribution = pd.fk_distribution_shift 
+left join payment p on p.id_payment = pu.fk_payment
 WHERE d.date IN ('".implode("','",$dates)."')";
         if($farms != null) {
             $sql .= "AND pr.fk_farm IN (".implode(',',$farms_id).") ";
@@ -203,13 +205,15 @@ concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit,
 f.sequence as f_seq, 
 pr.sequence as pr_seq,
 d.date AS date_shift,
-1 is_shift
+1 is_shift,
+p.received_at IS NOT NULL AS paiement_recu 
 from purchase pu 
 left join product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
 left join distribution d on d.id_distribution = pd.fk_distribution 
 left join product pr on pr.id_product = pd.fk_product 
 left join farm f on f.id_farm = pr.fk_farm
 left join distribution d2 ON d2.id_distribution = pd.fk_distribution_shift 
+left join payment p on p.id_payment = pu.fk_payment
 WHERE pu.fk_product_distribution IS NOT NULL
 AND d2.date IN ('".implode("','",$dates)."')";
         if($farms != null) {
@@ -243,6 +247,7 @@ f.sequence as f_seq,
 pr.sequence as pr_seq,
 d2.date AS date_shift,
 0 is_shift,
+p.received_at IS NOT NULL AS paiement_recu, 
 ".$farm['is_cur_db']." as is_cur_db
 from ".$farm['db'].".purchase pu 
 left join ".$farm['db'].".product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
@@ -250,6 +255,7 @@ left join ".$farm['db'].".distribution d on d.id_distribution = pd.fk_distributi
 left join ".$farm['db'].".product pr on pr.id_product = pd.fk_product 
 left join ".$farm['db'].".farm f on f.id_farm = pr.fk_farm
 left join ".$farm['db'].".distribution d2 ON d2.id_distribution = pd.fk_distribution_shift 
+left join ".$farm['db'].".payment p on p.id_payment = pu.fk_payment
 WHERE d.date >= :date_debut AND d.date <= :date_fin 
 AND pr.fk_farm=".$farm['id_farm']."
  group by f.label, d.date, pr.fk_farm, pr.id_product, f.sequence, pr.sequence, d2.date
@@ -264,6 +270,7 @@ f.sequence as f_seq,
 pr.sequence as pr_seq,
 d.date AS date_shift,
 1 is_shift,
+p.received_at IS NOT NULL AS paiement_recu,
 ".$farm['is_cur_db']." as is_cur_db
 from ".$farm['db'].".purchase pu 
 left join ".$farm['db'].".product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
@@ -271,6 +278,7 @@ left join ".$farm['db'].".distribution d on d.id_distribution = pd.fk_distributi
 left join ".$farm['db'].".product pr on pr.id_product = pd.fk_product 
 left join ".$farm['db'].".farm f on f.id_farm = pr.fk_farm
 left join ".$farm['db'].".distribution d2 ON d2.id_distribution = pd.fk_distribution_shift 
+left join ".$farm['db'].".payment p on p.id_payment = pu.fk_payment
 WHERE pu.fk_product_distribution IS NOT NULL
 AND d2.date >= :date_debut AND d2.date <= :date_fin 
 AND pr.fk_farm=".$farm['id_farm']."
@@ -303,13 +311,15 @@ SELECT
 (SELECT name FROM ".$farm['db'].".setting) AS amap,
 sum(pu.quantity) AS nb, 
 concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit,
-pr.sequence as pr_seq
+pr.sequence as pr_seq,
+p.received_at IS NOT NULL AS paiement_recu 
 from ".$farm['db'].".purchase pu 
 left join ".$farm['db'].".product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
 left join ".$farm['db'].".distribution d on d.id_distribution = pd.fk_distribution 
 left join ".$farm['db'].".product pr on pr.id_product = pd.fk_product 
 left join ".$farm['db'].".farm f on f.id_farm = pr.fk_farm
 left join ".$farm['db'].".distribution d2 ON d2.id_distribution = pd.fk_distribution_shift 
+left join ".$farm['db'].".payment p on p.id_payment = pu.fk_payment
 WHERE d.date >= :date_debut AND d.date <= :date_fin 
 AND pr.fk_farm=".$farm['id_farm']."
  group by f.label, d.date, pr.fk_farm, pr.id_product, f.sequence, pr.sequence, d2.date
@@ -318,13 +328,15 @@ SELECT
 (SELECT name FROM ".$farm['db'].".setting) AS amap,
 sum(pu.quantity) AS nb, 
 concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit, 
-pr.sequence as pr_seq
+pr.sequence as pr_seq,
+p.received_at IS NOT NULL AS paiement_recu 
 from ".$farm['db'].".purchase pu 
 left join ".$farm['db'].".product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution
 left join ".$farm['db'].".distribution d on d.id_distribution = pd.fk_distribution 
 left join ".$farm['db'].".product pr on pr.id_product = pd.fk_product 
 left join ".$farm['db'].".farm f on f.id_farm = pr.fk_farm
 left join ".$farm['db'].".distribution d2 ON d2.id_distribution = pd.fk_distribution_shift 
+left join ".$farm['db'].".payment p on p.id_payment = pu.fk_payment
 WHERE pu.fk_product_distribution IS NOT NULL
 AND d2.date >= :date_debut AND d2.date <= :date_fin 
 AND pr.fk_farm=".$farm['id_farm']."
@@ -397,7 +409,8 @@ SELECT
     concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit,
     pr.sequence as pr_seq,
     d2.date AS date_shift,
-    f.sequence as f_seq
+    f.sequence as f_seq,
+	p.received_at IS NOT NULL AS paiement_recu 
     from purchase pu 
     left join product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution 
     left join distribution d on d.id_distribution = pd.fk_distribution 
@@ -405,6 +418,7 @@ SELECT
     left join product pr on pr.id_product = pd.fk_product
     left join farm f on f.id_farm = pr.fk_farm
 	LEFT JOIN user u ON u.id_user = pu.fk_user
+	left join payment p on p.id_payment = pu.fk_payment
 	WHERE d.date IN ('".implode("','",$dates)."')
     AND (pu.fk_user=:id_user OR :id_user is null)
 	GROUP BY CONCAT(ifnull(u.lastname,''),'<br>',ifnull(u.firstname,'')), pd.id_product_distribution, d.date,pu.fk_user, concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')), pr.sequence, d2.date 
@@ -419,7 +433,8 @@ SELECT
     concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')) AS produit,
     pr.sequence as pr_seq,
     d.date AS date_shift,
-    f.sequence as f_seq
+    f.sequence as f_seq,
+	p.received_at IS NOT NULL AS paiement_recu 
     from purchase pu 
     left join product_distribution pd on pd.id_product_distribution = pu.fk_product_distribution 
     left join distribution d on d.id_distribution = pd.fk_distribution 
@@ -427,6 +442,7 @@ SELECT
     left join product pr on pr.id_product = pd.fk_product
     left join farm f on f.id_farm = pr.fk_farm
 	LEFT JOIN user u ON u.id_user = pu.fk_user
+	left join payment p on p.id_payment = pu.fk_payment
 	WHERE d2.date IN ('".implode("','",$dates)."')
     AND (pu.fk_user=:id_user OR :id_user is null)
 	GROUP BY CONCAT(ifnull(u.lastname,''),'<br>',ifnull(u.firstname,'')), pd.id_product_distribution, d.date,pu.fk_user, concat(ifnull(pr.label,''),' ',ifnull(pr.unit,'')), pr.sequence, d2.date 
@@ -447,7 +463,7 @@ SELECT
             {
                 if (!isset($newInfo[$info['date']]))
                     $newInfo[$info['date']] = [];
-                $newInfo[$info['date']][] = ['nb'=>$info['nb'],'produit' => $info['produit'],'date_shift' => $info['date_shift'],'is_shift' => $info['is_shift']];
+                $newInfo[$info['date']][] = ['nb'=>$info['nb'],'produit' => $info['produit'],'date_shift' => $info['date_shift'],'is_shift' => $info['is_shift'], 'paiement_recu' => $info['paiement_recu']];
             }
             $tab[$entity] = $newInfo;
         }

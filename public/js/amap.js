@@ -38,3 +38,7 @@ const validatePayment = (idPayment, checked,) => {
     }
 })();
 
+const showSpinner = ()=>{document.getElementById('overlay').style.display = "block";}
+const hideSpinner = ()=>{document.getElementById('overlay').style.display = "none";}
+window.addEventListener("beforeunload", e=>{showSpinner();return undefined;});
+window.addEventListener('pageshow', e=>{if (e.persisted) {hideSpinner();}});
