@@ -1,0 +1,37 @@
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "8080:80"
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: "0"
+      APP_SECRET: change-me-in-production
+      DATABASE_URL: mysql://easyamap:easyamap@db:3306/easyamap?serverVersion=mariadb-11.0.0&charset=utf8mb4
+      MAILER_URL: null://localhost
+      TRUSTED_HOSTS: '^localhost$'
+    volumes:
+      - ./config/url2env.php:/var/www/html/config/url2env.php:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:11
+    environment:
+      MARIADB_DATABASE: easyamap
+      MARIADB_USER: easyamap
+      MARIADB_PASSWORD: easyamap
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./data/amap_init.sql:/docker-entrypoint-initdb.d/01-amap_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h 127.0.0.1 -u easyamap -peasyamap"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  db_data:
