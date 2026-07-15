@@ -23,7 +23,7 @@ class CheckTransferCommand extends Command {
     protected function configure() {
         $this
                 ->setName('amap:check-transfer')
-                ->setDescription('Envoie par mail au producteur les virements à vérifier.')
+                ->setDescription('Envoie par mail au producteur les paiements à vérifier.')
         ;
     }
 
@@ -58,7 +58,7 @@ class CheckTransferCommand extends Command {
               $referents_email = array_merge($referents_email, array_filter(explode(',',$virement['referents_email'])));
             }
           }
-           die(print_r($referents_email,1));
+          die(print_r($referents_email,1));
           $message = (new \Swift_Message())
             ->setSubject('easyamap : '.count($virements).' virement'.(count($virements) > 1 ? 's' : '').' à vérifier')
             ->setFrom(array('ne_pas_repondre@easyamap.fr' => "easyamap"))

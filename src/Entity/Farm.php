@@ -368,6 +368,13 @@ class Farm
             }
         }
 
+        
+        if (($virement || $wero) && empty($this->getEmail())) {
+            $context->buildViolation('L\'adresse e-mail est obligatoire pour le paiement par Virement ou Wero.')
+                ->atPath('email')
+                ->addViolation();
+        }
+
         if ($virement && empty($this->getIban())) {
             $context->buildViolation('L\'IBAN est obligatoire pour le paiement par virement.')
                 ->atPath('iban')
@@ -376,7 +383,7 @@ class Farm
 
         if ($wero && empty($this->getPhone())) {
             $context->buildViolation('Le numéro de téléphone est obligatoire pour le paiement par Wero.')
-                ->atPath('wero')
+                ->atPath('phone')
                 ->addViolation();
         }
 

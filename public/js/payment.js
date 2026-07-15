@@ -9,7 +9,7 @@ var tmp_received = {
 
 function refreshFilters() {
     var url = "";
-    if (isReferentPage) {
+    if (role == "ROLE_REFERENT") {
         url = root+'paiements_referent/{page}/{contract}/{farm}/{received}/{adherent}';
         url = url.replace('{adherent}',$("#filter-adherent").val());
     }
@@ -57,7 +57,7 @@ $(document).ready(function() {
                 window.location.href = root+'payment_history_from_one_payment/'+id_payment;
             });
        */
-       if (isReferentPage)
+       if (role == "ROLE_REFERENT")
        {
            /* $('.paiement .row-description, .paiement .row-amount, .paiement .row-received').attr('rel','tooltip').attr('data-container','body').attr('data-placement','bottom');
             $('.paiement .row-amount').attr('data-title','Modifier le montant');

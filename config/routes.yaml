@@ -102,6 +102,14 @@ paiements_referent:
         farm: 0
         received: 0
         adherent: 0
+
+paiements_producteur:
+    path: /paiements_producteur/{page}/{received}/{issued}
+    controller: App\Controller\PaymentController:indexProducteur
+    defaults:
+        page: 1
+        received: 0
+        issued: 0
         
         
 payment_new:
@@ -583,13 +591,17 @@ tableau_livraison_par_produit:
     defaults:
         dateDebutStr: null
 
-validation_virements_a_valider:
-    path: validation_virements/a_valider
-    controller: App\Controller\PaymentController:validationVirementsAValider
+#validation_virements_a_valider:
+#    path: validation_virements/a_valider
+#    controller: App\Controller\PaymentController:validationVirementsAValider
 
-validation_virements_valides:
-    path: validation_virements/valides
-    controller: App\Controller\PaymentController:validationVirementsValides
+#validation_virements_valides:
+#    path: validation_virements/valides
+#    controller: App\Controller\PaymentController:validationVirementsValides
+
+validation_virements_producteur:
+    path: validation_virements_producteur
+    controller: App\Controller\PaymentController:validationVirementsProducteur
 
 validation_virements_valider:
     path: validation_virements/valider/{amap}/{valide}/{id_payment}

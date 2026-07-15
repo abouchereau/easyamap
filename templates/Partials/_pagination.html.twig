@@ -1,3 +1,11 @@
+{% if role == 'ROLE_REFERENT' %}
+    {% set route = 'paiements_referent' %}
+{% elseif role == 'ROLE_ADHERENT' %}
+    {% set route = 'paiements_adherent' %}
+{% elseif role == 'ROLE_PRODUCTEUR' %}
+    {% set route = 'paiements_producteur' %}
+{% endif %}
+
 {% if pagination.nbPages > 0 %}
     <ul class="pagination">
         {% if pagination.page > 1 %}
@@ -25,14 +33,12 @@
 
         {% if pagination.page < pagination.nbPages %}
             <li>
-                <a href="{{ path(route,
-                pagination.paramsRoute|merge({'page': pagination.page+1})) }}">
+                <a href="{{ path(route, pagination.paramsRoute|merge({'page': pagination.page+1})) }}">
                     >
                 </a>
             </li>
             <li>
-                <a href="{{ path(route,
-                pagination.paramsRoute|merge({'page': pagination.nbPages})) }}">
+                <a href="{{ path(route, pagination.paramsRoute|merge({'page': pagination.nbPages})) }}">
                     >>
                 </a>
             </li>

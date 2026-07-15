@@ -35,21 +35,26 @@ class PaymentRepository extends EntityRepository
         $query = $qb->getQuery();
         return $this->getPaymentPaginator($query, $page, $nbPerPage);
     }
+
+    public function getForProducteur() {
+        //TODO
+        //Attention multi amap
+    }
     
     private function getPaymentQb($filters) {
         $qb = $this->createQueryBuilder('p')
             ->addSelect('p.idPayment')
             ->addSelect('c.idContract')
-            ->addSelect('c.label contract')
-            ->addSelect('CONCAT(COALESCE(u.firstname,\'\'),\' \',COALESCE(u.lastname,\'\')) adherent')
+            ->addSelect('c.periodStart')
+            ->addSelect('CONCAT(SUBSTRING(COALESCE(u.firstname,\'\'),1,1),\'. \',COALESCE(u.lastname,\'\')) adherent')
             ->addSelect('f.idFarm')
             ->addSelect('f.label farm')
-            ->addSelect('p.description')
             ->addSelect('p.amount')
             ->addSelect('p.received')
             ->addSelect('p.receivedAt')
             ->addSelect('p.issuedAt')
-            ->addSelect('p.paymentType')
+            ->addSelect('p.paymentType')            
+            ->addSelect('p.reference')
             ->leftJoin('App\Entity\Contract','c','WITH','p.fkContract = c.idContract')
             ->leftJoin('App\Entity\Farm','f','WITH','p.fkFarm = f.idFarm')
             ->leftJoin('App\Entity\User','u','WITH','p.fkUser = u.idUser')
@@ -242,12 +247,25 @@ class PaymentRepository extends EntityRepository
         $payment->setPaymentType($payment_type);
 
         try {
-         $em->persist($payment);
-         $em->flush();//à enlever pour la transaction ?       
+            $em->persist($payment);
+            $em->flush();//à enlever pour la transaction ?       
         }
         catch(Exception $e) {
           return false;
         }        
+
+        //après récupération de l'id_payment
+        if (in_array([\App\Entity\PaymentType::WERO,\App\Entity\PaymentType::VIREMENT], $payment_type)) {
+            $payment->setReference($this->generateReference($payment));
+            try {
+                $em->persist($payment);
+                $em->flush();     
+            }
+            catch(Exception $e) {
+            return false;
+            } 
+        }
+
         
         
         //mise à jour des purchase.fk_payment
@@ -785,7 +803,7 @@ class PaymentRepository extends EntityRepository
     public function getInfoVirement($idPayment, $paymentType) {  
         $conn = $this->getEntityManager()->getConnection();
         $params = ['id_payment' => $idPayment];
-        $sql = "select concat('EASYAMAP-".PaymentType::getPrefix($paymentType)."-".strtoupper($_SERVER['APP_ENV'])."-', LPAD(p.id_payment, 7, '0')) as reference, format(p.amount,2,'fr_FR') as montant, f.label as beneficiaire, f.iban, f.phone
+        $sql = "select p.reference, format(p.amount,2,'fr_FR') as montant, f.label as beneficiaire, f.iban, f.phone
             from payment p
             left join farm f on f.id_farm = p.fk_farm
             where p.id_payment=:id_payment";
@@ -809,7 +827,7 @@ class PaymentRepository extends EntityRepository
             $sqlPart = "select '".$db['name']."' as amap_name, 
                 '".$db['db']."' as db_name,
                 '".$db['nom_domaine']."' as nom_domaine,
-                concat('EASYAMAP-".strtoupper(str_replace("amap_","",$db['db']))."-', LPAD(p.id_payment, 7, '0')) as reference, 
+                p.reference, 
                 p.id_payment,
                 format(p.amount,2,'fr_FR') as montant, 
                 CONCAT(u_adherent.lastname, ' ', u_adherent.firstname) as adherent, 
@@ -822,7 +840,8 @@ class PaymentRepository extends EntityRepository
                 left join ".$db['db'].".referent r on r.fk_farm = f.id_farm
                 left join ".$db['db'].".user u_referent on u_referent.id_user = r.fk_user
                 left join ".$db['db'].".user u_adherent on u_adherent.id_user = p.fk_user
-                where p.issued_at is not null
+                where p.payment_type in (".\App\Entity\PaymentType::WERO.",".\App\Entity\PaymentType::VIREMENT.")
+                and p.issued_at is not null
                 and p.received_at is " . ($received ? "not null" : "null");
                 if($emails != null) {
                     $sqlPart .= " and f.email IN (".$placeholders.")";
@@ -874,5 +893,12 @@ class PaymentRepository extends EntityRepository
         $stmt = $conn->prepare($sql);
         $stmt->execute(['id_payment' => $idPayment]);
         return true;
+    }
+
+    public function generateReference($payment) {
+        return "EASYAMAP-"
+        .PaymentType::getPrefix($payment->getPaymentType())
+        ."-".strtoupper($_SERVER['APP_ENV'])
+        ."-".str_pad($payment->getIdPayment(), 7, "0", STR_PAD_LEFT);
     }
 }

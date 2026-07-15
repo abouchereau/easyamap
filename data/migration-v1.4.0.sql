@@ -9,6 +9,7 @@ ALTER TABLE payment ADD COLUMN validated_by int(11) NULL DEFAULT NULL;
 ALTER TABLE payment ADD KEY validated_by (validated_by);
 ALTER TABLE payment ADD CONSTRAINT payment_ibfk_4 FOREIGN KEY (validated_by) REFERENCES user (id_user) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE payment ADD COLUMN payment_type int(1) DEFAULT 0;
+ALTER TABLE payment ADD COLUMN reference VARCHAR(255) NULL DEFAULT NULL;
 
 
 SET FOREIGN_KEY_CHECKS = 0;

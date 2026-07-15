@@ -44,7 +44,7 @@ class PaymentController extends AmapBaseController
             'contracts' => $contracts,
             'farms' => $farms,
             'adherents' => [],
-            'isReferentPage' => false
+            'role' => "ROLE_ADHERENT"
         ]);
     }
 
@@ -70,7 +70,32 @@ class PaymentController extends AmapBaseController
             'contracts' => $contracts,
             'farms' => $farms,
             'adherents' => $adherents,
-            'isReferentPage' => true
+            'role' => "ROLE_REFERENT"
+        ]);
+    }
+
+    public function indexProducteur(Request $request, $page=1, $received=0, $issued=0) {
+        $this->denyAccessUnlessGranted('ROLE_PRODUCTEUR');
+        $curUser = $this->get('security.token_storage')->getToken()->getUser();
+        $filters = ['contract'=>$contract,'received'=>$received,'issued'=>$issued];
+        $em = $this->getDoctrine()->getManager();
+        $payments = $em->getRepository('App\Entity\Payment')->getForProducteur($curUser, $filters, $page, self::NB_PER_PAGE);
+        $contracts = $em->getRepository('App\Entity\Contract')->findAllOrderByIdDescDoctrine($curUser);
+        $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($curUser);
+        $adherents = $em->getRepository('App\Entity\User')->findBy(['isActive'=>1],['lastname'=>'ASC']);
+        $pagination = [
+            'page' => $page,
+            'nbPages' => ceil(count($payments) / self::NB_PER_PAGE),
+            'paramsRoute' => $filters
+        ];
+        return $this->render('Payment/list.html.twig', [
+            'payments' => $payments,
+            'pagination' => $pagination,
+            'filters' => $filters,
+            'contracts' => $contracts,
+            'farms' => $farms,
+            'adherents' => $adherents,
+            'role' => "ROLE_PRODUCTEUR"
         ]);
     }
 
@@ -383,7 +408,7 @@ class PaymentController extends AmapBaseController
             "received" => false
         ));
      }*/
-
+/*
     public function validationVirementsAValider() {
          
         $this->denyAccessUnlessGranted(['ROLE_FARMER', 'ROLE_ADMIN']);
@@ -450,7 +475,7 @@ class PaymentController extends AmapBaseController
             "received" => true
         ));
     }
-
+*/
     public function validerVirement($amap, $id_payment, $valide) {
         
         $em = $this->getDoctrine()->getManager();    
@@ -560,6 +585,10 @@ class PaymentController extends AmapBaseController
                 throw new AccessDeniedException();
             }
             $payment->setPaymentType($paymentType);
+            if (in_array($paymentType, [\App\Entity\PaymentType::VIREMENT, \App\Entity\PaymentType::WERO])) {
+                $reference = $em->getRepository('App\Entity\Payment')->generateReference($payment);
+                $payment->setReference($reference);
+            }
             $em->persist($payment);
             $em->flush();
         }

@@ -23,4 +23,6 @@ class ApiController extends Controller
         $products = $em->getRepository('App\Entity\Product')->getAllProducts();
         return new JsonResponse($products);
     }
+
+
 }

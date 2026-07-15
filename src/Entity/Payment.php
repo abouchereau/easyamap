@@ -74,6 +74,13 @@ class Payment
      * @ORM\JoinColumn(name="payment_type", referencedColumnName="id_payment_type", nullable=true)
      */
     private $paymentType;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="reference", type="text", nullable=true)
+     */
+    private $reference;
     
     /**
      * Get idPayment
@@ -195,4 +202,14 @@ class Payment
     public function getPaymentTypeLabel()  {
         return PaymentType::getLabel($this->paymentType);
     }
+
+    public function setReference($reference) {
+        $this->reference = $reference;
+        return $this;
+    }
+
+    public function getReference() {
+        return $this->reference;
+    }
+
 }

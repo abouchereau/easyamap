@@ -71,12 +71,12 @@ class HomeController extends AmapBaseController
              'Rapports',
              'Statistiques par produit'
              );
-        $list[] = array(
-             $this->generateUrl('validation_virements_a_valider'),
+      /*  $list[] = array(
+             $this->generateUrl('paiements_producteur'),
              'euro',
              'Virements',
              'Validation des virements'
-             );
+             );*/
         return $list;
     }
     
@@ -355,7 +355,8 @@ class HomeController extends AmapBaseController
                 "id"=>"q3",
                 "question"=>"Documentaion",
                 "answer"=>'<a href="https://cdn1.easyamap.fr/docs/documentation.pdf" target="_blank">Documentation</a>'
-            ] 
+            ],
+            
         ];
         return $this->render('Home/faq.html.twig', ['faqs'=>$faqs]);
     }

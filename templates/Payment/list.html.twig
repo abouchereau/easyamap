@@ -1,5 +1,5 @@
 {% extends 'layout.html.twig' %}
-{% if not isReferentPage %}
+{% if role == "ROLE_ADHERENT" %}
     {% set page_title = 'Paiements' %}    
 {% else %}
     {% set page_title = 'Réception des paiements' %}
@@ -8,22 +8,23 @@
 
 {% block body %}
     
-{% include 'Payment/_page_switcher.html.twig' with {'curPage': 'global','role':(isReferentPage?'referent':'adherent')} %}
+{% include 'Payment/_page_switcher.html.twig' with {'curPage': 'global','role':role} %}
 {% include 'Payment/_filters.html.twig' with {'filters': filters, 'contracts':contracts,'farms':farms, 'adherents': adherents } %}
 <div class="row paiement">
    <div class="col-md-12 text-center">
        
-   {% include 'Partials/_pagination.html.twig' with {'pagination': pagination, 'route':isReferentPage?'paiements_referent':'paiements_adherent' } %}
+   {% include 'Partials/_pagination.html.twig' with {'pagination': pagination, 'role': role } %}
    </div>
    <div class="col-md-12">
         <table class="table table-bordered table-striped table-condensed">
             <thead>
                 <tr>
-                    <th>Contrat</th>
-                    {% if isReferentPage %}<th>Adhérent</th>{% endif %}
-                    <th>Producteur</th>
+                    <th>Dates</th>
+                    {% if role == "ROLE_REFERENT" or role == "ROLE_PRODUCTEUR" %}<th>Adhérent</th>{% endif %}
+                    {% if role != "ROLE_PRODUCTEUR" %}<th>Producteur</th>{% endif %}
                     <th>Type de paiement</th>
                     <th>Montant</th>
+                    <th>Référence</th>
                     <th>Emis</th>
                     <th>Reçu</th>
                 </tr>
@@ -31,31 +32,37 @@
             <tbody>
             {% for payment in payments %}
                 <tr>
-                    <td>{{ payment.contract }}</td>
-                    {% if isReferentPage %}<td class="row-fkUser">{{ payment.adherent }}</td>{% endif %}
-                    <td>{{ payment.farm }}</td>
+                    <td>{{ payment.periodStart|date("m/Y") }}</td>
+                    {% if role == "ROLE_REFERENT" or role == "ROLE_PRODUCTEUR" %}<td class="row-fkUser">{{ payment.adherent }}</td>{% endif %}
+                    {% if role != "ROLE_PRODUCTEUR" %}<td>{{ payment.farm }}</td>{% endif %}
                     <td>
-                    {% if isReferentPage %}<a href="{{ path('payment_edit', {'id': payment.idPayment}) }}">{% endif %}
+                    {% if role == "ROLE_REFERENT" %}<a href="{{ path('payment_edit', {'id': payment.idPayment}) }}">{% endif %}
                         {{ payment.paymentType|paymentLabel }}
-                    {% if isReferentPage %}</a>{% endif %}            
+                    {% if role == "ROLE_REFERENT" %}</a>{% endif %}            
 
                     <td>
-                        {% if isReferentPage %}<a data-toggle="tooltip" data-placement="bottom" title="Détails du paiement" href="{{ path('payment_edit', {'id': payment.idPayment}) }}">{% endif %}
+                        {% if role == "ROLE_REFERENT" %}<a data-toggle="tooltip" data-placement="bottom" title="Détails du paiement" href="{{ path('payment_edit', {'id': payment.idPayment}) }}">{% endif %}
                             {{ payment.amount|price_fr }}                        
-                        {% if isReferentPage %}</a>{% endif %}                        
+                        {% if role == "ROLE_REFERENT" %}</a>{% endif %}     
+                    </td>   
+                    <td>{{payment.reference}}</td>  
                     <td>
+                        {% if role == "ROLE_REFERENT" or role == "ROLE_ADHERENT" %}
                         <a id="issued-{{ payment.idPayment }}" data-toggle="tooltip" data-placement="bottom" title="Valider/invalider" 
                         class="btn btn-default" style="padding:0 12px;" href="#" 
                         onclick="changeIssuedAt({{payment.idPayment}});return false;">
+                        {% endif %}
                             {% if payment.issuedAt %}
                                 <i class="glyphicon glyphicon-ok text-success"></i>
                             {% else %}
                                 <i class="glyphicon glyphicon-remove text-danger"></i>
                             {% endif %}
+                        {% if role == "ROLE_REFERENT" or role == "ROLE_ADHERENT" %}                        
                         </a>
+                        {% endif %}
                     </td>
                     <td>
-                        {% if isReferentPage %}
+                        {% if role == "ROLE_REFERENT" %}
                             <a id="received-{{ payment.idPayment }}" data-toggle="tooltip" data-placement="bottom" title="Valider/invalider" 
                                 class="btn btn-default" style="padding:0 12px;" href="#" 
                                 onclick="changeReceivedAt({{payment.idPayment}});return false;">
@@ -65,7 +72,7 @@
                         {% else %}
                             <i class="glyphicon glyphicon-remove text-danger"></i>
                         {% endif %}
-                        {% if isReferentPage %}
+                        {% if role == "ROLE_REFERENT"  %}
                             </a>
                         {% endif %}
                     </td>
@@ -74,7 +81,7 @@
             </tbody>
        </table>
        <div class="col-md-12 text-center">
-            {% include 'Partials/_pagination.html.twig' with {'pagination': pagination, 'route':isReferentPage?'paiements_referent':'paiements_adherent' } %}
+            {% include 'Partials/_pagination.html.twig' with {'pagination': pagination, 'role': role } %}
         </div>
     </div>
 </div>
@@ -83,7 +90,7 @@
 {% block footer_js %}
 <script>
 var root='{{ url('home') }}';
-var isReferentPage = {{ isReferentPage?'true':'false' }};
+var role = '{{ role }}';
 
 const changeIssuedAt = (idPayment) =>{
  const url = root+'ajax/checkIssued';
