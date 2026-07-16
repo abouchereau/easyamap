@@ -10,16 +10,29 @@ var tmp_received = {
 function refreshFilters() {
     var url = "";
     if (role == "ROLE_REFERENT") {
-        url = root+'paiements_referent/{page}/{contract}/{farm}/{received}/{adherent}';
-        url = url.replace('{adherent}',$("#filter-adherent").val());
+        url = root+'paiements_referent/{page}/{farm}/{adherent}/{issued}/{received}';        
     }
-    else {
-        url = root+'paiements_adherent/{page}/{contract}/{farm}/{received}';
+    else if (role == "ROLE_ADHERENT") { 
+        url = root+'paiements_adherent/{page}/{farm}/{issued}/{received}';
     }    
-    url = url.replace('{contract}',$("#filter-contract").val());
-    url = url.replace('{farm}',$("#filter-farm").val());
-    url = url.replace('{received}',$("#filter-received").val());
+    else if (role == "ROLE_FARMER") { 
+        url = root+'paiements_producteur/{page}/{adherent}/{issued}/{received}';
+    }    
+    url = url.replace('{contract}',"0");
+    if ($("#filter-farm").length) {
+        url = url.replace('{farm}',$("#filter-farm").val());
+    }
+    if ($("#filter-received").length) {
+        url = url.replace('{received}',$("#filter-received").val());
+    }
+    if ($("#filter-issued").length) {
+        url = url.replace('{issued}',$("#filter-issued").val());
+    }
+    if ($("#filter-adherent").length) {
+        url = url.replace('{adherent}',$("#filter-adherent").val());
+    }    
     url = url.replace('{page}',"1");
+    
     window.location.href = url;
 }
 

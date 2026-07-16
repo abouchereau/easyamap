@@ -37,8 +37,44 @@ class PaymentRepository extends EntityRepository
     }
 
     public function getForProducteur() {
-        //TODO
+        //TODO été 2026
         //Attention multi amap
+        $em = $this->getEntityManager();        
+        $allDb = $em->getRepository('App\Entity\Setting')->getAllDatabases(); 
+        
+        $sqlTab = [];    
+        if ($emails != null) {
+            $placeholders = implode(',', array_fill(0, count($emails), '?'));
+        }
+        $allParameters = [];
+        foreach($allDb as $db) {
+            $sqlPart = "select '".$db['name']."' as amap_name, 
+                '".$db['db']."' as db_name,
+                '".$db['nom_domaine']."' as nom_domaine,
+                p.reference, 
+                p.id_payment,
+                format(p.amount,2,'fr_FR') as montant, 
+                CONCAT(u_adherent.lastname, ' ', u_adherent.firstname) as adherent, 
+                f.label as beneficiaire, 
+                p.issued_at,
+                f.email,
+                group_concat(distinct u_referent.email separator ',') as referents_email
+                from ".$db['db'].".payment p
+                left join ".$db['db'].".farm f on f.id_farm = p.fk_farm
+                left join ".$db['db'].".referent r on r.fk_farm = f.id_farm
+                left join ".$db['db'].".user u_referent on u_referent.id_user = r.fk_user
+                left join ".$db['db'].".user u_adherent on u_adherent.id_user = p.fk_user
+                where p.payment_type in (".\App\Entity\PaymentType::WERO.",".\App\Entity\PaymentType::VIREMENT.")
+                and p.issued_at is not null
+                and p.received_at is " . ($received ? "not null" : "null");
+                if($emails != null) {
+                    $sqlPart .= " and f.email IN (".$placeholders.")";
+                    $allParameters = array_merge($allParameters, $emails);
+                }
+                $sqlTab[] = $sqlPart;
+        }
+
+        $sql = "select * from(".implode(PHP_EOL." UNION ALL ".PHP_EOL, $sqlTab).") t where id_payment is not null order by issued_at DESC";  
     }
     
     private function getPaymentQb($filters) {
@@ -59,7 +95,9 @@ class PaymentRepository extends EntityRepository
             ->leftJoin('App\Entity\Farm','f','WITH','p.fkFarm = f.idFarm')
             ->leftJoin('App\Entity\User','u','WITH','p.fkUser = u.idUser')
             ->addOrderBy('c.periodStart', 'DESC')
-            ->addOrderBy('u.lastname', 'ASC');
+            ->addOrderBy('u.lastname', 'ASC')
+            ->andWhere('c.periodStart >= :period_start_limit')
+            ->setParameter('period_start_limit', new \DateTime('-3 years'));
         if ($filters['received']!=0) {
             if ($filters['received'] == '1') {
                 $qb->andWhere('p.receivedAt IS NOT NULL');
@@ -68,13 +106,17 @@ class PaymentRepository extends EntityRepository
                 $qb->andWhere('p.receivedAt IS NULL');
             }
         }
+        if ($filters['issued']!=0) {
+            if ($filters['issued'] == '1') {
+                $qb->andWhere('p.issuedAt IS NOT NULL');
+            }
+            elseif ($filters['issued'] == '2') {
+                $qb->andWhere('p.issuedAt IS NULL');
+            }
+        }
         if ($filters['farm']!=0) {
             $qb->andWhere('f.idFarm=:id_farm');//$qb->andWhere('IDENTITY(f.id_farm)=:id_farm');
             $qb->setParameter('id_farm',$filters['farm']);
-        }
-        if ($filters['contract']!=0) {
-            $qb->andWhere('c.idContract=:id_contract');//$qb->andWhere('IDENTITY(f.id_contract)=:id_contract');
-            $qb->setParameter('id_contract',$filters['contract']);
         }
         if (isset($filters['adherent']) && $filters['adherent']!=0) {
             $qb->andWhere('u.idUser = :user');//$qb->andWhere('IDENTITY(u.idUser) = :user');

@@ -4,21 +4,11 @@
             <div class="box-body">
                 <form class="sonata-filter-form" action="#" method="GET" role="form">                    
                     <div class="filter_container active">
-                        <div class="form-group">
-                            <label for="filter-contract">Contrat</label>                                    
-                           <br />
-                            <select id="filter-contract" class="form-control">
-                                <option value="0">Tous</option>
-                                {% for contract in contracts %}{#
-                                    #}<option value="{{ contract.idContract }}"{% if contract.idContract == filters.contract %} selected="selected"{% endif %}>{{ contract.label }}</option>{#
-                                #}{% endfor %}
-                            </select>
-                        </div>
-                            
+                                                  
+                    {% if role != "ROLE_ADHERENT" %}
                        {% if adherents is not empty %}
                        <div class="form-group">
-                            <label for="filter-adherent">Adhérent</label>                                    
-                           <br />
+                            <label for="filter-adherent">Adhérent</label><br />
                             <select id="filter-adherent" class="form-control">
                                 <option value="0">Tous</option>
                                 {% for adherent in adherents %}{#
@@ -27,15 +17,26 @@
                             </select>
                         </div>
                          {% endif %}
+                        {% endif %}
                     
+                        {% if role != "ROLE_FARMER" %}
                         <div class="form-group">
-                            <label for="filter-farm">Producteur</label>                                    
-                           <br />
+                            <label for="filter-farm">Producteur</label><br />
                             <select id="filter-farm" class="form-control">
                                 <option value="0">Tous</option>
                                 {% for farm in farms %}{#
                                     #}<option value="{{ farm.idFarm }}"{% if farm.idFarm == filters.farm %} selected="selected"{% endif %}>{{ farm.label }}</option>{#
                                 #}{% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+
+                        <div class="form-group">
+                            <label for="filter-issued">Emis</label><br />
+                            <select id="filter-issued" class="form-control">
+                                <option value="0">Tous</option>
+                                <option value="1"{% if filters.issued=='1' %} selected="selected"{% endif %}>Oui</option>
+                                <option value="2"{% if filters.issued=='2' %} selected="selected"{% endif %}>Non</option>
                             </select>
                         </div>
                     

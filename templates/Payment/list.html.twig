@@ -9,7 +9,7 @@
 {% block body %}
     
 {% include 'Payment/_page_switcher.html.twig' with {'curPage': 'global','role':role} %}
-{% include 'Payment/_filters.html.twig' with {'filters': filters, 'contracts':contracts,'farms':farms, 'adherents': adherents } %}
+{% include 'Payment/_filters.html.twig' with {'filters': filters, 'years': years, 'farms':farms, 'adherents': adherents } %}
 <div class="row paiement">
    <div class="col-md-12 text-center">
        
@@ -20,8 +20,8 @@
             <thead>
                 <tr>
                     <th>Dates</th>
-                    {% if role == "ROLE_REFERENT" or role == "ROLE_PRODUCTEUR" %}<th>Adhérent</th>{% endif %}
-                    {% if role != "ROLE_PRODUCTEUR" %}<th>Producteur</th>{% endif %}
+                    {% if role == "ROLE_REFERENT" or role == "ROLE_FARMER" %}<th>Adhérent</th>{% endif %}
+                    {% if role != "ROLE_FARMER" %}<th>Producteur</th>{% endif %}
                     <th>Type de paiement</th>
                     <th>Montant</th>
                     <th>Référence</th>
@@ -33,8 +33,8 @@
             {% for payment in payments %}
                 <tr>
                     <td>{{ payment.periodStart|date("m/Y") }}</td>
-                    {% if role == "ROLE_REFERENT" or role == "ROLE_PRODUCTEUR" %}<td class="row-fkUser">{{ payment.adherent }}</td>{% endif %}
-                    {% if role != "ROLE_PRODUCTEUR" %}<td>{{ payment.farm }}</td>{% endif %}
+                    {% if role == "ROLE_REFERENT" or role == "ROLE_FARMER" %}<td class="row-fkUser">{{ payment.adherent }}</td>{% endif %}
+                    {% if role != "ROLE_FARMER" %}<td>{{ payment.farm }}</td>{% endif %}
                     <td>
                     {% if role == "ROLE_REFERENT" %}<a href="{{ path('payment_edit', {'id': payment.idPayment}) }}">{% endif %}
                         {{ payment.paymentType|paymentLabel }}
