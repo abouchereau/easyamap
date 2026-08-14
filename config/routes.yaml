@@ -85,32 +85,17 @@ farm_activate:
 
     
 paiements_adherent:
-    path: /paiements_adherent/{page}/{contract}/{farm}/{received}
+    path: /paiements_adherent
     controller: App\Controller\PaymentController:indexAdherent
-    defaults:
-        page: 1
-        contract: 0
-        farm: 0
-        received: 0
         
 paiements_referent:
-    path: /paiements_referent/{page}/{contract}/{farm}/{received}/{adherent}
+    path: /paiements_referent
     controller: App\Controller\PaymentController:indexReferent
-    defaults:
-        page: 1
-        contract: 0
-        farm: 0
-        received: 0
-        adherent: 0
 
 paiements_producteur:
-    path: /paiements_producteur/{page}/{received}/{issued}
+    path: /paiements_producteur
     controller: App\Controller\PaymentController:indexProducteur
-    defaults:
-        page: 1
-        received: 0
-        issued: 0
-        
+       
         
 payment_new:
     path: /payment/new

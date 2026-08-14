@@ -36,45 +36,76 @@ class PaymentRepository extends EntityRepository
         return $this->getPaymentPaginator($query, $page, $nbPerPage);
     }
 
-    public function getForProducteur() {
-        //TODO été 2026
-        //Attention multi amap
-        $em = $this->getEntityManager();        
-        $allDb = $em->getRepository('App\Entity\Setting')->getAllDatabases(); 
-        
-        $sqlTab = [];    
-        if ($emails != null) {
-            $placeholders = implode(',', array_fill(0, count($emails), '?'));
+    public function getForProducteur($email, $filters) {
+        $em = $this->getEntityManager();       
+        $conn = $em->getConnection();
+        $allDb = $em->getRepository('App\Entity\Setting')->getAllDatabasesForFarmer($email);    
+         
+        if ($filters['amap'] != '0') {
+            $allDb = array_filter($allDb, function($db) use ($filters) {
+                return $db['db'] == $filters['amap'];
+            });
         }
-        $allParameters = [];
+        if (!count($allDb)) {
+            return [];
+        }
+        $sqlTab = [];    
+        $parameters = ['email'=>$email];
         foreach($allDb as $db) {
-            $sqlPart = "select '".$db['name']."' as amap_name, 
-                '".$db['db']."' as db_name,
-                '".$db['nom_domaine']."' as nom_domaine,
-                p.reference, 
-                p.id_payment,
-                format(p.amount,2,'fr_FR') as montant, 
-                CONCAT(u_adherent.lastname, ' ', u_adherent.firstname) as adherent, 
-                f.label as beneficiaire, 
-                p.issued_at,
-                f.email,
-                group_concat(distinct u_referent.email separator ',') as referents_email
+            $sqlPart = "select 
+                '".$db['name']."' as amapName, 
+                '".$db['db']."' as dbName,
+                p.id_payment as idPayment,
+                p.fk_contract as idContract,
+                c.period_start as periodStart,
+                CONCAT(SUBSTRING(COALESCE(u.firstname,''),1,1),'. ',COALESCE(u.lastname,'')) adherent,
+                u.username,
+                f.id_farm as idFarm,
+                f.label as farm,
+                p.amount,
+                p.received,
+                p.received_at as receivedAt,
+                p.issued_at as issuedAt,
+                p.payment_type as paymentType,
+                p.reference
                 from ".$db['db'].".payment p
-                left join ".$db['db'].".farm f on f.id_farm = p.fk_farm
-                left join ".$db['db'].".referent r on r.fk_farm = f.id_farm
-                left join ".$db['db'].".user u_referent on u_referent.id_user = r.fk_user
-                left join ".$db['db'].".user u_adherent on u_adherent.id_user = p.fk_user
-                where p.payment_type in (".\App\Entity\PaymentType::WERO.",".\App\Entity\PaymentType::VIREMENT.")
-                and p.issued_at is not null
-                and p.received_at is " . ($received ? "not null" : "null");
-                if($emails != null) {
-                    $sqlPart .= " and f.email IN (".$placeholders.")";
-                    $allParameters = array_merge($allParameters, $emails);
+                left join ".$db['db'].".contract c ON p.fk_contract = c.id_contract
+                left join ".$db['db'].".farm f ON p.fk_farm = f.id_farm
+                left join ".$db['db'].".user u ON p.fk_user = u.id_user
+                where f.email =:email";
+                if ($filters['received']!=0) {
+                    if ($filters['received'] == '1') {
+                        $sqlPart .= PHP_EOL."AND p.received_at IS NOT NULL";
+                    }
+                    elseif ($filters['received'] == '2') {
+                        $sqlPart .= PHP_EOL."AND p.received_at IS NULL";
+                    }
                 }
+                if ($filters['issued']!=0) {
+                    if ($filters['received'] == '1') {
+                        $sqlPart .= PHP_EOL."AND p.issued_at IS NOT NULL";
+                    }
+                    elseif ($filters['received'] == '2') {
+                        $sqlPart .= PHP_EOL."AND p.issued_at IS NULL";
+                    }
+                }
+                if ($filters['payment_type'] != -1) {
+                    $sqlPart .= PHP_EOL."AND p.payment_type = :payment_type";
+                    $parameters['payment_type'] = $filters['payment_type'];
+                }
+                if ($filters['username'] != '0') {
+                    $sqlPart .= PHP_EOL."AND u.username = :username";
+                    $parameters['username'] = $filters['username'];
+                }
+                $sqlPart .= PHP_EOL."AND c.period_start >= NOW() - INTERVAL 3 YEAR";
                 $sqlTab[] = $sqlPart;
         }
+        $sql = "select * from(".implode(PHP_EOL." UNION ALL ".PHP_EOL, $sqlTab).") t order by periodStart DESC, username ASC";   
 
-        $sql = "select * from(".implode(PHP_EOL." UNION ALL ".PHP_EOL, $sqlTab).") t where id_payment is not null order by issued_at DESC";  
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($parameters);   
+        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $results;
     }
     
     private function getPaymentQb($filters) {
@@ -121,6 +152,10 @@ class PaymentRepository extends EntityRepository
         if (isset($filters['adherent']) && $filters['adherent']!=0) {
             $qb->andWhere('u.idUser = :user');//$qb->andWhere('IDENTITY(u.idUser) = :user');
             $qb->setParameter('user', $filters['adherent']);
+        }
+        if (isset($filters['payment_type']) && $filters['payment_type'] != -1) {
+            $qb->andWhere('p.paymentType = :payment_type');
+            $qb->setParameter('payment_type', $filters['payment_type']);
         }
         return $qb;
     }

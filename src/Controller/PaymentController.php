@@ -21,12 +21,17 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class PaymentController extends AmapBaseController
 {
-    const NB_PER_PAGE = 50;
+    const NB_PER_PAGE = 25;
     
-    public function indexAdherent(Request $request, $page=1, $farm=0, $issued=0, $received=0) {
+    public function indexAdherent(Request $request) {
         $curUser = $this->get('security.token_storage')->getToken()->getUser();
         $em = $this->getDoctrine()->getManager();
-        $filters = ['year'=>$year,'farm'=>$farm,'received'=>$received, 'issued'=>$issued];
+        $farm = $request->query->get('farm', '0');
+        $page = $request->query->get('page', 1);
+        $received = $request->query->get('received', 0);
+        $issued = $request->query->get('issued', 0);
+        $payment_type = $request->query->get('payment_type', -1);
+        $filters = ['farm'=>$farm,'received'=>$received, 'issued'=>$issued, 'payment_type'=>$payment_type];
         $payments = $em->getRepository('App\Entity\Payment')->getForAdherent($curUser, $filters, $page, self::NB_PER_PAGE);
         $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($curUser);
 
@@ -46,15 +51,17 @@ class PaymentController extends AmapBaseController
     }
 
     
-    public function indexReferent(Request $request, $page=1, $issued=0, $farm=0, $received=0, $adherent=0) {
+    public function indexReferent(Request $request) {
         $this->denyAccessUnlessGranted('ROLE_REFERENT');
         $curUser = $this->get('security.token_storage')->getToken()->getUser();
         $em = $this->getDoctrine()->getManager();
-        $year = $request->query->get('year');
-        if (empty($year)) {
-            $year = date('Y');
-        }
-        $filters = ['farm'=>$farm,'received'=>$received,'adherent'=>$adherent, 'issued'=>$issued];
+        $farm = $request->query->get('farm', '0');
+        $page = $request->query->get('page', 1);
+        $received = $request->query->get('received', 0);
+        $issued = $request->query->get('issued', 0);
+        $adherent = $request->query->get('adherent', 0);
+        $payment_type = $request->query->get('payment_type', -1);
+        $filters = ['farm'=>$farm,'received'=>$received,'adherent'=>$adherent, 'issued'=>$issued, 'payment_type'=>$payment_type];
         $payments = $em->getRepository('App\Entity\Payment')->getForReferent($curUser, $filters, $page, self::NB_PER_PAGE);
         $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($curUser);
         $adherents = $em->getRepository('App\Entity\User')->findBy(['isActive'=>1],['lastname'=>'ASC']);
@@ -73,7 +80,7 @@ class PaymentController extends AmapBaseController
         ]);
     }
 
-    public function indexProducteur(Request $request, $page=1, $received=0, $issued=0, $adherent=0) {
+    public function indexProducteur(Request $request) {
         $this->denyAccessUnlessGranted('ROLE_FARMER');
         $curUser = $this->get('security.token_storage')->getToken()->getUser();
         $em = $this->getDoctrine()->getManager();
@@ -81,23 +88,34 @@ class PaymentController extends AmapBaseController
         if (empty($year)) {
             $year = date('Y');
         }
+        $username = $request->query->get('username', '0');
+        $amap = $request->query->get('amap', '0');
+        $page = $request->query->get('page', 1);
+        $page = $page - 1;
+        $received = $request->query->get('received', 0);
+        $issued = $request->query->get('issued', 0);
+        $payment_type = $request->query->get('payment_type', -1);
+        $filters = ['received'=>$received,'issued'=>$issued,'username'=>$username,'amap'=>$amap,'payment_type'=>$payment_type];
+        $farm = $em->getRepository('App\Entity\Farm')->findOneBy(['fkUser'=>$curUser]);
 
-        $filters = ['received'=>$received,'issued'=>$issued];
-        $payments = $em->getRepository('App\Entity\Payment')->getForProducteur($curUser, $filters, $page, self::NB_PER_PAGE);
-        $years = $em->getRepository('App\Entity\Payment')->getDistinctYears();
-        if (!in_array($year, $years)) {
-            array_unshift($years, $year);
-        }
+        $payments = $em->getRepository('App\Entity\Payment')->getForProducteur($farm->getEmail(), $filters);
+        $pageResults = array_slice($payments, $page * self::NB_PER_PAGE, self::NB_PER_PAGE);
         $farms = $em->getRepository('App\Entity\Farm')->findAllOrderByLabel($curUser);
-        $adherents = $em->getRepository('App\Entity\User')->findBy(['isActive'=>1],['lastname'=>'ASC']);
+        $amaps = array_reduce($payments, function($carry, $payment) {
+            $carry[$payment['dbName']] = $payment['amapName'];
+            return $carry;
+        }, []);
+        $adherents = $em->getRepository('App\Entity\User')->getUserMultiAmapForFarmer($farm->getEmail());
+        ksort($amaps);
         $pagination = [
-            'page' => $page,
+            'page' => $page+1,
             'nbPages' => ceil(count($payments) / self::NB_PER_PAGE),
             'paramsRoute' => $filters
         ];
         return $this->render('Payment/list.html.twig', [
-            'payments' => $payments,
+            'payments' => $pageResults,
             'pagination' => $pagination,
+            'amaps' => $amaps,
             'filters' => $filters,
             'farms' => $farms,
             'adherents' => $adherents,

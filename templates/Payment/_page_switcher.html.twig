@@ -4,7 +4,7 @@
         <a class="btn{% if curPage == 'by_year' %} btn-warning{% else %} btn-default{% endif %} no-print" href="{% if role == 'referent' %}{{ path('payment_history') }}{% else %}{{ path('payment_history_adherent') }}{% endif %}">Vue par année</a>
     </div>
     <div class="col-md-6 text-right">
-            {% if role != 'ROLE_ADHRENT' %}
+            {% if role != 'ROLE_ADHERENT' %}
                 {% set params = {'id_user': null, 'id_farm': null} %}
                 {% if user is defined and user is not null %}
                     {% set params = params|merge({'id_user': user.idUser}) %}

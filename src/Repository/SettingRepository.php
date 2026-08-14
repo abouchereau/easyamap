@@ -132,11 +132,43 @@ class SettingRepository extends EntityRepository
             $sqlTab[] = "select '".$db."' as db, '".$ndd."' as nom_domaine, name from ".$db.".setting";
         }
         $sql = implode(" UNION ALL ", $sqlTab);
+        die($sql);
         $stmt = $conn->prepare($sql);   
         $stmt->execute();
         $res = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         return $res;
     }
 
+
+    public function getAllDatabasesForFarmer($email) {
+        require __DIR__.'/../../config/url2env.php';
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "SHOW DATABASES 
+            WHERE `Database` LIKE 'amap_%' 
+            AND `Database` NOT LIKE 'amap_test%'
+            AND `Database` NOT LIKE 'amap_tmp%'
+            AND `Database` not in('amap_init', 'amap_admin', 'amap_corresp')";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $allDb = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        $sqlTab = [];
+        foreach($allDb as $db) {
+            $ndd = "";
+            foreach ($url2env as $nom_domaine => $env) {
+                if ($env[0] == str_replace("amap_","",$db)) {
+                    $ndd = $nom_domaine;
+                    break;
+                }
+            }
+            $sqlTab[] = "select '".$db."' as db, '".$ndd."' as nom_domaine ,
+(select name from ".$db.".setting) as name, 
+(select count(*) from ".$db.".farm where email='".$email."') as farmer_is_here";
+        }
+        $sql = "select * from (" . implode(" UNION ALL ", $sqlTab) . ") as subquery where farmer_is_here > 0";
+        $stmt = $conn->prepare($sql);   
+        $stmt->execute();
+        $res = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $res;
+    }
        
 }

@@ -75,7 +75,7 @@ class HomeController extends AmapBaseController
              $this->generateUrl('paiements_producteur'),
              'euro',
              'Virements',
-             'Validation des virements'
+             'Validation des paiements'
              );
         return $list;
     }

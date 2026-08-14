@@ -7,9 +7,10 @@
 
 
 {% block body %}
-    
-{% include 'Payment/_page_switcher.html.twig' with {'curPage': 'global','role':role} %}
-{% include 'Payment/_filters.html.twig' with {'filters': filters, 'years': years, 'farms':farms, 'adherents': adherents } %}
+    {% if role != "ROLE_FARMER" %}
+        {% include 'Payment/_page_switcher.html.twig' with {'curPage': 'global','role':role} %}
+    {% endif %}
+{% include 'Payment/_filters.html.twig' with {'filters': filters, 'farms':farms, 'adherents': adherents } %}
 <div class="row paiement">
    <div class="col-md-12 text-center">
        
@@ -19,7 +20,8 @@
         <table class="table table-bordered table-striped table-condensed">
             <thead>
                 <tr>
-                    <th>Dates</th>
+                    <th>Date</th>
+                    {% if role == "ROLE_FARMER" %}<th>AMAP</th>{% endif %}
                     {% if role == "ROLE_REFERENT" or role == "ROLE_FARMER" %}<th>Adhérent</th>{% endif %}
                     {% if role != "ROLE_FARMER" %}<th>Producteur</th>{% endif %}
                     <th>Type de paiement</th>
@@ -33,6 +35,7 @@
             {% for payment in payments %}
                 <tr>
                     <td>{{ payment.periodStart|date("m/Y") }}</td>
+                    {% if role == "ROLE_FARMER" %}<td>{{ payment.amapName }}</td>{% endif %}
                     {% if role == "ROLE_REFERENT" or role == "ROLE_FARMER" %}<td class="row-fkUser">{{ payment.adherent }}</td>{% endif %}
                     {% if role != "ROLE_FARMER" %}<td>{{ payment.farm }}</td>{% endif %}
                     <td>
@@ -62,7 +65,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if role == "ROLE_REFERENT" %}
+                        {% if role == "ROLE_REFERENT" or role == "ROLE_FARMER" %}
                             <a id="received-{{ payment.idPayment }}" data-toggle="tooltip" data-placement="bottom" title="Valider/invalider" 
                                 class="btn btn-default" style="padding:0 12px;" href="#" 
                                 onclick="changeReceivedAt({{payment.idPayment}});return false;">
@@ -72,7 +75,7 @@
                         {% else %}
                             <i class="glyphicon glyphicon-remove text-danger"></i>
                         {% endif %}
-                        {% if role == "ROLE_REFERENT"  %}
+                        {% if role == "ROLE_REFERENT" or role == "ROLE_FARMER" %}
                             </a>
                         {% endif %}
                     </td>

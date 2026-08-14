@@ -2,17 +2,17 @@
     <div class="col-md-12 bg-success">    
         <div class="box box-primary">
             <div class="box-body">
-                <form class="sonata-filter-form" action="#" method="GET" role="form">                    
+                <form class="sonata-filter-form" action="" method="GET" role="form">
                     <div class="filter_container active">
                                                   
-                    {% if role != "ROLE_ADHERENT" %}
+                    {% if role != "ROLE_ADHERENT" and role != "ROLE_FARMER" %}
                        {% if adherents is not empty %}
                        <div class="form-group">
                             <label for="filter-adherent">Adhérent</label><br />
-                            <select id="filter-adherent" class="form-control">
+                            <select id="filter-adherent" name="username" class="form-control">
                                 <option value="0">Tous</option>
                                 {% for adherent in adherents %}{#
-                                    #}<option value="{{ adherent.idUser }}"{% if adherent.idUser == filters.adherent %} selected="selected"{% endif %}>{{ adherent.lastname }} {{ adherent.firstname }}</option>{#
+                                    #}<option value="{{ adherent.username }}"{% if adherent.idUser == filters.adherent %} selected="selected"{% endif %}>{{ adherent.lastname }} {{ adherent.firstname }}</option>{#
                                 #}{% endfor %}
                             </select>
                         </div>
@@ -22,7 +22,7 @@
                         {% if role != "ROLE_FARMER" %}
                         <div class="form-group">
                             <label for="filter-farm">Producteur</label><br />
-                            <select id="filter-farm" class="form-control">
+                            <select id="filter-farm" name="farm" class="form-control">
                                 <option value="0">Tous</option>
                                 {% for farm in farms %}{#
                                     #}<option value="{{ farm.idFarm }}"{% if farm.idFarm == filters.farm %} selected="selected"{% endif %}>{{ farm.label }}</option>{#
@@ -31,9 +31,31 @@
                         </div>
                         {% endif %}
 
+                        {% if role == "ROLE_FARMER" %}
+                            <div class="form-group">
+                                <label for="filter-amap">AMAP</label><br />
+                                <select id="filter-amap" name="amap" class="form-control">
+                                    <option value="0">Toutes</option>
+                                    {% for key, amap in amaps %}{#
+                                        #}<option value="{{ key }}"{% if key == filters.amap %} selected="selected"{% endif %}>{{ amap }}</option>{#
+                                    #}{% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="filter-adherent">Adhérent</label><br />
+                                <select id="filter-adherent" name="username" class="form-control">
+                                    <option value="0">Tous</option>
+                                    {% for key, adherent in adherents %}{#
+                                        #}<option value="{{ key }}"{% if key == filters.username %} selected="selected"{% endif %}>{{ adherent }}</option>{#
+                                    #}{% endfor %}
+                                </select>
+                            </div>
+                        {% endif %}
+
                         <div class="form-group">
                             <label for="filter-issued">Emis</label><br />
-                            <select id="filter-issued" class="form-control">
+                            <select id="filter-issued" name="issued" class="form-control">
                                 <option value="0">Tous</option>
                                 <option value="1"{% if filters.issued=='1' %} selected="selected"{% endif %}>Oui</option>
                                 <option value="2"{% if filters.issued=='2' %} selected="selected"{% endif %}>Non</option>
@@ -43,13 +65,30 @@
                         <div class="form-group">
                             <label for="filter-received">Reçu</label>                                    
                            <br />
-                            <select id="filter-received" class="form-control">
+                            <select id="filter-received" name="received" class="form-control">
                                 <option value="0">Tous</option>
                                 <option value="1"{% if filters.received=='1' %} selected="selected"{% endif %}>Oui</option>
                                 <option value="2"{% if filters.received=='2' %} selected="selected"{% endif %}>Non</option>
                             </select>
                         </div>
                     
+                        <div class="form-group">
+                            <label for="filter-payment-type">Type de paiement</label><br />
+                            <select id="filter-payment-type" name="payment_type" class="form-control">
+                                <option value="-1">Tous</option>
+                        
+                                {% if payment_types is defined %}
+                                    {% for key, label in payment_types %}
+                                        <option value="{{ key }}"{% if filters.payment_type is defined and filters.payment_type == key %} selected="selected"{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="1"{% if filters.payment_type is defined and filters.payment_type == '1' %} selected="selected"{% endif %}>Espèces</option>
+                                    <option value="2"{% if filters.payment_type is defined and filters.payment_type == '2' %} selected="selected"{% endif %}>Carte</option>
+                                    <option value="3"{% if filters.payment_type is defined and filters.payment_type == '3' %} selected="selected"{% endif %}>Virement</option>
+                                    <option value="4"{% if filters.payment_type is defined and filters.payment_type == '4' %} selected="selected"{% endif %}>Chèque</option>
+                                {% endif %}
+                            </select>
+                        </div>
                     </div>
                 </form>
             </div>

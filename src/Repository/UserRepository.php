@@ -160,4 +160,19 @@ class UserRepository extends ServiceEntityRepository
          ->getQuery()
          ->getResult();
     }
+
+    public function getUserMultiAmapForFarmer($email) {
+        $em = $this->getEntityManager();       
+        $conn = $em->getConnection();
+        $allDb = $em->getRepository('App\Entity\Setting')->getAllDatabasesForFarmer($email);         
+        $sqlTab = [];    
+        $parameters = ['email'=>$email];
+        foreach($allDb as $db) {
+            $sqlTab[] = "select username, CONCAT(lastname, ' ', firstname) as fullname from ".$db['db'].".user where is_active=1";
+        }
+        $sql = "select username, ifnull(fullname, username) as fullname from (" . implode(" UNION ALL ", $sqlTab) . ") as subquery order by fullname";
+        $stmt = $conn->prepare($sql);   
+        $stmt->execute($parameters);
+        return $stmt->fetchAll(\PDO::FETCH_KEY_PAIR);
+    }
 }

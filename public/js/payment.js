@@ -6,7 +6,7 @@ var tmp_received = {
     amount: 0,
     received: 0
 };
-
+/*
 function refreshFilters() {
     var url = "";
     if (role == "ROLE_REFERENT") {
@@ -35,12 +35,12 @@ function refreshFilters() {
     
     window.location.href = url;
 }
-
+*/
 $(document).ready(function() {
 //       $('.sonata-filter-option').val(1);
        $('select.form-control').change(function() {
-           refreshFilters();
-           //$(this).closest('form').trigger('submit');
+           //refreshFilters();
+           $(this).closest('form').trigger('submit');
        });
 //       if ($("#filter_fkFarm_value").children().length <3)
 //       {
