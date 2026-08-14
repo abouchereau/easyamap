@@ -82,10 +82,10 @@ class PaymentRepository extends EntityRepository
                     }
                 }
                 if ($filters['issued']!=0) {
-                    if ($filters['received'] == '1') {
+                    if ($filters['issued'] == '1') {
                         $sqlPart .= PHP_EOL."AND p.issued_at IS NOT NULL";
                     }
-                    elseif ($filters['received'] == '2') {
+                    elseif ($filters['issued'] == '2') {
                         $sqlPart .= PHP_EOL."AND p.issued_at IS NULL";
                     }
                 }
